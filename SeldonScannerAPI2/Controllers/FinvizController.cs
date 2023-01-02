@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SeldonStockScannerAPI.Data;
@@ -7,6 +8,7 @@ using StockScannerCommonCode.model;
 
 namespace SeldonStockScannerAPI.Controllers
 {
+    [EnableCors("corsPolicy")]
     [Route("api/[controller]")]
     [ApiController]
     public class FinvizController : ControllerBase

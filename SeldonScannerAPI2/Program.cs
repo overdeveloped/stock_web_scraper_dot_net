@@ -17,14 +17,29 @@ builder.Services.AddDbContext<DataContext>(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+// CORS explanation:
+https://learn.microsoft.com/en-us/aspnet/core/security/cors?view=aspnetcore-7.0
+
+var MyAllowSpecificOrigins = "corsPolicy";
+
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("CorsPolicy",
-        builder => builder
-            .AllowAnyMethod()
-            .AllowCredentials()
-            .SetIsOriginAllowed((host) => true)
-            .AllowAnyHeader());
+    //options.AddPolicy("CorsPolicy",
+    //    builder => builder
+    //        .AllowAnyMethod()
+    //        .AllowAnyHeader()
+    //        //.SetIsOriginAllowed((host) => true)
+    //        .WithOrigins("http://localhost:4200") // Allow only this origin can also have multiple origins separated with comma
+    //        .AllowCredentials());
+
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                        policy =>
+                        {
+                            //policy.WithOrigins("http://localhost:4200")
+                            policy.AllowAnyOrigin()
+                                .AllowAnyMethod()
+                                .AllowAnyHeader();
+                        });
 });
 
 var app = builder.Build();
@@ -34,13 +49,17 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
-    app.UseCors("CorsPolicy");
 }
 
 app.UseHttpsRedirection();
+app.UseRouting();
+
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthorization();
 
 app.MapControllers();
 
 app.Run();
+
+
