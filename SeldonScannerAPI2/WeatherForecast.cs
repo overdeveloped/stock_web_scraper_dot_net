@@ -1,4 +1,4 @@
-namespace SeldonScannerAPI2
+namespace SeldonStockScannerAPI
 {
     public class WeatherForecast
     {

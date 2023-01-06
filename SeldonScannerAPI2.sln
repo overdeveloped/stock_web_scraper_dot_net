@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SeldonScannerAPI2", "SeldonScannerAPI2\SeldonScannerAPI2.csproj", "{A42ABEBA-F9B9-49B5-A062-3B8DA58BAE0D}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StockScannerCommonCode", "StockScannerCommonCode\StockScannerCommonCode.csproj", "{90DAB34C-FAEA-466B-BEA8-12DF77984F57}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SeldonStockScannerAPI", "SeldonScannerAPI2\SeldonStockScannerAPI.csproj", "{F5848D2C-9933-444D-95FD-065CCFEE02B8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +21,10 @@ Global
 		{90DAB34C-FAEA-466B-BEA8-12DF77984F57}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{90DAB34C-FAEA-466B-BEA8-12DF77984F57}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{90DAB34C-FAEA-466B-BEA8-12DF77984F57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5848D2C-9933-444D-95FD-065CCFEE02B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5848D2C-9933-444D-95FD-065CCFEE02B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5848D2C-9933-444D-95FD-065CCFEE02B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5848D2C-9933-444D-95FD-065CCFEE02B8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

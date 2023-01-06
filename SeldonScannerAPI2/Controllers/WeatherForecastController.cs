@@ -1,15 +1,16 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace SeldonScannerAPI2.Controllers
+namespace SeldonStockScannerAPI.Controllers
 {
     [ApiController]
+    // Everything that comes before the word "Controller" e.g. "WeatherForecast":
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
         private static readonly string[] Summaries = new[]
         {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
+            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
+        };
 
         private readonly ILogger<WeatherForecastController> _logger;
 
@@ -18,7 +19,10 @@ namespace SeldonScannerAPI2.Controllers
             _logger = logger;
         }
 
-        [HttpGet(Name = "GetWeatherForecast")]
+        // This name isn't the route
+        //[HttpGet(Name = "GetWeatherForecast")]
+        //[Route("thing")]
+        [HttpGet("thing")]
         public IEnumerable<WeatherForecast> Get()
         {
             return Enumerable.Range(1, 5).Select(index => new WeatherForecast
