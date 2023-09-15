@@ -93,7 +93,7 @@ namespace StockScannerCommonCode
                 for (int index = 1; index < 20 * iterationScaler; index += 20)
                 {
                     doc = web.Load($"{fullUrl}&r={index}");
-                    Helpers.outputToFile("increasing_volume_raw", doc.DocumentNode.OuterHtml);
+                    Helpers.outputToFile("custom_search_raw", doc.DocumentNode.OuterHtml);
 
                     IList<HtmlNode> tableData = doc.QuerySelectorAll(".screener-body-table-nw");
                     string paginationDataString = paginationData.First().InnerHtml;
@@ -137,7 +137,7 @@ namespace StockScannerCommonCode
                     }
                 }
 
-                Helpers.outputToFile("increasing_volume_processed", sb.ToString());
+                Helpers.outputToFile("custom_search_processed", sb.ToString());
 
             }
             catch (Exception ex)

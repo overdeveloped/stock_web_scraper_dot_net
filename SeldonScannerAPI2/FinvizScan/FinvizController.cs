@@ -5,7 +5,7 @@ using SeldonStockScannerAPI.Data;
 using StockScannerCommonCode;
 using StockScannerCommonCode.model;
 
-namespace SeldonStockScannerAPI.Controllers
+namespace SeldonStockScannerAPI.FinvizScan
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -52,23 +52,46 @@ namespace SeldonStockScannerAPI.Controllers
         /// <param name="filterNames"></param>
         /// <returns></returns>
 
-        [HttpPost]
-        public async Task<ActionResult<WatchList>> GetWatchList(Dictionary<string, string> filterNames)
+        //[HttpPost]
+        //public async Task<ActionResult<WatchList>> GetWatchList(Dictionary<string, string> filterNames)
+        //{
+        //    List<Plus500Symbol> plus500Symbols = await dataContext.plus500_symbols.ToListAsync();
+        //    FinvizFilter filter = new FinvizFilter();
+
+        //    fillFilters(filter, filterNames);
+        //    filter.BuildUrl();
+        //    WebScraper scraper = new WebScraper();
+
+        //    List<FinvizCompany> results = scraper.GetCustomWatchList(filter);
+        //    //List<FinvizCompany> filteredTechWatchList = Helpers.filterByPlus500Stocks(results);
+        //    List<FinvizCompany> filteredTechWatchList = filterByPlus500Stocks(results, plus500Symbols);
+
+        //    WatchList list = new WatchList();
+        //    list.companies = filteredTechWatchList;
+
+        //    return list;
+        //}
+
+        [HttpPut("scan")]
+        public async Task<ActionResult<string>> GetWatchList(Dictionary<string, string> filterNames)
         {
             List<Plus500Symbol> plus500Symbols = await dataContext.plus500_symbols.ToListAsync();
-            FinvizFilter filter = new FinvizFilter();
-            fillFilters(filter, filterNames);
-            filter.BuildUrl();
-            WebScraper scraper = new WebScraper();
+            FinvizFilter filter = new FinvizFilter(filterNames);
 
-            List<FinvizCompany> results = scraper.GetCustomWatchList(filter);
+
+
+            //fillFilters(filter, filterNames);
+            //filter.BuildUrl();
+            //WebScraper scraper = new WebScraper();
+
+            //List<FinvizCompany> results = scraper.GetCustomWatchList(filter);
             //List<FinvizCompany> filteredTechWatchList = Helpers.filterByPlus500Stocks(results);
-            List<FinvizCompany> filteredTechWatchList = filterByPlus500Stocks(results, plus500Symbols);
+            //List<FinvizCompany> filteredTechWatchList = filterByPlus500Stocks(results, plus500Symbols);
 
-            WatchList list = new WatchList();
-            list.companies = filteredTechWatchList;
+            //WatchList list = new WatchList();
+            //list.companies = filteredTechWatchList;
 
-            return list;
+            return filter.getFullUrl();
         }
 
         // Example input:
