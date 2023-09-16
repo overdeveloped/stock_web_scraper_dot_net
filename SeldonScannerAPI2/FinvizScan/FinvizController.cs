@@ -75,7 +75,7 @@ namespace SeldonStockScannerAPI.FinvizScan
         [HttpPut("scan")]
         public async Task<ActionResult<string>> GetWatchList(Dictionary<string, string> filterNames)
         {
-            List<Plus500Symbol> plus500Symbols = await dataContext.plus500_symbols.ToListAsync();
+            //List<Plus500Symbol> plus500Symbols = await dataContext.plus500_symbols.ToListAsync();
             FinvizFilter filter = new FinvizFilter(filterNames);
 
 
@@ -127,29 +127,29 @@ namespace SeldonStockScannerAPI.FinvizScan
         private void fillFilters(FinvizFilter filter, Dictionary<string, string> input)
         {
             // Column 1
-            filter.Exchange = input["Exchange"];
-            filter.MarketCap = input["MarketCap"];
-            filter.EarningsDate = input["EarningsDate"];
-            filter.TargetPrice = input["TargetPrice"];
-            // Column 2
-            filter.Index = input["Index"];
-            filter.DividendYield = input["DividendYield"];
-            filter.AverageVolume = input["AverageVolume"];
-            filter.IPODate = input["IPODate"];
-            // Column 3
-            filter.Sector = input["Sector"];
-            filter.FloatShort = input["FloatShort"];
-            filter.RelativeVolume = input["RelativeVolume"];
-            filter.SharesOutstanding = input["SharesOutstanding"];
-            // Column 4
-            filter.Industry = input["Industry"];
-            filter.AnalystRecom = input["AnalystRecom"];
-            filter.CurrentVolume = input["CurrentVolume"];
-            filter.Float = input["Float"];
-            // Column 5
-            filter.Country = input["Country"];
-            filter.OptionShort = input["OptionShort"];
-            filter.Price = input["Price"];
+            //filter.Exchange = input["Exchange"];
+            //filter.MarketCap = input["MarketCap"];
+            //filter.EarningsDate = input["EarningsDate"];
+            //filter.TargetPrice = input["TargetPrice"];
+            //// Column 2
+            //filter.Index = input["Index"];
+            //filter.DividendYield = input["DividendYield"];
+            //filter.AverageVolume = input["AverageVolume"];
+            //filter.IPODate = input["IPODate"];
+            //// Column 3
+            //filter.Sector = input["Sector"];
+            //filter.FloatShort = input["FloatShort"];
+            //filter.RelativeVolume = input["RelativeVolume"];
+            //filter.SharesOutstanding = input["SharesOutstanding"];
+            //// Column 4
+            //filter.Industry = input["Industry"];
+            //filter.AnalystRecom = input["AnalystRecom"];
+            //filter.CurrentVolume = input["CurrentVolume"];
+            //filter.Float = input["Float"];
+            //// Column 5
+            //filter.Country = input["Country"];
+            //filter.OptionShort = input["OptionShort"];
+            //filter.Price = input["Price"];
         }
 
         private static List<FinvizCompany> filterByPlus500Stocks(List<FinvizCompany> rawResults, List<Plus500Symbol> plus500symbols)

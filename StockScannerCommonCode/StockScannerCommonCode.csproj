@@ -86,6 +86,7 @@
   <ItemGroup>
     <Compile Include="charting\ChartData.cs" />
     <Compile Include="EnumTimeScale.cs" />
+    <Compile Include="finviz_classes\EnumFilterType.cs" />
     <Compile Include="finviz_classes\FinvizFilterSave.cs" />
     <Compile Include="finviz_classes\FinvizFilter.cs" />
     <Compile Include="IHistoricPriceActionData.cs" />
