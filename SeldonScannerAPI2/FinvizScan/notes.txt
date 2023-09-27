@@ -1,0 +1,10 @@
+
+
+EXAMPLE REQUEST BODY PUT SCAN/
+
+{
+  "exchange": "NYSE"
+}
+
+
+

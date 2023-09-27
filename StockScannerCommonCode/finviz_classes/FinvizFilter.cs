@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using StockScannerCommonCode.finviz_classes;
@@ -67,18 +68,42 @@ namespace StockScannerCommonCode
 
 
 
-        public Dictionary<string, string> translationRelativeVolume { get; set; }
-        public Dictionary<string, string> translationSharesOutstanding { get; set; }
         // Column 4
         public Dictionary<string, string> translationIndustry { get; set; }
-        public Dictionary<string, string> translationCurrentVolume { get; set; }
-        public Dictionary<string, string> translationFloat { get; set; }
+        public Dictionary<string, string> translationPEG { get; set; }
+        public Dictionary<string, string> translationEPSGrowthThisYears { get; set; }
+        public Dictionary<string, string> translationEPSGrowthQuarterOverQuarter{ get; set; }
+        public Dictionary<string, string> translationReturnOnInvestment { get; set; }
+        public Dictionary<string, string> translationGrossMargin { get; set; }
+        public Dictionary<string, string> translationInsiderTransactions { get; set; }
+        public Dictionary<string, string> translationOptionShort { get; set; }
+
+
+
+
+        public Dictionary<string, string> translationRSI14 { get; set; }
+        public Dictionary<string, string> translationChange { get; set; }
+        public Dictionary<string, string> translationPattern { get; set; }
+
+
+
+
+
+
+
+
+        public Dictionary<string, string> translationRelativeVolume { get; set; }
+        public Dictionary<string, string> translationSharesOutstanding { get; set; }
 
         // Column 5
         public Dictionary<string, string> translationCountry { get; set; }
-        public Dictionary<string, string> translationOptionShort { get; set; }
         public Dictionary<string, string> translationEarningsDate { get; set; }
 
+
+
+
+        public Dictionary<string, string> translationCurrentVolume { get; set; }
+        public Dictionary<string, string> translationFloat { get; set; }
 
 
         // Individual Fields
@@ -879,7 +904,6 @@ namespace StockScannerCommonCode
             translationLTDebtEquity.Add("Over 1", "fa_ltdebteq_o1");
             translationLTDebtEquity.Add("Custom (Elite only)", "custom doesn't work");
 
-            translationPayoutRatio.Add("High (>20%)", "fa_payoutratio_high");
             translationPayoutRatio = new Dictionary<string, string>();
             translationPayoutRatio.Add("Any", "");
             translationPayoutRatio.Add("None (0%)", "fa_payoutratio_none");
@@ -1438,51 +1462,9 @@ namespace StockScannerCommonCode
             translationIPODate.Add("Custom (Elite only)", "custom doesn't work");
 
 
-
-
-
-            translationRelativeVolume.Add("Any", "");
-            translationRelativeVolume.Add("Over 10", "sh_relvol_o10");
-            translationRelativeVolume.Add("Over 5", "sh_relvol_o5");
-            translationRelativeVolume.Add("Over 3", "sh_relvol_o3");
-            translationRelativeVolume.Add("Over 2", "sh_relvol_o2");
-            translationRelativeVolume.Add("Over 1.5", "sh_relvol_o1.5");
-            translationRelativeVolume.Add("Over 1", "sh_relvol_o1");
-            translationRelativeVolume.Add("Over 0.75", "sh_relvol_o0.75");
-            translationRelativeVolume.Add("Over 0.5", "sh_relvol_o0.5");
-            translationRelativeVolume.Add("Over 0.25", "sh_relvol_o0.25");
-            translationRelativeVolume.Add("Under 2", "sh_relvol_u2");
-            translationRelativeVolume.Add("Under 1.5", "sh_relvol_u1.5");
-            translationRelativeVolume.Add("Under 1", "sh_relvol_u1");
-            translationRelativeVolume.Add("Under 0.75", "sh_relvol_u0.75");
-            translationRelativeVolume.Add("Under 0.5", "sh_relvol_u0.5");
-            translationRelativeVolume.Add("Under 0.25", "sh_relvol_u0.25");
-            translationRelativeVolume.Add("Under 0.1", "sh_relvol_u0.1");
-            translationRelativeVolume.Add("Custom (Elite only)", "custom doesn't work");
-
-            translationSharesOutstanding.Add("Any", "");
-            translationSharesOutstanding.Add("Under 1M", "sh_outstanding_u1");
-            translationSharesOutstanding.Add("Under 5M", "sh_outstanding_u5");
-            translationSharesOutstanding.Add("Under 10M", "sh_outstanding_u10");
-            translationSharesOutstanding.Add("Under 20M", "sh_outstanding_u20");
-            translationSharesOutstanding.Add("Under 50M", "sh_outstanding_u50");
-            translationSharesOutstanding.Add("Under 100M", "sh_outstanding_u100");
-            translationSharesOutstanding.Add("Over 1M", "sh_outstanding_o1");
-            translationSharesOutstanding.Add("Over 2M", "sh_outstanding_o2");
-            translationSharesOutstanding.Add("Over 5M", "sh_outstanding_o5");
-            translationSharesOutstanding.Add("Over 10M", "sh_outstanding_o10");
-            translationSharesOutstanding.Add("Over 20M", "sh_outstanding_o20");
-            translationSharesOutstanding.Add("Over 50M", "sh_outstanding_o50");
-            translationSharesOutstanding.Add("Over 100M", "sh_outstanding_o100");
-            translationSharesOutstanding.Add("Over 200M", "sh_outstanding_o200");
-            translationSharesOutstanding.Add("Over 500M", "sh_outstanding_o500");
-            translationSharesOutstanding.Add("Over 1000M", "sh_outstanding_o1000");
-            translationSharesOutstanding.Add("Custom (Elite only)", "custom doesn't work");
-
-
-
             // Column 4
-            translationIndustry.Add("Any", "ind_stocksonly");
+            translationIndustry = new Dictionary<string, string>();
+            translationIndustry.Add("Any", "");
             translationIndustry.Add("Stocks only (ex-Funds)", "ind_exchangetradedfund");
             translationIndustry.Add("Exchange Traded Fund", "ind_advertisingagencies");
             translationIndustry.Add("Advertising Agencies", "ind_aerospacedefense");
@@ -1628,7 +1610,7 @@ namespace StockScannerCommonCode
             translationIndustry.Add("Trucking", "ind_trucking");
             translationIndustry.Add("Uranium", "ind_uranium");
             translationIndustry.Add("Utilities - Diversified", "ind_utilitiesdiversified");
-            translationIndustry.Add("Utilities - Independent Power Producers", "ind_utilitiesindependentpowerproducers");
+            translationIndustry.Add("Utilities - Independent Power Producers", "ind_utilitiesindependentpowerproducers");   
             translationIndustry.Add("Utilities - Regulated Electric", "ind_utilitiesregulatedelectric");
             translationIndustry.Add("Utilities - Regulated Gas", "ind_utilitiesregulatedgas");
             translationIndustry.Add("Utilities - Regulated Water", "ind_utilitiesregulatedwater");
@@ -1645,59 +1627,221 @@ namespace StockScannerCommonCode
             translationIndustry.Add("Waste Management", "ind_wastemanagement");
             translationIndustry.Add("Custom (Elite only)", "custom doesn't work");
 
+            translationPEG = new Dictionary<string, string>();
+            translationPEG.Add("Any", "");
+            translationPEG.Add("Low (<1)", "fa_peg_low");
+            translationPEG.Add("High (>2)", "fa_peg_high");
+            translationPEG.Add("Under 1", "fa_peg_u1");
+            translationPEG.Add("Under 2", "fa_peg_u2");
+            translationPEG.Add("Under 3", "fa_peg_u3");
+            translationPEG.Add("Over 1", "fa_peg_o1");
+            translationPEG.Add("Over 2", "fa_peg_o2");
+            translationPEG.Add("Over 3", "fa_peg_o3");
+            translationPEG.Add("Custom (Elite only)", "custom doesn't work");
 
-            //dsrgadsrghdrghadrfhda
+            translationEPSGrowthThisYears = new Dictionary<string, string>();
+            translationEPSGrowthThisYears.Add("Any", "");
+            translationEPSGrowthThisYears.Add("Negative (<0%)", "fa_epsyoy_neg");
+            translationEPSGrowthThisYears.Add("Positive (>0%)", "fa_epsyoy_pos");
+            translationEPSGrowthThisYears.Add("Positive Low (0-10%)", "fa_epsyoy_poslow");
+            translationEPSGrowthThisYears.Add("High (>25%)", "fa_epsyoy_high");
+            translationEPSGrowthThisYears.Add("Under 5%", "fa_epsyoy_u5");
+            translationEPSGrowthThisYears.Add("Under 10%", "fa_epsyoy_u10");
+            translationEPSGrowthThisYears.Add("Under 15%", "fa_epsyoy_u15");
+            translationEPSGrowthThisYears.Add("Under 20%", "fa_epsyoy_u20");
+            translationEPSGrowthThisYears.Add("Under 25%", "fa_epsyoy_u25");
+            translationEPSGrowthThisYears.Add("Under 30%", "fa_epsyoy_u30");
+            translationEPSGrowthThisYears.Add("Over 5%", "fa_epsyoy_o5");
+            translationEPSGrowthThisYears.Add("Over 10%", "fa_epsyoy_o10");
+            translationEPSGrowthThisYears.Add("Over 15%", "fa_epsyoy_o15");
+            translationEPSGrowthThisYears.Add("Over 20%", "fa_epsyoy_o20");
+            translationEPSGrowthThisYears.Add("Over 25%", "fa_epsyoy_o25");
+            translationEPSGrowthThisYears.Add("Over 30%", "fa_epsyoy_o30");
+            translationEPSGrowthThisYears.Add("Custom (Elite only)", "custom doesn't work");
+
+            translationEPSGrowthQuarterOverQuarter = new Dictionary<string, string>();
+            translationEPSGrowthQuarterOverQuarter.Add("Any", "");
+            translationEPSGrowthQuarterOverQuarter.Add("Negative (<0%)", "fa_epsqoq_neg");
+            translationEPSGrowthQuarterOverQuarter.Add("Positive (>0%)", "fa_epsqoq_pos");
+            translationEPSGrowthQuarterOverQuarter.Add("Positive Low (0-10%)", "fa_epsqoq_poslow");
+            translationEPSGrowthQuarterOverQuarter.Add("High (>25%)", "fa_epsqoq_high");
+            translationEPSGrowthQuarterOverQuarter.Add("Under 5%", "fa_epsqoq_u5");
+            translationEPSGrowthQuarterOverQuarter.Add("Under 10%", "fa_epsqoq_u10");
+            translationEPSGrowthQuarterOverQuarter.Add("Under 15%", "fa_epsqoq_u15");
+            translationEPSGrowthQuarterOverQuarter.Add("Under 20%", "fa_epsqoq_u20");
+            translationEPSGrowthQuarterOverQuarter.Add("Under 25%", "fa_epsqoq_u25");
+            translationEPSGrowthQuarterOverQuarter.Add("Under 30%", "fa_epsqoq_u30");
+            translationEPSGrowthQuarterOverQuarter.Add("Over 5%", "fa_epsqoq_o5");
+            translationEPSGrowthQuarterOverQuarter.Add("Over 10%", "fa_epsqoq_o10");
+            translationEPSGrowthQuarterOverQuarter.Add("Over 15%", "fa_epsqoq_o15");
+            translationEPSGrowthQuarterOverQuarter.Add("Over 20%", "fa_epsqoq_o20");
+            translationEPSGrowthQuarterOverQuarter.Add("Over 25%", "fa_epsqoq_o25");
+            translationEPSGrowthQuarterOverQuarter.Add("Over 30%", "fa_epsqoq_o30");
+            translationEPSGrowthQuarterOverQuarter.Add("Custom (Elite only)", "custom doesn't work");
+
+            translationReturnOnInvestment = new Dictionary<string, string>();
+            translationReturnOnInvestment.Add("Any", "");
+            translationReturnOnInvestment.Add("Positive (>0%)", "fa_roi_pos");
+            translationReturnOnInvestment.Add("Negative (<0%)", "fa_roi_neg");
+            translationReturnOnInvestment.Add("Very Positive (>25%)", "fa_roi_verypos");
+            translationReturnOnInvestment.Add("Very Negative (<-10%)", "fa_roi_veryneg");
+            translationReturnOnInvestment.Add("Under -50%", "fa_roi_u-50");
+            translationReturnOnInvestment.Add("Under -45%", "fa_roi_u-45");
+            translationReturnOnInvestment.Add("Under -40%", "fa_roi_u-40");
+            translationReturnOnInvestment.Add("Under -35%", "fa_roi_u-45");
+            translationReturnOnInvestment.Add("Under -30%", "fa_roi_u-30");
+            translationReturnOnInvestment.Add("Under -25%", "fa_roi_u-25");
+            translationReturnOnInvestment.Add("Under -20%", "fa_roi_u-20");
+            translationReturnOnInvestment.Add("Under -15%", "fa_roi_u-15");
+            translationReturnOnInvestment.Add("Under -10%", "fa_roi_u-10");
+            translationReturnOnInvestment.Add("Under -5%", "fa_roi_u-5");
+            translationReturnOnInvestment.Add("Over +5%", "fa_roi_o5");
+            translationReturnOnInvestment.Add("Over +10%", "fa_roi_o10");
+            translationReturnOnInvestment.Add("Over +15%", "fa_roi_o15");
+            translationReturnOnInvestment.Add("Over +20%", "fa_roi_o20");
+            translationReturnOnInvestment.Add("Over +25%", "fa_roi_o25");
+            translationReturnOnInvestment.Add("Over +30%", "fa_roi_o30");
+            translationReturnOnInvestment.Add("Over +35%", "fa_roi_o35");
+            translationReturnOnInvestment.Add("Over +40%", "fa_roi_o40");
+            translationReturnOnInvestment.Add("Over +45%", "fa_roi_o45");
+            translationReturnOnInvestment.Add("Over +50%", "fa_roi_o50");
+            translationReturnOnInvestment.Add("Custom (Elite only)", "custom doesn't work");
+
+            translationGrossMargin = new Dictionary<string, string>();
+            translationGrossMargin.Add("Any", "");
+            translationGrossMargin.Add("Positive (>0%)", "fa_grossmargin_pos");
+            translationGrossMargin.Add("Negative (<0%)", "fa_grossmargin_neg");
+            translationGrossMargin.Add("High (>50%)", "fa_grossmargin_high");
+            translationGrossMargin.Add("Under 90%", "fa_grossmargin_u90");
+            translationGrossMargin.Add("Under 80%", "fa_grossmargin_u80");
+            translationGrossMargin.Add("Under 70%", "fa_grossmargin_u70");
+            translationGrossMargin.Add("Under 60%", "fa_grossmargin_u60");
+            translationGrossMargin.Add("Under 50%", "fa_grossmargin_u50");
+            translationGrossMargin.Add("Under 45%", "fa_grossmargin_u45");
+            translationGrossMargin.Add("Under 40%", "fa_grossmargin_u40");
+            translationGrossMargin.Add("Under 35%", "fa_grossmargin_u35");
+            translationGrossMargin.Add("Under 30%", "fa_grossmargin_u30");
+            translationGrossMargin.Add("Under 25%", "fa_grossmargin_u25");
+            translationGrossMargin.Add("Under 20%", "fa_grossmargin_u20");
+            translationGrossMargin.Add("Under 15%", "fa_grossmargin_u15");
+            translationGrossMargin.Add("Under 10%", "fa_grossmargin_u10");
+            translationGrossMargin.Add("Under 5%", "fa_grossmargin_u5");
+            translationGrossMargin.Add("Under 0%", "fa_grossmargin_u0");
+            translationGrossMargin.Add("Under -10%", "fa_grossmargin_u-10");
+            translationGrossMargin.Add("Under -20%", "fa_grossmargin_u-20");
+            translationGrossMargin.Add("Under -30%", "fa_grossmargin_u-30");
+            translationGrossMargin.Add("Under -50%", "fa_grossmargin_u-50");
+            translationGrossMargin.Add("Under -70%", "fa_grossmargin_u-70");
+            translationGrossMargin.Add("Under -100%", "fa_grossmargin_u-100");
+            translationGrossMargin.Add("Over 0%", "fa_grossmargin_o0");
+            translationGrossMargin.Add("Over 5%", "fa_grossmargin_o5");
+            translationGrossMargin.Add("Over 10%", "fa_grossmargin_o10");
+            translationGrossMargin.Add("Over 15%", "fa_grossmargin_o15");
+            translationGrossMargin.Add("Over 20%", "fa_grossmargin_o20");
+            translationGrossMargin.Add("Over 25%", "fa_grossmargin_o25");
+            translationGrossMargin.Add("Over 30%", "fa_grossmargin_o30");
+            translationGrossMargin.Add("Over 35%", "fa_grossmargin_o35");
+            translationGrossMargin.Add("Over 40%", "fa_grossmargin_o40");
+            translationGrossMargin.Add("Over 45%", "fa_grossmargin_o45");
+            translationGrossMargin.Add("Over 50%", "fa_grossmargin_o50");
+            translationGrossMargin.Add("Over 60%", "fa_grossmargin_o60");
+            translationGrossMargin.Add("Over 70%", "fa_grossmargin_o70");
+            translationGrossMargin.Add("Over 80%", "fa_grossmargin_o80");
+            translationGrossMargin.Add("Over 90%", "fa_grossmargin_o90");
+            translationGrossMargin.Add("Custom (Elite only)", "custom doesn't work");
+
+            translationInsiderTransactions = new Dictionary<string, string>();
+            translationInsiderTransactions.Add("Any", "");
+            translationInsiderTransactions.Add("Very Negative (<20%)", "sh_insidertrans_veryneg");
+            translationInsiderTransactions.Add("Negative (<0%)", "sh_insidertrans_neg");
+            translationInsiderTransactions.Add("Positive (>0%)", "sh_insidertrans_pos");
+            translationInsiderTransactions.Add("Very Positive (>20%)", "sh_insidertrans_verypos");
+            translationInsiderTransactions.Add("Under -90%", "sh_insidertrans_u-90");
+            translationInsiderTransactions.Add("Under -80%", "sh_insidertrans_u-80");
+            translationInsiderTransactions.Add("Under -70%", "sh_insidertrans_u-70");
+            translationInsiderTransactions.Add("Under -60%", "sh_insidertrans_u-60");
+            translationInsiderTransactions.Add("Under -50%", "sh_insidertrans_u-50");
+            translationInsiderTransactions.Add("Under -45%", "sh_insidertrans_u-45");
+            translationInsiderTransactions.Add("Under -40%", "sh_insidertrans_u-40");
+            translationInsiderTransactions.Add("Under -35%", "sh_insidertrans_u-35");
+            translationInsiderTransactions.Add("Under -30%", "sh_insidertrans_u-30");
+            translationInsiderTransactions.Add("Under -25%", "sh_insidertrans_u-25");
+            translationInsiderTransactions.Add("Under -20%", "sh_insidertrans_u-20");
+            translationInsiderTransactions.Add("Under -15%", "sh_insidertrans_u-15");
+            translationInsiderTransactions.Add("Under -10%", "sh_insidertrans_u-10");
+            translationInsiderTransactions.Add("Under -5%", "sh_insidertrans_u-5");
+            translationInsiderTransactions.Add("Over +5%", "fa_insidertrans_o5");
+            translationInsiderTransactions.Add("Over +10%", "fa_insidertrans_o10");
+            translationInsiderTransactions.Add("Over +15%", "fa_insidertrans_o15");
+            translationInsiderTransactions.Add("Over +20%", "fa_insidertrans_o20");
+            translationInsiderTransactions.Add("Over +25%", "fa_insidertrans_o25");
+            translationInsiderTransactions.Add("Over +30%", "fa_insidertrans_o30");
+            translationInsiderTransactions.Add("Over +35%", "fa_insidertrans_o35");
+            translationInsiderTransactions.Add("Over +40%", "fa_insidertrans_o40");
+            translationInsiderTransactions.Add("Over +45%", "sh_insidertrans_o45");
+            translationInsiderTransactions.Add("Over +50%", "fa_insidertrans_o50");
+            translationInsiderTransactions.Add("Over +60%", "fa_insidertrans_o60");
+            translationInsiderTransactions.Add("Over +70%", "fa_insidertrans_o70");
+            translationInsiderTransactions.Add("Over +80%", "fa_insidertrans_o80");
+            translationInsiderTransactions.Add("Over +90%", "fa_insidertrans_o90");
+            translationInsiderTransactions.Add("Optionable and shortable", "sh_opt_optionshort");
+
+            translationOptionShort = new Dictionary<string, string>();
+            translationOptionShort.Add("Any", "");
+            translationOptionShort.Add("Optionable", "sh_opt_option");
+            translationOptionShort.Add("Shortable", "sh_opt_short");
+            translationOptionShort.Add("Optionable and shortable", "sh_opt_optionshort");
+            translationOptionShort.Add("Optionable and not shortable", "sh_opt_optionnotshort");
+            translationOptionShort.Add("Not optionable and shortable", "sh_opt_notoptionshort");
+            translationOptionShort.Add("Not optionable and not shortable", "sh_opt_notoptionnotshort");
 
 
 
 
+            translationRSI14 = new Dictionary<string, string>();
+            translationChange = new Dictionary<string, string>();
+            translationPattern = new Dictionary<string, string>();
 
 
+            translationRelativeVolume = new Dictionary<string, string>();
+            translationRelativeVolume.Add("Any", "");
+            translationRelativeVolume.Add("Over 10", "sh_relvol_o10");
+            translationRelativeVolume.Add("Over 5", "sh_relvol_o5");
+            translationRelativeVolume.Add("Over 3", "sh_relvol_o3");
+            translationRelativeVolume.Add("Over 2", "sh_relvol_o2");
+            translationRelativeVolume.Add("Over 1.5", "sh_relvol_o1.5");
+            translationRelativeVolume.Add("Over 1", "sh_relvol_o1");
+            translationRelativeVolume.Add("Over 0.75", "sh_relvol_o0.75");
+            translationRelativeVolume.Add("Over 0.5", "sh_relvol_o0.5");
+            translationRelativeVolume.Add("Over 0.25", "sh_relvol_o0.25");
+            translationRelativeVolume.Add("Under 2", "sh_relvol_u2");
+            translationRelativeVolume.Add("Under 1.5", "sh_relvol_u1.5");
+            translationRelativeVolume.Add("Under 1", "sh_relvol_u1");
+            translationRelativeVolume.Add("Under 0.75", "sh_relvol_u0.75");
+            translationRelativeVolume.Add("Under 0.5", "sh_relvol_u0.5");
+            translationRelativeVolume.Add("Under 0.25", "sh_relvol_u0.25");
+            translationRelativeVolume.Add("Under 0.1", "sh_relvol_u0.1");
+            translationRelativeVolume.Add("Custom (Elite only)", "custom doesn't work");
 
-
-
-
-
-            translationCurrentVolume.Add("Any", "");
-            translationCurrentVolume.Add("Under 50K", "sh_curvol_u50");
-            translationCurrentVolume.Add("Under 100K", "sh_curvol_u100");
-            translationCurrentVolume.Add("Under 500K", "sh_curvol_u500");
-            translationCurrentVolume.Add("Under 750K", "sh_curvol_u750");
-            translationCurrentVolume.Add("Under 1M", "sh_curvol_u1000");
-            translationCurrentVolume.Add("Over 0", "sh_curvol_o0");
-            translationCurrentVolume.Add("Over 50K", "sh_curvol_o50");
-            translationCurrentVolume.Add("Over 100K", "sh_curvol_o100");
-            translationCurrentVolume.Add("Over 200K", "sh_curvol_o200");
-            translationCurrentVolume.Add("Over 300K", "sh_curvol_o300");
-            translationCurrentVolume.Add("Over 400K", "sh_curvol_o400");
-            translationCurrentVolume.Add("Over 500K", "sh_curvol_o500");
-            translationCurrentVolume.Add("Over 750K", "sh_curvol_o750");
-            translationCurrentVolume.Add("Over 1M", "sh_curvol_o1000");
-            translationCurrentVolume.Add("Over 2M", "sh_curvol_o2000");
-            translationCurrentVolume.Add("Over 5M", "sh_curvol_o5000");
-            translationCurrentVolume.Add("Over 10M", "sh_curvol_o10000");
-            translationCurrentVolume.Add("Over 20M", "sh_curvol_o20000");
-            translationCurrentVolume.Add("Custom (Elite only)", "custom doesn't work");
-
-            translationFloat.Add("Any", "");
-            translationFloat.Add("Under 1M", "sh_float_u1");
-            translationFloat.Add("Under 5M", "sh_float_u5");
-            translationFloat.Add("Under 10M", "sh_float_u10");
-            translationFloat.Add("Under 20M", "sh_float_u20");
-            translationFloat.Add("Under 50M", "sh_float_u50");
-            translationFloat.Add("Under 100M", "sh_float_u100");
-            translationFloat.Add("Over 1M", "sh_float_o1");
-            translationFloat.Add("Over 2M", "sh_float_o2");
-            translationFloat.Add("Over 5M", "sh_float_o5");
-            translationFloat.Add("Over 10M", "sh_float_o10");
-            translationFloat.Add("Over 20M", "sh_float_o20");
-            translationFloat.Add("Over 50M", "sh_float_o50");
-            translationFloat.Add("Over 100M", "sh_float_o100");
-            translationFloat.Add("Over 200M", "sh_float_o200");
-            translationFloat.Add("Over 500M", "sh_float_o500");
-            translationFloat.Add("Over 1000M", "sh_float_o1000");
-            translationFloat.Add("Custom (Elite only)", "custom doesn't work");
-
+            translationSharesOutstanding = new Dictionary<string, string>();
+            translationSharesOutstanding.Add("Any", "");
+            translationSharesOutstanding.Add("Under 1M", "sh_outstanding_u1");
+            translationSharesOutstanding.Add("Under 5M", "sh_outstanding_u5");
+            translationSharesOutstanding.Add("Under 10M", "sh_outstanding_u10");
+            translationSharesOutstanding.Add("Under 20M", "sh_outstanding_u20");
+            translationSharesOutstanding.Add("Under 50M", "sh_outstanding_u50");
+            translationSharesOutstanding.Add("Under 100M", "sh_outstanding_u100");
+            translationSharesOutstanding.Add("Over 1M", "sh_outstanding_o1");
+            translationSharesOutstanding.Add("Over 2M", "sh_outstanding_o2");
+            translationSharesOutstanding.Add("Over 5M", "sh_outstanding_o5");
+            translationSharesOutstanding.Add("Over 10M", "sh_outstanding_o10");
+            translationSharesOutstanding.Add("Over 20M", "sh_outstanding_o20");
+            translationSharesOutstanding.Add("Over 50M", "sh_outstanding_o50");
+            translationSharesOutstanding.Add("Over 100M", "sh_outstanding_o100");
+            translationSharesOutstanding.Add("Over 200M", "sh_outstanding_o200");
+            translationSharesOutstanding.Add("Over 500M", "sh_outstanding_o500");
+            translationSharesOutstanding.Add("Over 1000M", "sh_outstanding_o1000");
+            translationSharesOutstanding.Add("Custom (Elite only)", "custom doesn't work");
 
             // Column 5
             translationCountry.Add("Any", "");
@@ -1762,11 +1906,6 @@ namespace StockScannerCommonCode
             translationCountry.Add("Uruguay", "geo_uruguay");
             translationCountry.Add("Custom (Elite only)", "custom doesn't work");
 
-            translationOptionShort.Add("Any", "");
-            translationOptionShort.Add("Optionable", "sh_opt_option");
-            translationOptionShort.Add("Shortable", "sh_opt_short");
-            translationOptionShort.Add("Optionable and shortable", "sh_opt_optionshort");
-
             translationEarningsDate.Add("Any", "");
             translationEarningsDate.Add("Today", "earningsdate_today");
             translationEarningsDate.Add("Today Before Market Open", "earningsdate_todaybefore");
@@ -1784,6 +1923,54 @@ namespace StockScannerCommonCode
             translationEarningsDate.Add("Previous Week", "earningsdate_prevweek");
             translationEarningsDate.Add("This Month", "earningsdate_thismonth");
             translationEarningsDate.Add("Custom (Elite only)", "custom doesn't work");
+
+
+
+
+
+
+            translationCurrentVolume = new Dictionary<string, string>();
+            translationCurrentVolume.Add("Any", "");
+            translationCurrentVolume.Add("Under 50K", "sh_curvol_u50");
+            translationCurrentVolume.Add("Under 100K", "sh_curvol_u100");
+            translationCurrentVolume.Add("Under 500K", "sh_curvol_u500");
+            translationCurrentVolume.Add("Under 750K", "sh_curvol_u750");
+            translationCurrentVolume.Add("Under 1M", "sh_curvol_u1000");
+            translationCurrentVolume.Add("Over 0", "sh_curvol_o0");
+            translationCurrentVolume.Add("Over 50K", "sh_curvol_o50");
+            translationCurrentVolume.Add("Over 100K", "sh_curvol_o100");
+            translationCurrentVolume.Add("Over 200K", "sh_curvol_o200");
+            translationCurrentVolume.Add("Over 300K", "sh_curvol_o300");
+            translationCurrentVolume.Add("Over 400K", "sh_curvol_o400");
+            translationCurrentVolume.Add("Over 500K", "sh_curvol_o500");
+            translationCurrentVolume.Add("Over 750K", "sh_curvol_o750");
+            translationCurrentVolume.Add("Over 1M", "sh_curvol_o1000");
+            translationCurrentVolume.Add("Over 2M", "sh_curvol_o2000");
+            translationCurrentVolume.Add("Over 5M", "sh_curvol_o5000");
+            translationCurrentVolume.Add("Over 10M", "sh_curvol_o10000");
+            translationCurrentVolume.Add("Over 20M", "sh_curvol_o20000");
+            translationCurrentVolume.Add("Custom (Elite only)", "custom doesn't work");
+
+            translationFloat = new Dictionary<string, string>();
+            translationFloat.Add("Any", "");
+            translationFloat.Add("Under 1M", "sh_float_u1");
+            translationFloat.Add("Under 5M", "sh_float_u5");
+            translationFloat.Add("Under 10M", "sh_float_u10");
+            translationFloat.Add("Under 20M", "sh_float_u20");
+            translationFloat.Add("Under 50M", "sh_float_u50");
+            translationFloat.Add("Under 100M", "sh_float_u100");
+            translationFloat.Add("Over 1M", "sh_float_o1");
+            translationFloat.Add("Over 2M", "sh_float_o2");
+            translationFloat.Add("Over 5M", "sh_float_o5");
+            translationFloat.Add("Over 10M", "sh_float_o10");
+            translationFloat.Add("Over 20M", "sh_float_o20");
+            translationFloat.Add("Over 50M", "sh_float_o50");
+            translationFloat.Add("Over 100M", "sh_float_o100");
+            translationFloat.Add("Over 200M", "sh_float_o200");
+            translationFloat.Add("Over 500M", "sh_float_o500");
+            translationFloat.Add("Over 1000M", "sh_float_o1000");
+            translationFloat.Add("Custom (Elite only)", "custom doesn't work");
+
 
         }
     }
