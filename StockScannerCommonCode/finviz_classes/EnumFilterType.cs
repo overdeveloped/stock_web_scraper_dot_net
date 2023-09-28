@@ -41,7 +41,7 @@ namespace StockScannerCommonCode.finviz_classes
         Sector,
         ForwardPE,
         PriceFreeCashFlow,
-        SaledGrowthPast5Years,
+        SalesGrowthPast5Years,
         ReturnOnEquity,
         DebtEquity,
         InsiderOwnership,
@@ -77,7 +77,8 @@ namespace StockScannerCommonCode.finviz_classes
         Gap,
         ChangeFromOpen,
         Candlestick,
-
+        CurrentVolume,
+        Float
 
     }
 }

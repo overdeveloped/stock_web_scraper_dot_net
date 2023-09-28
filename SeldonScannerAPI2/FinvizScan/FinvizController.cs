@@ -94,6 +94,14 @@ namespace SeldonStockScannerAPI.FinvizScan
             return filter.getFullUrl();
         }
 
+        [HttpPut("longholds")]
+        public async Task<ActionResult<string>> GetLongHolds()
+        {
+            FinvizFilter filter = new FinvizFilter();
+
+            return filter.getLongHolds();
+        }
+
         // Example input:
 
         //{
