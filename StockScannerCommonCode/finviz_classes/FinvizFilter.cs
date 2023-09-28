@@ -77,12 +77,12 @@ namespace StockScannerCommonCode
         public Dictionary<string, string> translationGrossMargin { get; set; }
         public Dictionary<string, string> translationInsiderTransactions { get; set; }
         public Dictionary<string, string> translationOptionShort { get; set; }
-
-
-
-
         public Dictionary<string, string> translationRSI14 { get; set; }
         public Dictionary<string, string> translationChange { get; set; }
+
+
+
+
         public Dictionary<string, string> translationPattern { get; set; }
 
 
@@ -1784,7 +1784,7 @@ namespace StockScannerCommonCode
             translationInsiderTransactions.Add("Over +70%", "fa_insidertrans_o70");
             translationInsiderTransactions.Add("Over +80%", "fa_insidertrans_o80");
             translationInsiderTransactions.Add("Over +90%", "fa_insidertrans_o90");
-            translationInsiderTransactions.Add("Optionable and shortable", "sh_opt_optionshort");
+            translationInsiderTransactions.Add("Custom (Elite only)", "custom doesn't work");
 
             translationOptionShort = new Dictionary<string, string>();
             translationOptionShort.Add("Any", "");
@@ -1795,12 +1795,84 @@ namespace StockScannerCommonCode
             translationOptionShort.Add("Not optionable and shortable", "sh_opt_notoptionshort");
             translationOptionShort.Add("Not optionable and not shortable", "sh_opt_notoptionnotshort");
 
-
-
-
             translationRSI14 = new Dictionary<string, string>();
+            translationRSI14.Add("Any", "");
+            translationRSI14.Add("Overbought (90)", "ta_rsi_ob90");
+            translationRSI14.Add("Overbought (80)", "ta_rsi_ob80");
+            translationRSI14.Add("Overbought (70)", "ta_rsi_ob70");
+            translationRSI14.Add("Overbought (60)", "ta_rsi_ob60");
+            translationRSI14.Add("Oversold (40)", "ta_rsi_os40");
+            translationRSI14.Add("Oversold (30)", "ta_rsi_os30");
+            translationRSI14.Add("Oversold (20)", "ta_rsi_os20");
+            translationRSI14.Add("Oversold (10)", "ta_rsi_os10");
+            translationRSI14.Add("Not Overbought (<60)", "ta_rsi_nob60");
+            translationRSI14.Add("Not Overbought (<50)", "ta_rsi_nob50");
+            translationRSI14.Add("Not Oversold (>50)", "ta_rsi_nos50");
+            translationRSI14.Add("Not Oversold (>40)", "ta_rsi_nos40");
+            translationRSI14.Add("Custom (Elite only)", "custom doesn't work");
+
             translationChange = new Dictionary<string, string>();
+            translationChange.Add("Any", "");
+            translationChange.Add("Up", "ta_change_u");
+            translationChange.Add("Up 1%", "ta_change_u1");
+            translationChange.Add("Up 2%", "ta_change_u2");
+            translationChange.Add("Up 3%", "ta_change_u3");
+            translationChange.Add("Up 4%", "ta_change_u4");
+            translationChange.Add("Up 5%", "ta_change_u5");
+            translationChange.Add("Up 6%", "ta_change_u6");
+            translationChange.Add("Up 7%", "ta_change_u7");
+            translationChange.Add("Up 8%", "ta_change_u8");
+            translationChange.Add("Up 9%", "ta_change_u9");
+            translationChange.Add("Up 10%", "ta_change_u10");
+            translationChange.Add("Up 15%", "ta_change_u15");
+            translationChange.Add("Up 20%", "ta_change_u20");
+            translationChange.Add("Down", "ta_change_d");
+            translationChange.Add("Down 1%", "ta_change_d1");
+            translationChange.Add("Down 2%", "ta_change_d2");
+            translationChange.Add("Down 3%", "ta_change_d3");
+            translationChange.Add("Down 4%", "ta_change_d4");
+            translationChange.Add("Down 5%", "ta_change_d5");
+            translationChange.Add("Down 6%", "ta_change_d6");
+            translationChange.Add("Down 7%", "ta_change_d7");
+            translationChange.Add("Down 8%", "ta_change_d8");
+            translationChange.Add("Down 9%", "ta_change_d9");
+            translationChange.Add("Down 10%", "ta_change_d10");
+            translationChange.Add("Down 15%", "ta_change_d15");
+            translationChange.Add("Down 20%", "ta_change_d20");
+            translationChange.Add("Custom (Elite only)", "custom doesn't work");
+
+
             translationPattern = new Dictionary<string, string>();
+            translationPattern.Add("Any", "");
+            translationPattern.Add("Horizontal S/R", "ta_pattern_horizontal");
+            translationPattern.Add("Horizontal S/R (Strong)", "ta_pattern_horizontal2");
+            translationPattern.Add("TL Resistance", "ta_pattern_tlresistance");
+            translationPattern.Add("TL Resistance (Strong)", "ta_pattern_tlresistance2");
+            translationPattern.Add("TL Support", "ta_pattern_tlsupport");
+            translationPattern.Add("TL Support (Strong)", "ta_pattern_tlsupport2");
+            translationPattern.Add("Wedge Up", "ta_pattern_wedgeup");
+            translationPattern.Add("Wedge Up (Strong)", "ta_pattern_wedgeup2");
+            translationPattern.Add("Wedge Down", "ta_pattern_wedgedown");
+            translationPattern.Add("Wedge Down (Strong)", "ta_pattern_wedgedown2");
+            translationPattern.Add("Triangle Ascending", "ta_pattern_wedgeresistance");
+            translationPattern.Add("Triangle Ascending (Strong)", "ta_pattern_wedgeresistance2");
+            translationPattern.Add("Triangle Descending", "ta_pattern_wedgesupport");
+            translationPattern.Add("Triangle Descending (Strong)", "ta_pattern_wedgesupport2");
+            translationPattern.Add("Wedge", "ta_pattern_wedgesupport");
+            translationPattern.Add("Wedge (Strong)", "ta_pattern_wedgesupport2");
+            translationPattern.Add("Channel Up", "ta_pattern_channelup");
+            translationPattern.Add("Channel Up (Strong)", "ta_pattern_channelup2");
+            translationPattern.Add("Channel Down", "ta_pattern_channeldown");
+            translationPattern.Add("Channel Down (Strong)", "ta_pattern_channeldown2");
+            translationPattern.Add("Channel", "ta_pattern_channel");
+            translationPattern.Add("Channel (Strong)", "ta_pattern_channel2");
+            translationPattern.Add("Double Top", "ta_pattern_doubletop");
+            translationPattern.Add("Double Bottom", "ta_pattern_doublebottom");
+            translationPattern.Add("Multiple Top", "ta_pattern_multipletop");
+            translationPattern.Add("Multiple Bottom", "ta_pattern_multiplebottom");
+            translationPattern.Add("Head & Shoulders", "ta_pattern_headandshoulders");
+            translationPattern.Add("Head & Shoulders Inverse", "ta_pattern_headandshouldersinv");
+            translationPattern.Add("Custom (Elite only)", "custom doesn't work");
 
 
             translationRelativeVolume = new Dictionary<string, string>();
