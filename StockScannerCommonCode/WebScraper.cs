@@ -10,17 +10,15 @@ using System.Threading.Tasks;
 
 namespace StockScannerCommonCode
 {
-    public class WebScraper
+    public class WebScraper : IWebScraper
     {
         /// <summary>
         /// Counts pages
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public int CountResultsPages(FinvizFilter filter)
+        public int CountResultsPages(string fullUrl)
         {
-            string fullUrl = filter.GetFullUrl();
-
             StringBuilder sb = new StringBuilder();
 
             List<FinvizCompany> results = new List<FinvizCompany>();
@@ -53,9 +51,9 @@ namespace StockScannerCommonCode
         /// Sends custom request to Finviz
         /// </summary>
         /// <returns></returns>
-        public List<FinvizCompany> GetCustomWatchList(FinvizFilter filter)
+        public List<FinvizCompany> GetCustomWatchList(string fullUrl)
         {
-            string fullUrl = filter.GetFullUrl();
+            Helpers.outputToFile("fullUrl", fullUrl);
 
             StringBuilder sb = new StringBuilder();
 

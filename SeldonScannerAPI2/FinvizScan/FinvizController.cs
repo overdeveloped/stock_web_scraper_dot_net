@@ -12,6 +12,7 @@ namespace SeldonStockScannerAPI.FinvizScan
     public class FinvizController : ControllerBase
     {
         private readonly DataContext dataContext;
+        private readonly FinvizFilter _finvizFilter = new FinvizFilter();
 
         public FinvizController(DataContext dataContext)
         {
@@ -47,30 +48,9 @@ namespace SeldonStockScannerAPI.FinvizScan
 
 
         /// <summary>
-        /// //////////////// THIS ONE //// THIS ONE //// THIS ONE //// THIS ONE //// THIS ONE //// THIS ONE ////////////////
         /// </summary>
         /// <param name="filterNames"></param>
         /// <returns></returns>
-
-        //[HttpPost]
-        //public async Task<ActionResult<WatchList>> GetWatchList(Dictionary<string, string> filterNames)
-        //{
-        //    List<Plus500Symbol> plus500Symbols = await dataContext.plus500_symbols.ToListAsync();
-        //    FinvizFilter filter = new FinvizFilter();
-
-        //    fillFilters(filter, filterNames);
-        //    filter.BuildUrl();
-        //    WebScraper scraper = new WebScraper();
-
-        //    List<FinvizCompany> results = scraper.GetCustomWatchList(filter);
-        //    //List<FinvizCompany> filteredTechWatchList = Helpers.filterByPlus500Stocks(results);
-        //    List<FinvizCompany> filteredTechWatchList = filterByPlus500Stocks(results, plus500Symbols);
-
-        //    WatchList list = new WatchList();
-        //    list.companies = filteredTechWatchList;
-
-        //    return list;
-        //}
 
         [HttpPut("scan")]
         public async Task<ActionResult<string>> GetWatchList(Dictionary<string, string> filterNames)
@@ -94,12 +74,26 @@ namespace SeldonStockScannerAPI.FinvizScan
             return filter.getFullUrl();
         }
 
-        [HttpPut("longholds")]
-        public async Task<ActionResult<string>> GetLongHolds()
-        {
-            FinvizFilter filter = new FinvizFilter();
 
-            return filter.getLongHolds();
+
+
+        [HttpGet("megacompanies")]
+        public async Task<ActionResult<List<FinvizCompany>>> GetMegaCompanies()
+        {
+            return _finvizFilter.getMegaCompanies();
+        }
+
+
+        [HttpGet("longholds")]
+        public async Task<ActionResult<List<FinvizCompany>>> GetLongHolds()
+        {
+            return _finvizFilter.getLongHolds();
+        }
+
+        [HttpGet("shorts")]
+        public async Task<ActionResult<List<FinvizCompany>>> GetShorts()
+        {
+            return _finvizFilter.getShorts();
         }
 
         // Example input:

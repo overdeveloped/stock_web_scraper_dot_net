@@ -15,9 +15,9 @@ namespace StockScannerCommonCode
 {
     public static class Helpers
     {
-        private const string dataPath = @"..\..\data\text\";
-        private const string errorPath = @"logs\errors\";
-        private const string logPath = @"logs\";
+        private const string dataPath = @"C:\Users\exper\output\data\";
+        private const string errorPath = @"C:\Users\exper\logs\errors\";
+        private const string logPath = @"C:\Users\exper\logs\";
         public static string connectionValue(string name)
         {
             return ConfigurationManager.ConnectionStrings[name].ConnectionString;

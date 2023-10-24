@@ -1,9 +1,14 @@
 global using SeldonStockScannerAPI.Data;
 using Microsoft.EntityFrameworkCore;
+//using SeldonStockScannerAPI.Config;
+using StockScannerCommonCode;
+using StockScannerCommonCode.finviz_classes;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+//builder.Services.AddCaching(builder.Configuration);
 
 builder.Services.AddControllers();
 
@@ -12,6 +17,9 @@ builder.Services.AddDbContext<DataContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+
+builder.Services.AddScoped<IFinvizFilter, FinvizFilter>();
+builder.Services.AddScoped<IWebScraper, WebScraper>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

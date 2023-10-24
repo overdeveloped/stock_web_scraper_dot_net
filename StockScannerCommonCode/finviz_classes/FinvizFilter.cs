@@ -8,8 +8,9 @@ using StockScannerCommonCode.finviz_classes;
 
 namespace StockScannerCommonCode
 {
-    public class FinvizFilter
+    public class FinvizFilter : IFinvizFilter
     {
+        private readonly WebScraper _scraper = new WebScraper();
         private string RootUrl;
         private string FullUrl;
         private Dictionary<string, string> filterNames;
@@ -120,13 +121,12 @@ namespace StockScannerCommonCode
         //public string Country { get; set; }
         //public string OptionShort { get; set; }
         //public string Price { get; set; }
-
+        
         public FinvizFilter()
         {
             translationsMaster = new Dictionary<string, Dictionary<string, string>>();
             translationExchange = new Dictionary<string, string>();
             SetupTranslations();
-
         }
 
         public FinvizFilter(Dictionary<string, string> filterNames)
@@ -152,8 +152,16 @@ namespace StockScannerCommonCode
         {
             return this.FullUrl;
         }
+        public List<FinvizCompany> getMegaCompanies()
+        {
+            ResetFilterNames();
 
-        public string getLongHolds()
+            this.filterNames.Add(EnumFilterType.MarketCap.ToString(), "Mega ($200bln and more)");
+
+            return _scraper.GetCustomWatchList(BuildUrl());
+        }
+
+        public List<FinvizCompany> getLongHolds()
         {
             ResetFilterNames();
 
@@ -164,7 +172,21 @@ namespace StockScannerCommonCode
             this.filterNames.Add(EnumFilterType.ReturnOnEquity.ToString(), "Over +15%");
             this.filterNames.Add(EnumFilterType.CurrentRatio.ToString(), "Over 1.5");
 
-            return BuildUrl();
+            return _scraper.GetCustomWatchList(BuildUrl());
+        }
+
+        public List<FinvizCompany> getShorts()
+        {
+            ResetFilterNames();
+
+            this.filterNames.Add(EnumFilterType.MarketCap.ToString(), "+Micro (over $50mln)");
+            this.filterNames.Add(EnumFilterType.MA20.ToString(), "Price above SMA20");
+            this.filterNames.Add(EnumFilterType.Beta.ToString(), "Over 1.5");
+            this.filterNames.Add(EnumFilterType.EpsGrowthNext5Years.ToString(), "Over 10%");
+            this.filterNames.Add(EnumFilterType.ReturnOnEquity.ToString(), "Over +15%");
+            this.filterNames.Add(EnumFilterType.CurrentRatio.ToString(), "Over 1.5");
+
+            return _scraper.GetCustomWatchList(BuildUrl());
         }
 
 
@@ -225,133 +247,6 @@ namespace StockScannerCommonCode
                 argumentsSB.Append(translationsMaster[filterKey][filterNames[filterKey]]);
 
             }
-
-
-
-            //if (this.filterNames.TryGetValue(EnumFilterType.Exchange.ToString(), out urlArgument))
-            //{
-            //    if (this.Exchange.TryGetValue(urlArgument, out urlArgument))
-            //    {
-            //        if (argumentsSB.Length > 0) argumentsSB.Append(",");
-            //        argumentsSB.Append(urlArgument);
-            //    }
-
-            //}
-
-            //if (this.translationMarketCap.TryGetValue(filterNames["marketCap"], out urlArgument))
-            //{
-            //    if (argumentsSB.Length > 0) argumentsSB.Append(",");
-            //    argumentsSB.Append(urlArgument);
-            //}
-            //if (this.translationEarningsDate.TryGetValue("earningsDate", out urlArgument))
-            //{
-            //    if (argumentsSB.Length > 0) argumentsSB.Append(",");
-            //    argumentsSB.Append(urlArgument);
-            //}
-            //if (this.translationTargetPrice.TryGetValue("targetPrice", out urlArgument))
-            //{
-            //    if (argumentsSB.Length > 0) argumentsSB.Append(",");
-            //    argumentsSB.Append(urlArgument);
-            //}
-
-            //// Column 2
-            //if (this.translationIndex.TryGetValue(this.Index, out urlArgument))
-            //{
-            //    if (argumentsSB.Length > 0) argumentsSB.Append(",");
-            //    argumentsSB.Append(urlArgument);
-            //}
-            //if (this.translationDividendYield.TryGetValue(this.DividendYield, out urlArgument))
-            //{
-            //    if (argumentsSB.Length > 0) argumentsSB.Append(",");
-            //    argumentsSB.Append(urlArgument);
-            //}
-            //if (this.translationAverageVolume.TryGetValue(this.AverageVolume, out urlArgument))
-            //{
-            //    if (argumentsSB.Length > 0) argumentsSB.Append(",");
-            //    argumentsSB.Append(urlArgument);
-            //}
-            //if (this.translationIPODate.TryGetValue(this.IPODate, out urlArgument))
-            //{
-            //    if (argumentsSB.Length > 0) argumentsSB.Append(",");
-            //    argumentsSB.Append(urlArgument);
-            //}
-
-            //// Column 3
-            //if (this.translationSector.TryGetValue(this.Sector, out urlArgument))
-            //{
-            //    if (argumentsSB.Length > 0) argumentsSB.Append(",");
-            //    argumentsSB.Append(urlArgument);
-            //}
-            //if (this.translationFloatShort.TryGetValue(this.FloatShort, out urlArgument))
-            //{
-            //    if (argumentsSB.Length > 0) argumentsSB.Append(",");
-            //    argumentsSB.Append(urlArgument);
-            //}
-            //if (this.translationRelativeVolume.TryGetValue(this.RelativeVolume, out urlArgument))
-            //{
-            //    if (argumentsSB.Length > 0) argumentsSB.Append(",");
-            //    argumentsSB.Append(urlArgument);
-            //}
-            //if (this.translationSharesOutstanding.TryGetValue(this.SharesOutstanding, out urlArgument))
-            //{
-            //    if (argumentsSB.Length > 0) argumentsSB.Append(",");
-            //    argumentsSB.Append(urlArgument);
-            //}
-
-            //// Column 4
-            //if (this.translationIndustry.TryGetValue(this.Industry, out urlArgument))
-            //{
-            //    if (argumentsSB.Length > 0) argumentsSB.Append(",");
-            //    argumentsSB.Append(urlArgument);
-            //}
-            //if (this.translationAnalystRecomends.TryGetValue(this.AnalystRecom, out urlArgument))
-            //{
-            //    if (argumentsSB.Length > 0) argumentsSB.Append(",");
-            //    argumentsSB.Append(urlArgument);
-            //}
-            //if (this.translationCurrentVolume.TryGetValue(this.CurrentVolume, out urlArgument))
-            //{
-            //    if (argumentsSB.Length > 0) argumentsSB.Append(",");
-            //    argumentsSB.Append(urlArgument);
-            //}
-            //if (this.translationFloat.TryGetValue(this.Float, out urlArgument))
-            //{
-            //    if (argumentsSB.Length > 0) argumentsSB.Append(",");
-            //    argumentsSB.Append(urlArgument);
-            //}
-
-            //// Column 5
-            //if (this.translationCountry.TryGetValue(this.Country, out urlArgument))
-            //{
-            //    if (argumentsSB.Length > 0) argumentsSB.Append(",");
-            //    argumentsSB.Append(urlArgument);
-            //}
-            //if (this.translationOptionShort.TryGetValue(this.OptionShort, out urlArgument))
-            //{
-            //    if (argumentsSB.Length > 0) argumentsSB.Append(",");
-            //    argumentsSB.Append(urlArgument);
-            //}
-            //if (this.translationPrice.TryGetValue(this.Price, out urlArgument))
-            //{
-            //    if (argumentsSB.Length > 0) argumentsSB.Append(",");
-            //    argumentsSB.Append(urlArgument);
-            //}
-
-
-
-
-            //foreach (var translation in translations)
-            //{
-            //    for (int i = 0; i < filters.Length; i++)
-            //    {
-            //        if (translation.Keys.Contains(filters[i]))
-            //        {
-            //            if (!firstRun) argumentsSB.Append(",");
-            //            argumentsSB.Append(translation[filters[i]]);
-            //            firstRun = false;
-            //        }
-            //    }
-            //}
 
             string fullUrl = "";
             if (argumentsSB.Length > 0)

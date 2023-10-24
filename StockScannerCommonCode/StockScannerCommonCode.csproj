@@ -89,7 +89,9 @@
     <Compile Include="finviz_classes\EnumFilterType.cs" />
     <Compile Include="finviz_classes\FinvizFilterSave.cs" />
     <Compile Include="finviz_classes\FinvizFilter.cs" />
+    <Compile Include="finviz_classes\IFinvizFilter.cs" />
     <Compile Include="IHistoricPriceActionData.cs" />
+    <Compile Include="IWebScraper.cs" />
     <Compile Include="PolygonAPI.cs" />
     <Compile Include="AlphaVantageAPI.cs" />
     <Compile Include="alpha_vantage_classes\MetaData.cs" />
