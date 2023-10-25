@@ -80,20 +80,26 @@ namespace SeldonStockScannerAPI.FinvizScan
         [HttpGet("megacompanies")]
         public async Task<ActionResult<List<FinvizCompany>>> GetMegaCompanies()
         {
-            return _finvizFilter.getMegaCompanies();
+            return _finvizFilter.GetMegaCompanies();
         }
 
 
         [HttpGet("longholds")]
         public async Task<ActionResult<List<FinvizCompany>>> GetLongHolds()
         {
-            return _finvizFilter.getLongHolds();
+            return _finvizFilter.GetLongHolds();
         }
 
         [HttpGet("shorts")]
         public async Task<ActionResult<List<FinvizCompany>>> GetShorts()
         {
-            return _finvizFilter.getShorts();
+            return _finvizFilter.GetShorts();
+        }
+
+        [HttpGet("tech")]
+        public async Task<ActionResult<List<FinvizCompany>>> GetTech()
+        {
+            return _finvizFilter.GetTech();
         }
 
         // Example input:

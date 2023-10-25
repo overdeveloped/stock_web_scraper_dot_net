@@ -152,7 +152,7 @@ namespace StockScannerCommonCode
         {
             return this.FullUrl;
         }
-        public List<FinvizCompany> getMegaCompanies()
+        public List<FinvizCompany> GetMegaCompanies()
         {
             ResetFilterNames();
 
@@ -161,7 +161,7 @@ namespace StockScannerCommonCode
             return _scraper.GetCustomWatchList(BuildUrl());
         }
 
-        public List<FinvizCompany> getLongHolds()
+        public List<FinvizCompany> GetLongHolds()
         {
             ResetFilterNames();
 
@@ -175,7 +175,7 @@ namespace StockScannerCommonCode
             return _scraper.GetCustomWatchList(BuildUrl());
         }
 
-        public List<FinvizCompany> getShorts()
+        public List<FinvizCompany> GetShorts()
         {
             ResetFilterNames();
 
@@ -187,6 +187,13 @@ namespace StockScannerCommonCode
             this.filterNames.Add(EnumFilterType.CurrentRatio.ToString(), "Over 1.5");
 
             return _scraper.GetCustomWatchList(BuildUrl());
+        }
+
+        public List<FinvizCompany> GetTech()
+        {
+            ResetFilterNames();
+
+            return _scraper.GetTech();
         }
 
 

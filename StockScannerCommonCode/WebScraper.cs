@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Dapper;
 
 namespace StockScannerCommonCode
 {
@@ -251,6 +252,7 @@ namespace StockScannerCommonCode
             {
                 var pageNumers = paginationData.First().SelectNodes("a");
 
+
                 if (pageNumers != null && pageNumers.Count > 1)
                 {
                     iterationScaler = pageNumers.Count - 1;
@@ -260,51 +262,79 @@ namespace StockScannerCommonCode
             for (int index = 1; index < 20 * iterationScaler; index += 20)
             {
                 doc = web.Load($"https://finviz.com/screener.ashx?v=111&f=cap_large,sec_technology,sh_avgvol_o500&r={index}");
-                //doc = web.Load($"https://finviz.com/screener.ashx?v=111&f=cap_mega,sec_technology,sh_avgvol_o500&r={index}");
-                //https://finviz.com/screener.ashx?v=111&f=sh_price_u20,ta_perf_ddown,ta_perf2_d5u,ta_rsi_os40&ft=3&r=21
-                //https://finviz.com/screener.ashx?v=111&f=cap_mega&o=ticker
                 Helpers.outputToFile("tech_raw", doc.DocumentNode.OuterHtml);
 
-                IList<HtmlNode> tableData = doc.QuerySelectorAll(".screener-body-table-nw");
-                //IList<HtmlNode> paginationData = doc.QuerySelectorAll(".screener_pagination");
-                string paginationDataString = paginationData.First().InnerHtml;
+                IList<HtmlNode> tableData = doc.QuerySelectorAll(".screener-views-table");
+                // Get specific data (granular)
+                HtmlNodeCollection tableTextAllColumns = doc.DocumentNode.SelectNodes("//*[@id='screener-views-table']/tr[5]/td[1]/table/tr/td/table/tr/td");
 
-                string[] companyTemp = new string[11];
-                int tempCounter = 0;
-                //foreach (var tableDatum in tableData)
-                for (int dIndex = 0; dIndex < tableData.Count; dIndex++)
+                HtmlNodeCollection tableTextRows = doc.DocumentNode.SelectNodes("//*[@id='screener-views-table']/tr[5]/td[1]/table/tr/td/table/tr");
+
+                for (int i = 0; i < tableTextRows.Count; i++)
                 {
-                    HtmlNode anchor = tableData[dIndex].SelectNodes("a").FirstOrDefault();
+                    var children = tableTextRows[i].GetChildElements();
 
-                    if (anchor.SelectNodes("span") != null && anchor.SelectNodes("span").Count > 0)
+                    for (int j = 0; j < children.Count(); j++)
                     {
-                        companyTemp[tempCounter] = anchor.SelectNodes("span").FirstOrDefault().InnerText;
-                    }
-                    else
-                    {
-                        companyTemp[tempCounter] = anchor.InnerText;
-                    }
-
-                    tempCounter++;
-
-                    if (tempCounter > 10)
-                    {
+                        Helpers.outputToFile($"tech_row_elements_{j}", children.ToList()[j].InnerText);
                         FinvizCompany fCompany = new FinvizCompany();
-                        fCompany.Ticker = companyTemp[1];
-                        fCompany.Company = companyTemp[2];
-                        fCompany.Sector = companyTemp[3];
-                        fCompany.Industry = companyTemp[4];
-                        fCompany.Country = companyTemp[5];
-                        fCompany.MarketCap = companyTemp[6];
-                        fCompany.PE = companyTemp[7];
-                        fCompany.Price = companyTemp[8];
-                        fCompany.Change = companyTemp[9];
-                        fCompany.Volume = companyTemp[10];
+                        fCompany.Ticker = children.ToList()[1].InnerText;
+                        fCompany.Company = children.ToList()[2].InnerText;
+                        fCompany.Sector = children.ToList()[3].InnerText;
+                        fCompany.Industry = children.ToList()[4].InnerText;
+                        fCompany.Country = children.ToList()[5].InnerText;
+                        fCompany.MarketCap = children.ToList()[6].InnerText;
+                        fCompany.PE = children.ToList()[7].InnerText;
+                        fCompany.Price = children.ToList()[8].InnerText;
+                        fCompany.Change = children.ToList()[9].InnerText;
+                        fCompany.Volume = children.ToList()[10].InnerText;
 
                         results.Add(fCompany);
-                        tempCounter = 0;
+
                     }
                 }
+
+
+                //IList<HtmlNode> tableData = doc.QuerySelectorAll(".screener-body-table-nw");
+                //IList<HtmlNode> paginationData = doc.QuerySelectorAll(".screener_pagination");
+                //string paginationDataString = paginationData.First().InnerHtml;
+
+                //string[] companyTemp = new string[11];
+                //int tempCounter = 0;
+                //foreach (var tableDatum in tableData)
+                //for (int dIndex = 0; dIndex < tableData.Count; dIndex++)
+                //{
+                //    HtmlNode anchor = tableData[dIndex].SelectNodes("a").FirstOrDefault();
+
+                //    if (anchor.SelectNodes("span") != null && anchor.SelectNodes("span").Count > 0)
+                //    {
+                //        companyTemp[tempCounter] = anchor.SelectNodes("span").FirstOrDefault().InnerText;
+                //    }
+                //    else
+                //    {
+                //        companyTemp[tempCounter] = anchor.InnerText;
+                //    }
+
+                //    tempCounter++;
+
+                //    if (tempCounter > 10)
+                //    {
+                //        FinvizCompany fCompany = new FinvizCompany();
+                //        fCompany.Ticker = companyTemp[1];
+                //        fCompany.Company = companyTemp[2];
+                //        fCompany.Sector = companyTemp[3];
+                //        fCompany.Industry = companyTemp[4];
+                //        fCompany.Country = companyTemp[5];
+                //        fCompany.MarketCap = companyTemp[6];
+                //        fCompany.PE = companyTemp[7];
+                //        fCompany.Price = companyTemp[8];
+                //        fCompany.Change = companyTemp[9];
+                //        fCompany.Volume = companyTemp[10];
+
+                //        results.Add(fCompany);
+                //        tempCounter = 0;
+                //    }
+                //}
             }
 
             Helpers.outputToFile("tech_processed", sb.ToString());
