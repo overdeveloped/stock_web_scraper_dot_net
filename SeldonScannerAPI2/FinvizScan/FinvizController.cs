@@ -71,7 +71,7 @@ namespace SeldonStockScannerAPI.FinvizScan
             //WatchList list = new WatchList();
             //list.companies = filteredTechWatchList;
 
-            return filter.getFullUrl();
+            return filter.GetFullUrl();
         }
 
 
@@ -89,6 +89,24 @@ namespace SeldonStockScannerAPI.FinvizScan
         {
             return _finvizFilter.GetLongHolds();
         }
+
+        [HttpGet("oversoldbounce")]
+        public async Task<ActionResult<List<FinvizCompany>>> GetOversoldBounce()
+        {
+            return _finvizFilter.GetOversoldBounce();
+        }
+
+        [HttpGet("breakout")]
+        public async Task<ActionResult<List<FinvizCompany>>> GetBreakout()
+        {
+            return _finvizFilter.GetBreakout();
+        }
+
+
+
+
+
+
 
         [HttpGet("shorts")]
         public async Task<ActionResult<List<FinvizCompany>>> GetShorts()

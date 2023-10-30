@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
+using System.Security.Policy;
 
 namespace StockScannerCommonCode
 {
@@ -52,100 +53,9 @@ namespace StockScannerCommonCode
         /// Sends custom request to Finviz
         /// </summary>
         /// <returns></returns>
-        public List<FinvizCompany> GetCustomWatchList(string fullUrl)
+        public List<FinvizCompany> GetCustomWatchList(string url, string name)
         {
-            Helpers.outputToFile("fullUrl", fullUrl);
-
-            StringBuilder sb = new StringBuilder();
-
-            List<FinvizCompany> results = new List<FinvizCompany>();
-            HtmlWeb web = new HtmlWeb();
-
-            //HtmlAgilityPack.HtmlDocument doc;
-
-            try
-            {
-                var doc = web.Load($"{fullUrl}");
-
-                // TODO: CHECK FOR TOO MANY REQUESTS RESPONSE:
-                // <html><head></head><body>Too many requests.</body></html>
-
-
-
-
-                // Check the pagination so that we know how much iteration is needed
-                IList<HtmlNode> paginationData = doc.QuerySelectorAll(".screener_pagination");
-
-                int iterationScaler = 1;
-
-                if (paginationData != null && paginationData.Count > 0)
-                {
-                    var pageNumers = paginationData.First().SelectNodes("a");
-                    if (pageNumers != null && pageNumers.Count > 1)
-                    {
-                        string totalPages = pageNumers[pageNumers.Count() - 2].InnerHtml;
-                        iterationScaler = Convert.ToInt32(pageNumers[pageNumers.Count() - 2].InnerHtml);
-                    }
-                }
-
-                // Go through each page
-                for (int index = 1; index < 20 * iterationScaler; index += 20)
-                {
-                    doc = web.Load($"{fullUrl}&r={index}");
-                    Helpers.outputToFile("custom_search_raw", doc.DocumentNode.OuterHtml);
-
-                    IList<HtmlNode> tableData = doc.QuerySelectorAll(".screener-body-table-nw");
-                    string paginationDataString = paginationData.First().InnerHtml;
-
-                    string[] companyTemp = new string[11];
-                    int tempCounter = 0;
-
-                    for (int dIndex = 0; dIndex < tableData.Count; dIndex++)
-                    {
-                        HtmlNode anchor = tableData[dIndex].SelectNodes("a").FirstOrDefault();
-
-                        if (anchor.SelectNodes("span") != null && anchor.SelectNodes("span").Count > 0)
-                        {
-                            companyTemp[tempCounter] = anchor.SelectNodes("span").FirstOrDefault().InnerText;
-                        }
-                        else
-                        {
-                            companyTemp[tempCounter] = anchor.InnerText;
-                        }
-
-                        tempCounter++;
-
-                        if (tempCounter > 10)
-                        {
-                            FinvizCompany fCompany = new FinvizCompany();
-                            fCompany.Ticker = companyTemp[1];
-                            fCompany.Company = companyTemp[2];
-                            fCompany.Sector = companyTemp[3];
-                            fCompany.Industry = companyTemp[4];
-                            fCompany.Country = companyTemp[5];
-                            fCompany.MarketCap = companyTemp[6];
-                            fCompany.PE = companyTemp[7];
-                            fCompany.Price = companyTemp[8];
-                            fCompany.Change = companyTemp[9];
-                            fCompany.Volume = companyTemp[10];
-
-                            results.Add(fCompany);
-                            tempCounter = 0;
-                            sb.AppendLine(fCompany.ToString());
-                        }
-                    }
-                }
-
-                Helpers.outputToFile("custom_search_processed", sb.ToString());
-
-            }
-            catch (Exception ex)
-            {
-                Helpers.error(MethodBase.GetCurrentMethod().DeclaringType.Name, $"Web scraper custom watch list error: {ex.Message}");
-            }
-
-            return results;
-
+            return getResults(url, name);
         }
 
 
@@ -222,6 +132,14 @@ namespace StockScannerCommonCode
 
         }
 
+        public List<FinvizCompany> GetMegaCompanies()
+        {
+            string url = "https://finviz.com/screener.ashx?v=111&f=cap_mega";
+            return getResults(url, "mega");
+        }
+
+
+
         /// <summary>
         /// Find blue chip stocks
         /// Market cap > 200B
@@ -229,117 +147,8 @@ namespace StockScannerCommonCode
         /// </summary>
         public List<FinvizCompany> GetTech()
         {
-            StringBuilder sb = new StringBuilder();
-            StringBuilder sb_row = new StringBuilder();
-
-            //List<HtmlNodeWrapper> results = new List<HtmlNodeWrapper>();
-            List<FinvizCompany> results = new List<FinvizCompany>();
-            HtmlWeb web = new HtmlWeb();
-
-            ////HtmlAgilityPack.HtmlDocument doc = web.Load("https://finviz.com/screener.ashx?v=111&f=fa_div_high,fa_pe_low,sh_avgvol_o300");
-            ///
-
-            HtmlAgilityPack.HtmlDocument doc;
-
-            // Check the pagination so that we know how much iteration is needed
-            //doc = web.Load($"https://finviz.com/screener.ashx?v=111&f=cap_mega,sec_technology,sh_avgvol_o500&r");
-            doc = web.Load($"https://finviz.com/screener.ashx?v=111&f=cap_large,sec_technology,sh_avgvol_o500&r");
-            IList<HtmlNode> paginationData = doc.QuerySelectorAll(".screener_pagination");
-
-            int iterationScaler = 1;
-
-            if (paginationData != null && paginationData.Count > 0)
-            {
-                var pageNumers = paginationData.First().SelectNodes("a");
-
-
-                if (pageNumers != null && pageNumers.Count > 1)
-                {
-                    iterationScaler = pageNumers.Count - 1;
-                }
-            }
-
-            for (int index = 1; index < 20 * iterationScaler; index += 20)
-            {
-                doc = web.Load($"https://finviz.com/screener.ashx?v=111&f=cap_large,sec_technology,sh_avgvol_o500&r={index}");
-                Helpers.outputToFile("tech_raw", doc.DocumentNode.OuterHtml);
-
-                IList<HtmlNode> tableData = doc.QuerySelectorAll(".screener-views-table");
-                // Get specific data (granular)
-                HtmlNodeCollection tableTextAllColumns = doc.DocumentNode.SelectNodes("//*[@id='screener-views-table']/tr[5]/td[1]/table/tr/td/table/tr/td");
-
-                HtmlNodeCollection tableTextRows = doc.DocumentNode.SelectNodes("//*[@id='screener-views-table']/tr[5]/td[1]/table/tr/td/table/tr");
-
-                for (int i = 0; i < tableTextRows.Count; i++)
-                {
-                    var children = tableTextRows[i].GetChildElements();
-
-                    for (int j = 0; j < children.Count(); j++)
-                    {
-                        Helpers.outputToFile($"tech_row_elements_{j}", children.ToList()[j].InnerText);
-                        FinvizCompany fCompany = new FinvizCompany();
-                        fCompany.Ticker = children.ToList()[1].InnerText;
-                        fCompany.Company = children.ToList()[2].InnerText;
-                        fCompany.Sector = children.ToList()[3].InnerText;
-                        fCompany.Industry = children.ToList()[4].InnerText;
-                        fCompany.Country = children.ToList()[5].InnerText;
-                        fCompany.MarketCap = children.ToList()[6].InnerText;
-                        fCompany.PE = children.ToList()[7].InnerText;
-                        fCompany.Price = children.ToList()[8].InnerText;
-                        fCompany.Change = children.ToList()[9].InnerText;
-                        fCompany.Volume = children.ToList()[10].InnerText;
-
-                        results.Add(fCompany);
-
-                    }
-                }
-
-
-                //IList<HtmlNode> tableData = doc.QuerySelectorAll(".screener-body-table-nw");
-                //IList<HtmlNode> paginationData = doc.QuerySelectorAll(".screener_pagination");
-                //string paginationDataString = paginationData.First().InnerHtml;
-
-                //string[] companyTemp = new string[11];
-                //int tempCounter = 0;
-                //foreach (var tableDatum in tableData)
-                //for (int dIndex = 0; dIndex < tableData.Count; dIndex++)
-                //{
-                //    HtmlNode anchor = tableData[dIndex].SelectNodes("a").FirstOrDefault();
-
-                //    if (anchor.SelectNodes("span") != null && anchor.SelectNodes("span").Count > 0)
-                //    {
-                //        companyTemp[tempCounter] = anchor.SelectNodes("span").FirstOrDefault().InnerText;
-                //    }
-                //    else
-                //    {
-                //        companyTemp[tempCounter] = anchor.InnerText;
-                //    }
-
-                //    tempCounter++;
-
-                //    if (tempCounter > 10)
-                //    {
-                //        FinvizCompany fCompany = new FinvizCompany();
-                //        fCompany.Ticker = companyTemp[1];
-                //        fCompany.Company = companyTemp[2];
-                //        fCompany.Sector = companyTemp[3];
-                //        fCompany.Industry = companyTemp[4];
-                //        fCompany.Country = companyTemp[5];
-                //        fCompany.MarketCap = companyTemp[6];
-                //        fCompany.PE = companyTemp[7];
-                //        fCompany.Price = companyTemp[8];
-                //        fCompany.Change = companyTemp[9];
-                //        fCompany.Volume = companyTemp[10];
-
-                //        results.Add(fCompany);
-                //        tempCounter = 0;
-                //    }
-                //}
-            }
-
-            Helpers.outputToFile("tech_processed", sb.ToString());
-
-            return results;
+            string url = "https://finviz.com/screener.ashx?v=111&f=cap_large,sec_technology,sh_avgvol_o500";
+            return getResults(url, "tech");
         }
 
         /// <summary>
@@ -890,6 +699,69 @@ namespace StockScannerCommonCode
             return results;
         }
 
+
+        private List<FinvizCompany> getResults(string url, string name)
+        {
+            StringBuilder sb = new StringBuilder();
+            List<FinvizCompany> results = new List<FinvizCompany>();
+            HtmlWeb web = new HtmlWeb();
+
+            HtmlAgilityPack.HtmlDocument doc;
+
+            // Check the pagination so that we know how much iteration is needed
+            doc = web.Load($"{url}");
+            IList<HtmlNode> paginationData = doc.QuerySelectorAll(".screener_pagination");
+
+            int iterationScaler = 1;
+
+            if (paginationData != null && paginationData.Count > 0)
+            {
+                var pageNumers = paginationData.First().SelectNodes("a");
+
+
+                if (pageNumers != null && pageNumers.Count > 1)
+                {
+                    iterationScaler = pageNumers.Count - 1;
+                }
+            }
+
+            for (int index = 1; index < 20 * iterationScaler; index += 20)
+            {
+                doc = web.Load($"{url}&r={index}");
+                Helpers.outputToFile($"{name}_raw", doc.DocumentNode.OuterHtml);
+
+                IList<HtmlNode> tableData = doc.QuerySelectorAll(".screener-views-table");
+                // Get specific data (granular)
+                HtmlNodeCollection tableTextAllColumns = doc.DocumentNode.SelectNodes("//*[@id='screener-views-table']/tr[5]/td[1]/table/tr/td/table/tr/td");
+
+                HtmlNodeCollection tableTextRows = doc.DocumentNode.SelectNodes("//*[@id='screener-views-table']/tr[5]/td[1]/table/tr/td/table/tr");
+
+                for (int i = 0; i < tableTextRows.Count; i++)
+                {
+                    var children = tableTextRows[i].GetChildElements();
+
+                    FinvizCompany fCompany = new FinvizCompany();
+                    fCompany.Ticker = children.ToList()[1].InnerText;
+                    fCompany.Company = children.ToList()[2].InnerText;
+                    fCompany.Sector = children.ToList()[3].InnerText;
+                    fCompany.Industry = children.ToList()[4].InnerText;
+                    fCompany.Country = children.ToList()[5].InnerText;
+                    fCompany.MarketCap = children.ToList()[6].InnerText;
+                    fCompany.PE = children.ToList()[7].InnerText;
+                    fCompany.Price = children.ToList()[8].InnerText;
+                    fCompany.Change = children.ToList()[9].InnerText;
+                    fCompany.Volume = children.ToList()[10].InnerText;
+
+                    results.Add(fCompany);
+
+                }
+            }
+
+            Helpers.outputToFile($"{name}_processed", sb.ToString());
+            Helpers.outputToFile($"{name}_count", results.Count.ToString());
+
+            return results;
+        }
 
         public List<FinvizCompany> TestWebScraper()
         {

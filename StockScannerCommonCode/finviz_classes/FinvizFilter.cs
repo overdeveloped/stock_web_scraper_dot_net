@@ -143,11 +143,6 @@ namespace StockScannerCommonCode
             //this.filterNames.Add(EnumFilterType.Exchange.ToString(), "NYSE");
         }
 
-        public string getFullUrl()
-        {
-            return this.FullUrl;
-        }
-
         public string GetFullUrl()
         {
             return this.FullUrl;
@@ -158,7 +153,7 @@ namespace StockScannerCommonCode
 
             this.filterNames.Add(EnumFilterType.MarketCap.ToString(), "Mega ($200bln and more)");
 
-            return _scraper.GetCustomWatchList(BuildUrl());
+            return _scraper.GetMegaCompanies();
         }
 
         public List<FinvizCompany> GetLongHolds()
@@ -172,8 +167,40 @@ namespace StockScannerCommonCode
             this.filterNames.Add(EnumFilterType.ReturnOnEquity.ToString(), "Over +15%");
             this.filterNames.Add(EnumFilterType.CurrentRatio.ToString(), "Over 1.5");
 
-            return _scraper.GetCustomWatchList(BuildUrl());
+            return _scraper.GetCustomWatchList(BuildUrl(), "longHolds");
         }
+
+        public List<FinvizCompany> GetOversoldBounce()
+        {
+            ResetFilterNames();
+
+            this.filterNames.Add(EnumFilterType.Price.ToString(), "Over $5");
+            this.filterNames.Add(EnumFilterType.RSI14.ToString(), "Oversold (30)");
+            this.filterNames.Add(EnumFilterType.Change.ToString(), "Up");
+            this.filterNames.Add(EnumFilterType.RelativeVolume.ToString(), "Over 2");
+
+            return _scraper.GetCustomWatchList(BuildUrl(), "oversoldBounce");
+        }
+
+        public List<FinvizCompany> GetBreakout()
+        {
+            ResetFilterNames();
+
+            this.filterNames.Add(EnumFilterType.MA20.ToString(), "Price above SMA20");
+            this.filterNames.Add(EnumFilterType.MA50.ToString(), "Price above SMA50");
+            this.filterNames.Add(EnumFilterType.MA200.ToString(), "Price above SMA200");
+            this.filterNames.Add(EnumFilterType.HighLow50Day.ToString(), "New High");
+            this.filterNames.Add(EnumFilterType.ReturnOnEquity.ToString(), "Over +20%");
+            this.filterNames.Add(EnumFilterType.DebtEquity.ToString(), "Under 1");
+            this.filterNames.Add(EnumFilterType.AverageVolume.ToString(), "Over 100K");
+
+            return _scraper.GetCustomWatchList(BuildUrl(), "breakout");
+        }
+
+
+
+
+
 
         public List<FinvizCompany> GetShorts()
         {
@@ -186,7 +213,7 @@ namespace StockScannerCommonCode
             this.filterNames.Add(EnumFilterType.ReturnOnEquity.ToString(), "Over +15%");
             this.filterNames.Add(EnumFilterType.CurrentRatio.ToString(), "Over 1.5");
 
-            return _scraper.GetCustomWatchList(BuildUrl());
+            return _scraper.GetCustomWatchList(BuildUrl(), "shorts");
         }
 
         public List<FinvizCompany> GetTech()
@@ -205,54 +232,16 @@ namespace StockScannerCommonCode
 
             string root = this.RootUrl;
             string args = "&f=";
-            string urlArgument = "";
-
-            // Column 1
-            //            public Dictionary<string, string> translationExchange { get; set; }
-            //public Dictionary<string, string> translationMarketCap { get; set; }
-            //public Dictionary<string, string> translationPB { get; set; }
-            //public Dictionary<string, string> translationEPSGrowthPast5Years { get; set; }
-            //public Dictionary<string, string> translationDividendYield { get; set; }
-            //public Dictionary<string, string> translationQuickRatio { get; set; }
-            //public Dictionary<string, string> translationNetProfitMargin { get; set; }
-            //public Dictionary<string, string> translationInstitutionalTransactions { get; set; }
-            //public Dictionary<string, string> translationPerformance { get; set; }
-            //public Dictionary<string, string> translation20SMA { get; set; }
-            //public Dictionary<string, string> translation20DayHighLow { get; set; }
-            //public Dictionary<string, string> translationBeta { get; set; }
-            //public Dictionary<string, string> translationPrice { get; set; }
-            //public Dictionary<string, string> translationAfterHoursClose { get; set; }
-
-
-            for (int i = 0; i < Enum.GetNames(typeof(EnumFilterType)).Length; i++)
-            {
-
-                //EnumFilterType;
-            }
-
-
-            //foreach (EnumFilterType filter in Enum.GetValues(typeof(EnumFilterType)))
-            //{
-            //    if (this.filterNames.ContainsKey(filter.ToString()))
-            //    {
-            //        if (this.translationMarketCap.TryGetValue(filterNames["marketCap"], out urlArgument))
-            //        {
-
-            //        }
-
-            //            if (this.translationExchange.TryGetValue((this.filterNames[filter.ToString()], out urlArgument))
-            //        {
-
-            //        }
-            //    }
-            //}
 
             foreach (var filterKey in filterNames.Keys)
             {
-                
                 if (argumentsSB.Length > 0) argumentsSB.Append(",");
+                Dictionary<string, string> thing = translationsMaster[filterKey];
+                string thing2 = filterNames[filterKey];
+                string thing3 = thing[thing2];
                 argumentsSB.Append(translationsMaster[filterKey][filterNames[filterKey]]);
-
+                // Price above sma200
+                // Price above sma200
             }
 
             string fullUrl = "";
@@ -1271,7 +1260,7 @@ namespace StockScannerCommonCode
             translationVolatility.Add("Month - Over 15%", "ta_volatility_mo15");
             translationVolatility.Add("Custom (Elite only)", "custom doesn't work");
             translationsMaster.Add(EnumFilterType.Volatility.ToString(), translationVolatility);
-
+            
             translation200SMA = new Dictionary<string, string>();
             translation200SMA.Add("Any", "");
             translation200SMA.Add("Price below sma200", "ta_sma200_pb");
