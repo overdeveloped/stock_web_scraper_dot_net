@@ -2,8 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SeldonStockScannerAPI.Data;
-using StockScannerCommonCode;
-using StockScannerCommonCode.model;
+using SeldonStockScannerAPI.models;
 
 namespace SeldonStockScannerAPI.FinvizScan
 {
@@ -12,7 +11,7 @@ namespace SeldonStockScannerAPI.FinvizScan
     public class FinvizController : ControllerBase
     {
         private readonly DataContext dataContext;
-        private readonly FinvizFilter _finvizFilter = new FinvizFilter();
+        private readonly FinvizService _finvizFilter = new FinvizService();
 
         public FinvizController(DataContext dataContext)
         {
@@ -24,7 +23,7 @@ namespace SeldonStockScannerAPI.FinvizScan
         {
             WatchList list = new WatchList();
 
-            FinvizCompany company = new FinvizCompany();
+            FinvizCompanyEntity company = new FinvizCompanyEntity();
 
             company.Ticker = "ticker";
             company.Company = "company";
@@ -37,7 +36,7 @@ namespace SeldonStockScannerAPI.FinvizScan
             company.Change = "change";
             company.Volume = "volume";
 
-            List<FinvizCompany> companies = new List<FinvizCompany>()
+            List<FinvizCompanyEntity> companies = new List<FinvizCompanyEntity>()
             {
                 company
             };
@@ -56,7 +55,7 @@ namespace SeldonStockScannerAPI.FinvizScan
         public async Task<ActionResult<string>> GetWatchList(Dictionary<string, string> filterNames)
         {
             //List<Plus500Symbol> plus500Symbols = await dataContext.plus500_symbols.ToListAsync();
-            FinvizFilter filter = new FinvizFilter(filterNames);
+            FinvizService filter = new FinvizService(filterNames);
 
 
 
@@ -75,47 +74,58 @@ namespace SeldonStockScannerAPI.FinvizScan
         }
 
 
+        [HttpGet("plus500list")]
+        public async Task<ActionResult<List<string>>> GetPlus500List()
+        {
+            return _finvizFilter.GetPlus500List();
+        }
 
 
         [HttpGet("megacompanies")]
-        public async Task<ActionResult<List<FinvizCompany>>> GetMegaCompanies()
+        public async Task<ActionResult<List<FinvizCompanyEntity>>> GetMegaCompanies()
         {
             return _finvizFilter.GetMegaCompanies();
         }
 
 
         [HttpGet("longholds")]
-        public async Task<ActionResult<List<FinvizCompany>>> GetLongHolds()
+        public async Task<ActionResult<List<FinvizCompanyEntity>>> GetLongHolds()
         {
             return _finvizFilter.GetLongHolds();
         }
 
         [HttpGet("oversoldbounce")]
-        public async Task<ActionResult<List<FinvizCompany>>> GetOversoldBounce()
+        public async Task<ActionResult<List<FinvizCompanyEntity>>> GetOversoldBounce()
         {
             return _finvizFilter.GetOversoldBounce();
         }
 
         [HttpGet("breakout")]
-        public async Task<ActionResult<List<FinvizCompany>>> GetBreakout()
+        public async Task<ActionResult<List<FinvizCompanyEntity>>> GetBreakout()
         {
             return _finvizFilter.GetBreakout();
         }
 
-
-
-
-
-
-
         [HttpGet("shorts")]
-        public async Task<ActionResult<List<FinvizCompany>>> GetShorts()
+        public async Task<ActionResult<List<FinvizCompanyEntity>>> GetShorts()
         {
             return _finvizFilter.GetShorts();
         }
 
+        [HttpGet("bouncema")]
+        public async Task<ActionResult<List<FinvizCompanyEntity>>> GetBounceOffMa()
+        {
+            return _finvizFilter.GetBounceOffMa();
+        }
+
+
+
+
+
+
+
         [HttpGet("tech")]
-        public async Task<ActionResult<List<FinvizCompany>>> GetTech()
+        public async Task<ActionResult<List<FinvizCompanyEntity>>> GetTech()
         {
             return _finvizFilter.GetTech();
         }
@@ -150,7 +160,7 @@ namespace SeldonStockScannerAPI.FinvizScan
 
         // https://finviz.com/screener.ashx
 
-        private void fillFilters(FinvizFilter filter, Dictionary<string, string> input)
+        private void fillFilters(FinvizService filter, Dictionary<string, string> input)
         {
             // Column 1
             //filter.Exchange = input["Exchange"];
@@ -178,29 +188,30 @@ namespace SeldonStockScannerAPI.FinvizScan
             //filter.Price = input["Price"];
         }
 
-        private static List<FinvizCompany> filterByPlus500Stocks(List<FinvizCompany> rawResults, List<Plus500Symbol> plus500symbols)
-        {
-            DataAccess db = new DataAccess();
-            List<FinvizCompany> filteredWatchList = new List<FinvizCompany>();
+        //private static List<FinvizCompanyEntity> filterByPlus500Stocks(List<FinvizCompanyEntity> rawResults, List<Plus500Symbol> plus500symbols)
+        //{
+        //    DataAccess db = new DataAccess();
+        //    List<FinvizCompanyEntity> filteredWatchList = new List<FinvizCompanyEntity>();
 
-            foreach (FinvizCompany company in rawResults)
-            {
-                foreach (Plus500Symbol plus500Company in plus500symbols)
-                {
-                    if (company.Ticker.Equals(plus500Company.symbol))
-                    {
-                        filteredWatchList.Add(company.Duplicate());
-                    }
-                }
-            }
+        //    foreach (FinvizCompanyEntity company in rawResults)
+        //    {
+        //        foreach (Plus500Symbol plus500Company in plus500symbols)
+        //        {
+        //            if (company.Ticker.Equals(plus500Company.Symbol))
+        //            {
+        //                filteredWatchList.Add(company.Duplicate());
+        //            }
+        //        }
+        //    }
 
-            return filteredWatchList;
-        }
+        //    return filteredWatchList;
+        //}
 
-        private ActionResult<IEnumerable<Plus500Symbol>> getAllPluss500Symbols()
-        {
-            return dataContext.plus500_symbols.ToList();
-        }
+        //private ActionResult<List<Plus500Symbol>> getAllPluss500Symbols()
+        //{
+        //    GetCompletePlus500();
+        //    return dataContext.plus500_symbols.ToList();
+        //}
 
     }
 }

@@ -1,9 +1,9 @@
-﻿using StockScannerCommonCode;
+﻿using SeldonStockScannerAPI.models;
 
 namespace SeldonStockScannerAPI
 {
     public class WatchList
     {
-        public List<FinvizCompany> companies { get; set; }
+        public List<FinvizCompanyEntity> companies { get; set; }
     }
 }

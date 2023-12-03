@@ -253,7 +253,7 @@ namespace StockScannerCommonCode
             {
                 foreach (Plus500Symbol plus500Company in plus500symbols)
                 {
-                    if (company.Ticker.Equals(plus500Company.symbol))
+                    if (company.Ticker.Equals(plus500Company.Symbol))
                     {
                         filteredWatchList.Add(company.Duplicate());
                     }

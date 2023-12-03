@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using StockScannerCommonCode.model;
+using SeldonStockScannerAPI.models;
 
 namespace SeldonStockScannerAPI.Data
 {
@@ -16,8 +16,9 @@ namespace SeldonStockScannerAPI.Data
         // Add migration:
         // dotnet ef migrations add <name>
 
-        public DbSet<SuperHero> SuperHeroes { get; set; }
 
-        public DbSet<Plus500Symbol> plus500_symbols { get; set; }
+        public DbSet<Plus500Symbol> plus500Symbols { get; set; }
+
+        public DbSet<FinvizCompanyEntity> finvizCompanyEntitys { get; set; }
     }
 }

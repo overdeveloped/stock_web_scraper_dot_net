@@ -4,11 +4,11 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using StockScannerCommonCode.finviz_classes;
+using SeldonStockScannerAPI.models;
 
-namespace StockScannerCommonCode
+namespace SeldonStockScannerAPI.FinvizScan
 {
-    public class FinvizFilter : IFinvizFilter
+    public class FinvizService : IFinvizFilter
     {
         private readonly WebScraper _scraper = new WebScraper();
         private string RootUrl;
@@ -96,40 +96,17 @@ namespace StockScannerCommonCode
         public Dictionary<string, string> translationCurrentVolume { get; set; }
         public Dictionary<string, string> translationFloat { get; set; }
 
+        // Plus500 Filter
+        private List<string> plus500tickers = new List<string>();
 
-        // Individual Fields
-        //public string Exchange { get; set; }
-        //public string MarketCap { get; set; }
-        //public string EarningsDate { get; set; }
-        //public string TargetPrice { get; set; }
-
-        //public string Index { get; set; }
-        //public string DividendYield { get; set; }
-        //public string AverageVolume { get; set; }
-        //public string IPODate { get; set; }
-
-        //public string Sector { get; set; }
-        //public string FloatShort { get; set; }
-        //public string RelativeVolume { get; set; }
-        //public string SharesOutstanding { get; set; }
-
-        //public string Industry { get; set; }
-        //public string AnalystRecom { get; set; }
-        //public string CurrentVolume { get; set; }
-        //public string Float { get; set; }
-
-        //public string Country { get; set; }
-        //public string OptionShort { get; set; }
-        //public string Price { get; set; }
-        
-        public FinvizFilter()
+        public FinvizService()
         {
             translationsMaster = new Dictionary<string, Dictionary<string, string>>();
             translationExchange = new Dictionary<string, string>();
             SetupTranslations();
         }
 
-        public FinvizFilter(Dictionary<string, string> filterNames)
+        public FinvizService(Dictionary<string, string> filterNames)
         {
             translationsMaster = new Dictionary<string, Dictionary<string, string>>();
             this.filterNames = filterNames;
@@ -147,78 +124,105 @@ namespace StockScannerCommonCode
         {
             return this.FullUrl;
         }
-        public List<FinvizCompany> GetMegaCompanies()
+
+        public List<string> GetPlus500List()
         {
-            ResetFilterNames();
+            this.plus500tickers = _scraper.GetCompletePlus500();
 
-            this.filterNames.Add(EnumFilterType.MarketCap.ToString(), "Mega ($200bln and more)");
-
-            return _scraper.GetMegaCompanies();
+            return this.plus500tickers;
         }
 
-        public List<FinvizCompany> GetLongHolds()
+
+        public List<FinvizCompanyEntity> GetMegaCompanies()
         {
             ResetFilterNames();
 
-            this.filterNames.Add(EnumFilterType.MarketCap.ToString(), "+Micro (over $50mln)");
-            this.filterNames.Add(EnumFilterType.MA20.ToString(), "Price above SMA20");
-            this.filterNames.Add(EnumFilterType.Beta.ToString(), "Over 1.5");
-            this.filterNames.Add(EnumFilterType.EpsGrowthNext5Years.ToString(), "Over 10%");
-            this.filterNames.Add(EnumFilterType.ReturnOnEquity.ToString(), "Over +15%");
-            this.filterNames.Add(EnumFilterType.CurrentRatio.ToString(), "Over 1.5");
+            this.filterNames.Add(FinvzEnumFilterType.MarketCap.ToString(), "Mega ($200bln and more)");
+
+            List<FinvizCompanyEntity> finvizResults = _scraper.GetMegaCompanies();
+
+            List<FinvizCompanyEntity> result = new List<FinvizCompanyEntity>();
+
+            if (this.plus500tickers.Count() > 0 && _scraper.GetMegaCompanies().Count() > 0)
+            {
+                foreach (string symbol in this.plus500tickers)
+                {
+                    foreach (FinvizCompanyEntity finvizResult in finvizResults)
+                    {
+                        if (symbol.Contains(finvizResult.Ticker))
+                        {
+                            result.Add(finvizResult);
+                        }
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public List<FinvizCompanyEntity> GetLongHolds()
+        {
+            ResetFilterNames();
+
+            this.filterNames.Add(FinvzEnumFilterType.MarketCap.ToString(), "+Micro (over $50mln)");
+            this.filterNames.Add(FinvzEnumFilterType.MA20.ToString(), "Price above SMA20");
+            this.filterNames.Add(FinvzEnumFilterType.Beta.ToString(), "Over 1.5");
+            this.filterNames.Add(FinvzEnumFilterType.EpsGrowthNext5Years.ToString(), "Over 10%");
+            this.filterNames.Add(FinvzEnumFilterType.ReturnOnEquity.ToString(), "Over +15%");
+            this.filterNames.Add(FinvzEnumFilterType.CurrentRatio.ToString(), "Over 1.5");
 
             return _scraper.GetCustomWatchList(BuildUrl(), "longHolds");
         }
 
-        public List<FinvizCompany> GetOversoldBounce()
+        public List<FinvizCompanyEntity> GetOversoldBounce()
         {
             ResetFilterNames();
 
-            this.filterNames.Add(EnumFilterType.Price.ToString(), "Over $5");
-            this.filterNames.Add(EnumFilterType.RSI14.ToString(), "Oversold (30)");
-            this.filterNames.Add(EnumFilterType.Change.ToString(), "Up");
-            this.filterNames.Add(EnumFilterType.RelativeVolume.ToString(), "Over 2");
+            this.filterNames.Add(FinvzEnumFilterType.Price.ToString(), "Over $5");
+            this.filterNames.Add(FinvzEnumFilterType.RSI14.ToString(), "Oversold (30)");
+            this.filterNames.Add(FinvzEnumFilterType.Change.ToString(), "Up");
+            this.filterNames.Add(FinvzEnumFilterType.RelativeVolume.ToString(), "Over 2");
 
             return _scraper.GetCustomWatchList(BuildUrl(), "oversoldBounce");
         }
 
-        public List<FinvizCompany> GetBreakout()
+        public List<FinvizCompanyEntity> GetBreakout()
         {
             ResetFilterNames();
 
-            this.filterNames.Add(EnumFilterType.MA20.ToString(), "Price above SMA20");
-            this.filterNames.Add(EnumFilterType.MA50.ToString(), "Price above SMA50");
-            this.filterNames.Add(EnumFilterType.MA200.ToString(), "Price above SMA200");
-            this.filterNames.Add(EnumFilterType.HighLow50Day.ToString(), "New High");
-            this.filterNames.Add(EnumFilterType.ReturnOnEquity.ToString(), "Over +20%");
-            this.filterNames.Add(EnumFilterType.DebtEquity.ToString(), "Under 1");
-            this.filterNames.Add(EnumFilterType.AverageVolume.ToString(), "Over 100K");
+            this.filterNames.Add(FinvzEnumFilterType.MA20.ToString(), "Price above SMA20");
+            this.filterNames.Add(FinvzEnumFilterType.MA50.ToString(), "Price above SMA50");
+            this.filterNames.Add(FinvzEnumFilterType.MA200.ToString(), "Price above SMA200");
+            this.filterNames.Add(FinvzEnumFilterType.HighLow50Day.ToString(), "New High");
+            this.filterNames.Add(FinvzEnumFilterType.ReturnOnEquity.ToString(), "Over +20%");
+            this.filterNames.Add(FinvzEnumFilterType.DebtEquity.ToString(), "Under 1");
+            this.filterNames.Add(FinvzEnumFilterType.AverageVolume.ToString(), "Over 100K");
 
             return _scraper.GetCustomWatchList(BuildUrl(), "breakout");
         }
 
-        public List<FinvizCompany> GetShorts()
+        public List<FinvizCompanyEntity> GetShorts()
         {
             ResetFilterNames();
 
-            this.filterNames.Add(EnumFilterType.MarketCap.ToString(), "+Small (over $300mln)");
-            this.filterNames.Add(EnumFilterType.FloatShort.ToString(), "High (>20%)");
-            this.filterNames.Add(EnumFilterType.AverageVolume.ToString(), "Over 500K");
-            this.filterNames.Add(EnumFilterType.RelativeVolume.ToString(), "Over 1");
-            this.filterNames.Add(EnumFilterType.CurrentVolume.ToString(), "Over 2M");
+            this.filterNames.Add(FinvzEnumFilterType.MarketCap.ToString(), "+Small (over $300mln)");
+            this.filterNames.Add(FinvzEnumFilterType.FloatShort.ToString(), "High (>20%)");
+            this.filterNames.Add(FinvzEnumFilterType.AverageVolume.ToString(), "Over 500K");
+            this.filterNames.Add(FinvzEnumFilterType.RelativeVolume.ToString(), "Over 1");
+            this.filterNames.Add(FinvzEnumFilterType.CurrentVolume.ToString(), "Over 2M");
 
             return _scraper.GetCustomWatchList(BuildUrl(), "shorts");
         }
 
-        public List<FinvizCompany> GetBounceOffMa()
+        public List<FinvizCompanyEntity> GetBounceOffMa()
         {
             ResetFilterNames();
 
-            this.filterNames.Add(EnumFilterType.MA20.ToString(), "Price above SMA20");
-            this.filterNames.Add(EnumFilterType.MA50.ToString(), "Price below SMA50");
-            this.filterNames.Add(EnumFilterType.AverageVolume.ToString(), "Over 400K");
-            this.filterNames.Add(EnumFilterType.RelativeVolume.ToString(), "Over 1");
-            this.filterNames.Add(EnumFilterType.CurrentVolume.ToString(), "Over 2M");
+            this.filterNames.Add(FinvzEnumFilterType.MA20.ToString(), "Price above SMA20");
+            this.filterNames.Add(FinvzEnumFilterType.MA50.ToString(), "Price below SMA50");
+            this.filterNames.Add(FinvzEnumFilterType.AverageVolume.ToString(), "Over 400K");
+            this.filterNames.Add(FinvzEnumFilterType.RelativeVolume.ToString(), "Over 1");
+            this.filterNames.Add(FinvzEnumFilterType.CurrentVolume.ToString(), "Over 2M");
 
             return _scraper.GetCustomWatchList(BuildUrl(), "bouncema");
         }
@@ -236,22 +240,22 @@ namespace StockScannerCommonCode
 
 
 
-        public List<FinvizCompany> GetShorts2()
+        public List<FinvizCompanyEntity> GetShorts2()
         {
             ResetFilterNames();
 
-            this.filterNames.Add(EnumFilterType.MarketCap.ToString(), "+Micro (over $50mln)");
-            this.filterNames.Add(EnumFilterType.MA20.ToString(), "Price above SMA20");
-            this.filterNames.Add(EnumFilterType.Beta.ToString(), "Over 1.5");
-            this.filterNames.Add(EnumFilterType.EpsGrowthNext5Years.ToString(), "Over 10%");
-            this.filterNames.Add(EnumFilterType.ReturnOnEquity.ToString(), "Over +15%");
-            this.filterNames.Add(EnumFilterType.CurrentRatio.ToString(), "Over 1.5");
+            this.filterNames.Add(FinvzEnumFilterType.MarketCap.ToString(), "+Micro (over $50mln)");
+            this.filterNames.Add(FinvzEnumFilterType.MA20.ToString(), "Price above SMA20");
+            this.filterNames.Add(FinvzEnumFilterType.Beta.ToString(), "Over 1.5");
+            this.filterNames.Add(FinvzEnumFilterType.EpsGrowthNext5Years.ToString(), "Over 10%");
+            this.filterNames.Add(FinvzEnumFilterType.ReturnOnEquity.ToString(), "Over +15%");
+            this.filterNames.Add(FinvzEnumFilterType.CurrentRatio.ToString(), "Over 1.5");
 
             return _scraper.GetCustomWatchList(BuildUrl(), "shorts2");
         }
 
 
-        public List<FinvizCompany> GetTech()
+        public List<FinvizCompanyEntity> GetTech()
         {
             ResetFilterNames();
 
@@ -305,7 +309,7 @@ namespace StockScannerCommonCode
             translationExchange.Add("AMEX", "exch_amex");
             translationExchange.Add("NASDAQ", "exch_nasd");
             translationExchange.Add("NYSE", "exch_nyse");
-            translationsMaster.Add(EnumFilterType.Exchange.ToString(), translationExchange);
+            translationsMaster.Add(FinvzEnumFilterType.Exchange.ToString(), translationExchange);
 
             translationMarketCap = new Dictionary<string, string>();
             translationMarketCap.Add("Any", "");
@@ -324,7 +328,7 @@ namespace StockScannerCommonCode
             translationMarketCap.Add("-Small (under $2bln)", "cap_smallunder");
             translationMarketCap.Add("-Micro (under $300mln)", "cap_microunder");
             translationMarketCap.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.MarketCap.ToString(), translationMarketCap);
+            translationsMaster.Add(FinvzEnumFilterType.MarketCap.ToString(), translationMarketCap);
 
             translationPB = new Dictionary<string, string>();
             translationPB.Add("Any", "");
@@ -351,7 +355,7 @@ namespace StockScannerCommonCode
             translationPB.Add("Over 9", "fa_pb_o9");
             translationPB.Add("Over 10", "fa_pb_o10");
             translationPB.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.PB.ToString(), translationPB);
+            translationsMaster.Add(FinvzEnumFilterType.PB.ToString(), translationPB);
 
             translationEPSGrowthPast5Years = new Dictionary<string, string>();
             translationEPSGrowthPast5Years.Add("Any", "");
@@ -372,7 +376,7 @@ namespace StockScannerCommonCode
             translationEPSGrowthPast5Years.Add("Over 25%", "fa_eps5years_o25");
             translationEPSGrowthPast5Years.Add("Over 30%", "fa_eps5years_o30");
             translationEPSGrowthPast5Years.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.EpsGrowthPast5Years.ToString(), translationEPSGrowthPast5Years);
+            translationsMaster.Add(FinvzEnumFilterType.EpsGrowthPast5Years.ToString(), translationEPSGrowthPast5Years);
 
             translationDividendYield = new Dictionary<string, string>();
             translationDividendYield.Add("Any", "");
@@ -391,7 +395,7 @@ namespace StockScannerCommonCode
             translationDividendYield.Add("Over 9%", "fa_div_o9");
             translationDividendYield.Add("Over 10%", "fa_div_o10");
             translationDividendYield.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.DividendYield.ToString(), translationDividendYield);
+            translationsMaster.Add(FinvzEnumFilterType.DividendYield.ToString(), translationDividendYield);
 
             translationQuickRatio = new Dictionary<string, string>();
             translationQuickRatio.Add("Any", "");
@@ -408,7 +412,7 @@ namespace StockScannerCommonCode
             translationQuickRatio.Add("Over 5", "fa_quickratio_o5");
             translationQuickRatio.Add("Over 10", "fa_quickratio_o10");
             translationQuickRatio.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.QuickRatio.ToString(), translationQuickRatio);
+            translationsMaster.Add(FinvzEnumFilterType.QuickRatio.ToString(), translationQuickRatio);
 
             translationNetProfitMargin = new Dictionary<string, string>();
             translationNetProfitMargin.Add("Any", "");
@@ -453,7 +457,7 @@ namespace StockScannerCommonCode
             translationNetProfitMargin.Add("Over 80%", "fa_netmargin_o80");
             translationNetProfitMargin.Add("Over 90%", "fa_netmargin_o90");
             translationNetProfitMargin.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.NetProfitMargin.ToString(), translationNetProfitMargin);
+            translationsMaster.Add(FinvzEnumFilterType.NetProfitMargin.ToString(), translationNetProfitMargin);
 
             translationInstitutionalTransactions = new Dictionary<string, string>();
             translationInstitutionalTransactions.Add("Any", "");
@@ -482,7 +486,7 @@ namespace StockScannerCommonCode
             translationInstitutionalTransactions.Add("Over +45%", "sh_insttrans_o45");
             translationInstitutionalTransactions.Add("Over +50%", "sh_insttrans_o50");
             translationInstitutionalTransactions.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.InstitutionalTransactions.ToString(), translationInstitutionalTransactions);
+            translationsMaster.Add(FinvzEnumFilterType.InstitutionalTransactions.ToString(), translationInstitutionalTransactions);
 
             translationPerformance = new Dictionary<string, string>();
             translationPerformance.Add("Any", "");
@@ -564,7 +568,7 @@ namespace StockScannerCommonCode
             translationPerformance.Add("YTD +50%", "ta_perf_ytd50o");
             translationPerformance.Add("YTD +100%", "ta_perf_ytd100o");
             translationPerformance.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.Performance.ToString(), translationPerformance);
+            translationsMaster.Add(FinvzEnumFilterType.Performance.ToString(), translationPerformance);
 
             translation20SMA = new Dictionary<string, string>();
             translation20SMA.Add("Any", "");
@@ -594,7 +598,7 @@ namespace StockScannerCommonCode
             translation20SMA.Add("SMA20 above SMA200", "ta_sma20_sa200");
             translation20SMA.Add("SMA20 below SMA200", "ta_sma20_sb200");
             translation20SMA.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.MA20.ToString(), translation20SMA);
+            translationsMaster.Add(FinvzEnumFilterType.MA20.ToString(), translation20SMA);
 
             translation20DayHighLow = new Dictionary<string, string>();
             translation20DayHighLow.Add("Any", "");
@@ -621,7 +625,7 @@ namespace StockScannerCommonCode
             translation20DayHighLow.Add("0-5% above Low", "ta_highlow20d_a0to5h");
             translation20DayHighLow.Add("0-10% above Low", "ta_highlow20d_a0to10h");
             translation20DayHighLow.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.HighLow20Day.ToString(), translation20DayHighLow);
+            translationsMaster.Add(FinvzEnumFilterType.HighLow20Day.ToString(), translation20DayHighLow);
 
             translationBeta = new Dictionary<string, string>();
             translationBeta.Add("Any", "");
@@ -645,7 +649,7 @@ namespace StockScannerCommonCode
             translationBeta.Add("1 to 1.5", "ta_beta_1to1.5");
             translationBeta.Add("1 to 2", "ta_beta_1to2");
             translationBeta.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.Beta.ToString(), translationBeta);
+            translationsMaster.Add(FinvzEnumFilterType.Beta.ToString(), translationBeta);
 
             translationPrice = new Dictionary<string, string>();
             translationPrice.Add("Any", "");
@@ -689,12 +693,12 @@ namespace StockScannerCommonCode
             translationPrice.Add("$10 to $50", "sh_price_10to50");
             translationPrice.Add("$20 to $50", "sh_price_20to50");
             translationPrice.Add("$50 to $100", "sh_price_50to100");
-            translationsMaster.Add(EnumFilterType.Price.ToString(), translationPrice);
+            translationsMaster.Add(FinvzEnumFilterType.Price.ToString(), translationPrice);
 
             translationAfterHoursClose = new Dictionary<string, string>();
             translationAfterHoursClose.Add("Any", "");
             translationAfterHoursClose.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.AfterHoursClose.ToString(), translationAfterHoursClose);
+            translationsMaster.Add(FinvzEnumFilterType.AfterHoursClose.ToString(), translationAfterHoursClose);
 
 
             // Column 2
@@ -704,7 +708,7 @@ namespace StockScannerCommonCode
             translationIndex.Add("DJIA", "idx_dji");
             translationIndex.Add("RUSSELL 2000", "idx_rut");
             translationIndex.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.Index.ToString(), translationIndex);
+            translationsMaster.Add(FinvzEnumFilterType.Index.ToString(), translationIndex);
 
             translationPE = new Dictionary<string, string>();
             translationPE.Add("Any", "");
@@ -732,7 +736,7 @@ namespace StockScannerCommonCode
             translationPE.Add("Over 45", "fa_pe_o45");
             translationPE.Add("Over 50", "fa_pe_o50");
             translationPE.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.PE.ToString(), translationPE);
+            translationsMaster.Add(FinvzEnumFilterType.PE.ToString(), translationPE);
 
             translationPriceCash = new Dictionary<string, string>();
             translationPriceCash.Add("Any", "");
@@ -763,7 +767,7 @@ namespace StockScannerCommonCode
             translationPriceCash.Add("Over 40", "fa_pc_o40");
             translationPriceCash.Add("Over 50", "fa_pc_o50");
             translationPriceCash.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.PriceCash.ToString(), translationPriceCash);
+            translationsMaster.Add(FinvzEnumFilterType.PriceCash.ToString(), translationPriceCash);
 
             translationEPSGrowthNext5Years = new Dictionary<string, string>();
             translationEPSGrowthNext5Years.Add("Negative (<0%)", "fa_estltgrowth_neg");
@@ -783,7 +787,7 @@ namespace StockScannerCommonCode
             translationEPSGrowthNext5Years.Add("Over 25%", "fa_estltgrowth_o25");
             translationEPSGrowthNext5Years.Add("Over 30%", "fa_estltgrowth_o30");
             translationEPSGrowthNext5Years.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.EpsGrowthNext5Years.ToString(), translationEPSGrowthNext5Years);
+            translationsMaster.Add(FinvzEnumFilterType.EpsGrowthNext5Years.ToString(), translationEPSGrowthNext5Years);
 
             translationReturnOnAssets = new Dictionary<string, string>();
             translationReturnOnAssets.Add("Positive (>0%)", "fa_roa_pos");
@@ -811,7 +815,7 @@ namespace StockScannerCommonCode
             translationReturnOnAssets.Add("Over +45%", "fa_roa_o45");
             translationReturnOnAssets.Add("Over +50%", "fa_roa_o50");
             translationReturnOnAssets.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.ReturnOnAssets.ToString(), translationReturnOnAssets);
+            translationsMaster.Add(FinvzEnumFilterType.ReturnOnAssets.ToString(), translationReturnOnAssets);
 
             translationLTDebtEquity = new Dictionary<string, string>();
             translationLTDebtEquity.Add("Any", "");
@@ -838,7 +842,7 @@ namespace StockScannerCommonCode
             translationLTDebtEquity.Add("Over 0.9", "fa_ltdebteq_o0.9");
             translationLTDebtEquity.Add("Over 1", "fa_ltdebteq_o1");
             translationLTDebtEquity.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.LTDebtEquity.ToString(), translationLTDebtEquity);
+            translationsMaster.Add(FinvzEnumFilterType.LTDebtEquity.ToString(), translationLTDebtEquity);
 
             translationPayoutRatio = new Dictionary<string, string>();
             translationPayoutRatio.Add("Any", "");
@@ -868,7 +872,7 @@ namespace StockScannerCommonCode
             translationPayoutRatio.Add("Under 90%", "fa_payoutratio_u90");
             translationPayoutRatio.Add("Under 100%", "fa_payoutratio_u100");
             translationPayoutRatio.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.PayoutRatio.ToString(), translationPayoutRatio);
+            translationsMaster.Add(FinvzEnumFilterType.PayoutRatio.ToString(), translationPayoutRatio);
 
             translationFloatShort = new Dictionary<string, string>();
             translationFloatShort.Add("Any", "");
@@ -887,7 +891,7 @@ namespace StockScannerCommonCode
             translationFloatShort.Add("Over 25%", "sh_short_o25");
             translationFloatShort.Add("Over 30%", "sh_short_o30");
             translationFloatShort.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.FloatShort.ToString(), translationFloatShort);
+            translationsMaster.Add(FinvzEnumFilterType.FloatShort.ToString(), translationFloatShort);
 
             translationPerformance2 = new Dictionary<string, string>();
             translationPerformance2.Add("Any", "");
@@ -969,7 +973,7 @@ namespace StockScannerCommonCode
             translationPerformance2.Add("YTD +50%", "ta_perf_ytd50o");
             translationPerformance2.Add("YTD +100%", "ta_perf_ytd100o");
             translationPerformance2.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.Performance2.ToString(), translationPerformance2);
+            translationsMaster.Add(FinvzEnumFilterType.Performance2.ToString(), translationPerformance2);
 
             translation50SMA = new Dictionary<string, string>();
             translation50SMA.Add("Any", "");
@@ -999,7 +1003,7 @@ namespace StockScannerCommonCode
             translation50SMA.Add("SMA50 above SMA200", "ta_sma50_sa200");
             translation50SMA.Add("SMA50 below SMA200", "ta_sma50_sb200");
             translation50SMA.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.MA50.ToString(), translation50SMA);
+            translationsMaster.Add(FinvzEnumFilterType.MA50.ToString(), translation50SMA);
 
             translation50DayHighLow = new Dictionary<string, string>();
             translation50DayHighLow.Add("Any", "");
@@ -1026,7 +1030,7 @@ namespace StockScannerCommonCode
             translation50DayHighLow.Add("0-5% above Low", "ta_highlow50d_a0to5h");
             translation50DayHighLow.Add("0-10% above Low", "ta_highlow50d_a0to10h");
             translation50DayHighLow.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.HighLow50Day.ToString(), translation50DayHighLow);
+            translationsMaster.Add(FinvzEnumFilterType.HighLow50Day.ToString(), translation50DayHighLow);
 
             translationAverageTrueRange = new Dictionary<string, string>();
             translationAverageTrueRange.Add("Any", "");
@@ -1055,7 +1059,7 @@ namespace StockScannerCommonCode
             translationAverageTrueRange.Add("Under 4.5", "ta_averagetruerange_u4.5");
             translationAverageTrueRange.Add("Under 5", "ta_averagetruerange_u5");
             translationAverageTrueRange.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.AverageTrueRange.ToString(), translationAverageTrueRange);
+            translationsMaster.Add(FinvzEnumFilterType.AverageTrueRange.ToString(), translationAverageTrueRange);
 
             translationTargetPrice = new Dictionary<string, string>();
             translationTargetPrice.Add("Any", "");
@@ -1074,12 +1078,12 @@ namespace StockScannerCommonCode
             translationTargetPrice.Add("40% Below Price", "targetprice_b40");
             translationTargetPrice.Add("50% Below Price", "targetprice_b50");
             translationTargetPrice.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.TargetPrice.ToString(), translationTargetPrice);
+            translationsMaster.Add(FinvzEnumFilterType.TargetPrice.ToString(), translationTargetPrice);
 
             translationAfterHoursChange = new Dictionary<string, string>();
             translationAfterHoursChange.Add("Any", "");
             translationAfterHoursChange.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.AfterHoursChange.ToString(), translationAfterHoursChange);
+            translationsMaster.Add(FinvzEnumFilterType.AfterHoursChange.ToString(), translationAfterHoursChange);
 
 
             // Column 3
@@ -1097,7 +1101,7 @@ namespace StockScannerCommonCode
             translationSector.Add("Technology", "sec_technology");
             translationSector.Add("Utilities", "sec_utilities");
             translationSector.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.Sector.ToString(), translationSector);
+            translationsMaster.Add(FinvzEnumFilterType.Sector.ToString(), translationSector);
 
             translationForwardPE = new Dictionary<string, string>();
             translationForwardPE.Add("Any", "");
@@ -1125,7 +1129,7 @@ namespace StockScannerCommonCode
             translationForwardPE.Add("Over 45", "fa_fpe_o45");
             translationForwardPE.Add("Over 50", "fa_fpe_o50");
             translationForwardPE.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.ForwardPE.ToString(), translationForwardPE);
+            translationsMaster.Add(FinvzEnumFilterType.ForwardPE.ToString(), translationForwardPE);
 
             translationPriceFreeCashFlow = new Dictionary<string, string>();
             translationPriceFreeCashFlow.Add("Any", "");
@@ -1162,7 +1166,7 @@ namespace StockScannerCommonCode
             translationPriceFreeCashFlow.Add("Over 90", "fa_pfcf_o100");
             translationPriceFreeCashFlow.Add("Over 100", "fa_pfcf_o50");
             translationPriceFreeCashFlow.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.PriceFreeCashFlow.ToString(), translationPriceFreeCashFlow);
+            translationsMaster.Add(FinvzEnumFilterType.PriceFreeCashFlow.ToString(), translationPriceFreeCashFlow);
 
             translationSalesGrowthPast5Years = new Dictionary<string, string>();
             translationSalesGrowthPast5Years.Add("Any", "");
@@ -1183,7 +1187,7 @@ namespace StockScannerCommonCode
             translationSalesGrowthPast5Years.Add("Over 25%", "fa_sales5years_o25");
             translationSalesGrowthPast5Years.Add("Over 30%", "fa_sales5years_o30");
             translationSalesGrowthPast5Years.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.SalesGrowthPast5Years.ToString(), translationSalesGrowthPast5Years);
+            translationsMaster.Add(FinvzEnumFilterType.SalesGrowthPast5Years.ToString(), translationSalesGrowthPast5Years);
 
             translationReturnOnEquity = new Dictionary<string, string>();
             translationReturnOnEquity.Add("Any", "");
@@ -1210,7 +1214,7 @@ namespace StockScannerCommonCode
             translationReturnOnEquity.Add("Over +45%", "fa_roe_o45");
             translationReturnOnEquity.Add("Over +50%", "fa_roe_o50");
             translationReturnOnEquity.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.ReturnOnEquity.ToString(), translationReturnOnEquity);
+            translationsMaster.Add(FinvzEnumFilterType.ReturnOnEquity.ToString(), translationReturnOnEquity);
 
             translationDebtEquity = new Dictionary<string, string>();
             translationDebtEquity.Add("Any", "");
@@ -1237,7 +1241,7 @@ namespace StockScannerCommonCode
             translationDebtEquity.Add("Over 0.9", "fa_debteq_o0.9");
             translationDebtEquity.Add("Over 1", "fa_debteq_o1");
             translationDebtEquity.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.DebtEquity.ToString(), translationDebtEquity);
+            translationsMaster.Add(FinvzEnumFilterType.DebtEquity.ToString(), translationDebtEquity);
 
             translationInsiderOwnership = new Dictionary<string, string>();
             translationInsiderOwnership.Add("Any", "");
@@ -1254,7 +1258,7 @@ namespace StockScannerCommonCode
             translationInsiderOwnership.Add("Over 80%", "sh_insiderown_o80");
             translationInsiderOwnership.Add("Over 90%", "sh_insiderown_o90");
             translationInsiderOwnership.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.InsiderOwnership.ToString(), translationInsiderOwnership);
+            translationsMaster.Add(FinvzEnumFilterType.InsiderOwnership.ToString(), translationInsiderOwnership);
 
             translationAnalystRecomends = new Dictionary<string, string>();
             translationAnalystRecomends.Add("Any", "");
@@ -1268,7 +1272,7 @@ namespace StockScannerCommonCode
             translationAnalystRecomends.Add("Sell or worse", "an_recom_sellworse");
             translationAnalystRecomends.Add("Strong Sell (5)", "an_recom_strongsell");
             translationAnalystRecomends.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.AnalystRecom.ToString(), translationAnalystRecomends);
+            translationsMaster.Add(FinvzEnumFilterType.AnalystRecom.ToString(), translationAnalystRecomends);
 
             translationVolatility = new Dictionary<string, string>();
             translationVolatility.Add("Any", "");
@@ -1294,7 +1298,7 @@ namespace StockScannerCommonCode
             translationVolatility.Add("Month - Over 12%", "ta_volatility_mo12");
             translationVolatility.Add("Month - Over 15%", "ta_volatility_mo15");
             translationVolatility.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.Volatility.ToString(), translationVolatility);
+            translationsMaster.Add(FinvzEnumFilterType.Volatility.ToString(), translationVolatility);
             
             translation200SMA = new Dictionary<string, string>();
             translation200SMA.Add("Any", "");
@@ -1333,7 +1337,7 @@ namespace StockScannerCommonCode
             translation200SMA.Add("SMA200 above SMA50", "ta_sma200_sa50");
             translation200SMA.Add("SMA200 below SMA50", "ta_sma200_sb50");
             translation200SMA.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.MA200.ToString(), translation200SMA);
+            translationsMaster.Add(FinvzEnumFilterType.MA200.ToString(), translation200SMA);
 
             translation52WeekHighLow = new Dictionary<string, string>();
             translation52WeekHighLow.Add("Any", "");
@@ -1373,7 +1377,7 @@ namespace StockScannerCommonCode
             translation52WeekHighLow.Add("0-5% above Low", "ta_highlow52w_a0to5h");
             translation52WeekHighLow.Add("0-10% above Low", "ta_highlow52w_a0to10h");
             translation52WeekHighLow.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.HighLow52Week.ToString(), translation52WeekHighLow);
+            translationsMaster.Add(FinvzEnumFilterType.HighLow52Week.ToString(), translation52WeekHighLow);
 
             translationAverageVolume = new Dictionary<string, string>();
             translationAverageVolume.Add("Any", "");
@@ -1396,7 +1400,7 @@ namespace StockScannerCommonCode
             translationAverageVolume.Add("500K to 1M", "sh_avgvol_500to1000");
             translationAverageVolume.Add("500K to 10M", "sh_avgvol_500to10000");
             translationAverageVolume.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.AverageVolume.ToString(), translationAverageVolume);
+            translationsMaster.Add(FinvzEnumFilterType.AverageVolume.ToString(), translationAverageVolume);
 
             translationIPODate = new Dictionary<string, string>();
             translationIPODate.Add("Any", "");
@@ -1416,7 +1420,7 @@ namespace StockScannerCommonCode
             translationIPODate.Add("More than 20 years ago", "ipodate_more20");
             translationIPODate.Add("More than 25 years ago", "ipodate_more25");
             translationIPODate.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.IPODate.ToString(), translationIPODate);
+            translationsMaster.Add(FinvzEnumFilterType.IPODate.ToString(), translationIPODate);
 
 
             // Column 4
@@ -1573,7 +1577,7 @@ namespace StockScannerCommonCode
             translationIndustry.Add("Utilities - Renewable", "ind_utilitiesrenewable");
             translationIndustry.Add("Waste Management", "ind_wastemanagement");
             translationIndustry.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.Industry.ToString(), translationIndustry);
+            translationsMaster.Add(FinvzEnumFilterType.Industry.ToString(), translationIndustry);
 
             translationPEG = new Dictionary<string, string>();
             translationPEG.Add("Any", "");
@@ -1586,7 +1590,7 @@ namespace StockScannerCommonCode
             translationPEG.Add("Over 2", "fa_peg_o2");
             translationPEG.Add("Over 3", "fa_peg_o3");
             translationPEG.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.PEG.ToString(), translationPEG);
+            translationsMaster.Add(FinvzEnumFilterType.PEG.ToString(), translationPEG);
 
             translationEPSGrowthThisYears = new Dictionary<string, string>();
             translationEPSGrowthThisYears.Add("Any", "");
@@ -1607,7 +1611,7 @@ namespace StockScannerCommonCode
             translationEPSGrowthThisYears.Add("Over 25%", "fa_epsyoy_o25");
             translationEPSGrowthThisYears.Add("Over 30%", "fa_epsyoy_o30");
             translationEPSGrowthThisYears.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.EPSGrowthThisYear.ToString(), translationEPSGrowthThisYears);
+            translationsMaster.Add(FinvzEnumFilterType.EPSGrowthThisYear.ToString(), translationEPSGrowthThisYears);
 
             translationEPSGrowthQuarterOverQuarter = new Dictionary<string, string>();
             translationEPSGrowthQuarterOverQuarter.Add("Any", "");
@@ -1628,7 +1632,7 @@ namespace StockScannerCommonCode
             translationEPSGrowthQuarterOverQuarter.Add("Over 25%", "fa_epsqoq_o25");
             translationEPSGrowthQuarterOverQuarter.Add("Over 30%", "fa_epsqoq_o30");
             translationEPSGrowthQuarterOverQuarter.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.EPSGrowthQuarterOverQuarter.ToString(), translationEPSGrowthQuarterOverQuarter);
+            translationsMaster.Add(FinvzEnumFilterType.EPSGrowthQuarterOverQuarter.ToString(), translationEPSGrowthQuarterOverQuarter);
 
             translationReturnOnInvestment = new Dictionary<string, string>();
             translationReturnOnInvestment.Add("Any", "");
@@ -1657,7 +1661,7 @@ namespace StockScannerCommonCode
             translationReturnOnInvestment.Add("Over +45%", "fa_roi_o45");
             translationReturnOnInvestment.Add("Over +50%", "fa_roi_o50");
             translationReturnOnInvestment.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.ReturnOnInvestment.ToString(), translationReturnOnInvestment);
+            translationsMaster.Add(FinvzEnumFilterType.ReturnOnInvestment.ToString(), translationReturnOnInvestment);
 
             translationGrossMargin = new Dictionary<string, string>();
             translationGrossMargin.Add("Any", "");
@@ -1701,7 +1705,7 @@ namespace StockScannerCommonCode
             translationGrossMargin.Add("Over 80%", "fa_grossmargin_o80");
             translationGrossMargin.Add("Over 90%", "fa_grossmargin_o90");
             translationGrossMargin.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.GrossMargin.ToString(), translationGrossMargin);
+            translationsMaster.Add(FinvzEnumFilterType.GrossMargin.ToString(), translationGrossMargin);
 
             translationInsiderTransactions = new Dictionary<string, string>();
             translationInsiderTransactions.Add("Any", "");
@@ -1738,7 +1742,7 @@ namespace StockScannerCommonCode
             translationInsiderTransactions.Add("Over +80%", "fa_insidertrans_o80");
             translationInsiderTransactions.Add("Over +90%", "fa_insidertrans_o90");
             translationInsiderTransactions.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.InsiderTransactions.ToString(), translationInsiderTransactions);
+            translationsMaster.Add(FinvzEnumFilterType.InsiderTransactions.ToString(), translationInsiderTransactions);
 
             translationOptionShort = new Dictionary<string, string>();
             translationOptionShort.Add("Any", "");
@@ -1748,7 +1752,7 @@ namespace StockScannerCommonCode
             translationOptionShort.Add("Optionable and not shortable", "sh_opt_optionnotshort");
             translationOptionShort.Add("Not optionable and shortable", "sh_opt_notoptionshort");
             translationOptionShort.Add("Not optionable and not shortable", "sh_opt_notoptionnotshort");
-            translationsMaster.Add(EnumFilterType.OptionShort.ToString(), translationOptionShort);
+            translationsMaster.Add(FinvzEnumFilterType.OptionShort.ToString(), translationOptionShort);
 
             translationRSI14 = new Dictionary<string, string>();
             translationRSI14.Add("Any", "");
@@ -1765,7 +1769,7 @@ namespace StockScannerCommonCode
             translationRSI14.Add("Not Oversold (>50)", "ta_rsi_nos50");
             translationRSI14.Add("Not Oversold (>40)", "ta_rsi_nos40");
             translationRSI14.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.RSI14.ToString(), translationRSI14);
+            translationsMaster.Add(FinvzEnumFilterType.RSI14.ToString(), translationRSI14);
 
             translationChange = new Dictionary<string, string>();
             translationChange.Add("Any", "");
@@ -1796,7 +1800,7 @@ namespace StockScannerCommonCode
             translationChange.Add("Down 15%", "ta_change_d15");
             translationChange.Add("Down 20%", "ta_change_d20");
             translationChange.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.Change.ToString(), translationChange);
+            translationsMaster.Add(FinvzEnumFilterType.Change.ToString(), translationChange);
 
             translationPattern = new Dictionary<string, string>();
             translationPattern.Add("Any", "");
@@ -1829,7 +1833,7 @@ namespace StockScannerCommonCode
             translationPattern.Add("Head & Shoulders", "ta_pattern_headandshoulders");
             translationPattern.Add("Head & Shoulders Inverse", "ta_pattern_headandshouldersinv");
             translationPattern.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.Pattern.ToString(), translationPattern);
+            translationsMaster.Add(FinvzEnumFilterType.Pattern.ToString(), translationPattern);
 
             translationRelativeVolume = new Dictionary<string, string>();
             translationRelativeVolume.Add("Any", "");
@@ -1850,7 +1854,7 @@ namespace StockScannerCommonCode
             translationRelativeVolume.Add("Under 0.25", "sh_relvol_u0.25");
             translationRelativeVolume.Add("Under 0.1", "sh_relvol_u0.1");
             translationRelativeVolume.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.RelativeVolume.ToString(), translationRelativeVolume);
+            translationsMaster.Add(FinvzEnumFilterType.RelativeVolume.ToString(), translationRelativeVolume);
 
             translationSharesOutstanding = new Dictionary<string, string>();
             translationSharesOutstanding.Add("Any", "");
@@ -1871,7 +1875,7 @@ namespace StockScannerCommonCode
             translationSharesOutstanding.Add("Over 500M", "sh_outstanding_o500");
             translationSharesOutstanding.Add("Over 1000M", "sh_outstanding_o1000");
             translationSharesOutstanding.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.SharesOutstanding.ToString(), translationSharesOutstanding);
+            translationsMaster.Add(FinvzEnumFilterType.SharesOutstanding.ToString(), translationSharesOutstanding);
 
 
             // Column 5
@@ -1937,7 +1941,7 @@ namespace StockScannerCommonCode
             translationCountry.Add("United Kingdom", "geo_unitedkingdom");
             translationCountry.Add("Uruguay", "geo_uruguay");
             translationCountry.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.Country.ToString(), translationCountry);
+            translationsMaster.Add(FinvzEnumFilterType.Country.ToString(), translationCountry);
 
             translationPS = new Dictionary<string, string>();
             translationPS.Add("Any", "");
@@ -1964,7 +1968,7 @@ namespace StockScannerCommonCode
             translationPS.Add("Over 9", "fa_ps_o9");
             translationPS.Add("Over 10", "fa_ps_o10");
             translationPS.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.PS.ToString(), translationPS);
+            translationsMaster.Add(FinvzEnumFilterType.PS.ToString(), translationPS);
 
             translationEPSGrowthNextYear = new Dictionary<string, string>();
             translationEPSGrowthNextYear.Add("Any", "");
@@ -1985,7 +1989,7 @@ namespace StockScannerCommonCode
             translationEPSGrowthNextYear.Add("Over 25%", "fa_epsyoy1_o25");
             translationEPSGrowthNextYear.Add("Over 30%", "fa_epsyoy1_o30");
             translationEPSGrowthNextYear.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.EPSGrowthNextYear.ToString(), translationEPSGrowthNextYear);
+            translationsMaster.Add(FinvzEnumFilterType.EPSGrowthNextYear.ToString(), translationEPSGrowthNextYear);
 
             translationSalesGrowthQuarterOverQuarter = new Dictionary<string, string>();
             translationSalesGrowthQuarterOverQuarter.Add("Any", "");
@@ -2006,7 +2010,7 @@ namespace StockScannerCommonCode
             translationSalesGrowthQuarterOverQuarter.Add("Over 25%", "fa_salesqoq_o25");
             translationSalesGrowthQuarterOverQuarter.Add("Over 30%", "fa_salesqoq_o30");
             translationSalesGrowthQuarterOverQuarter.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.SalesGrowthQuarterOverQuarter.ToString(), translationSalesGrowthQuarterOverQuarter);
+            translationsMaster.Add(FinvzEnumFilterType.SalesGrowthQuarterOverQuarter.ToString(), translationSalesGrowthQuarterOverQuarter);
 
             translationCurrentRatio = new Dictionary<string, string>();
             translationCurrentRatio.Add("Any", "");
@@ -2023,7 +2027,7 @@ namespace StockScannerCommonCode
             translationCurrentRatio.Add("Over 5", "fa_curratio_o5");
             translationCurrentRatio.Add("Over 10", "fa_curratio_o10");
             translationCurrentRatio.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.CurrentRatio.ToString(), translationCurrentRatio);
+            translationsMaster.Add(FinvzEnumFilterType.CurrentRatio.ToString(), translationCurrentRatio);
 
             translationOperatingMargin = new Dictionary<string, string>();
             translationOperatingMargin.Add("Any", "");
@@ -2068,7 +2072,7 @@ namespace StockScannerCommonCode
             translationOperatingMargin.Add("Over 80%", "fa_opermargin_o80");
             translationOperatingMargin.Add("Over 90%", "fa_opermargin_o90");
             translationOperatingMargin.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.OperatingMargin.ToString(), translationOperatingMargin);
+            translationsMaster.Add(FinvzEnumFilterType.OperatingMargin.ToString(), translationOperatingMargin);
 
             translationInstitutionalOwnership = new Dictionary<string, string>();
             translationInstitutionalOwnership.Add("Any", "");
@@ -2093,7 +2097,7 @@ namespace StockScannerCommonCode
             translationInstitutionalOwnership.Add("Over 80%", "sh_instown_o80");
             translationInstitutionalOwnership.Add("Over 90%", "sh_instown_o90");
             translationInstitutionalOwnership.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.InstitutionalOwnership.ToString(), translationInstitutionalOwnership);
+            translationsMaster.Add(FinvzEnumFilterType.InstitutionalOwnership.ToString(), translationInstitutionalOwnership);
 
             translationEarningsDate = new Dictionary<string, string>();
             translationEarningsDate.Add("Any", "");
@@ -2113,7 +2117,7 @@ namespace StockScannerCommonCode
             translationEarningsDate.Add("Previous Week", "earningsdate_prevweek");
             translationEarningsDate.Add("This Month", "earningsdate_thismonth");
             translationEarningsDate.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.EarningsDate.ToString(), translationEarningsDate);
+            translationsMaster.Add(FinvzEnumFilterType.EarningsDate.ToString(), translationEarningsDate);
 
             translationGap = new Dictionary<string, string>();
             translationGap.Add("Any", "");
@@ -2146,7 +2150,7 @@ namespace StockScannerCommonCode
             translationGap.Add("Down 15%", "ta_gap_d15");
             translationGap.Add("Down 20%", "ta_gap_d20");
             translationGap.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.Gap.ToString(), translationGap);
+            translationsMaster.Add(FinvzEnumFilterType.Gap.ToString(), translationGap);
 
             translationChangeFromOpen = new Dictionary<string, string>();
             translationChangeFromOpen.Add("Any", "");
@@ -2179,7 +2183,7 @@ namespace StockScannerCommonCode
             translationChangeFromOpen.Add("Down 15%", "ta_changeopen_d15");
             translationChangeFromOpen.Add("Down 20%", "ta_changeopen_d20");
             translationChangeFromOpen.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.ChangeFromOpen.ToString(), translationChangeFromOpen);
+            translationsMaster.Add(FinvzEnumFilterType.ChangeFromOpen.ToString(), translationChangeFromOpen);
 
             translationCandlestick = new Dictionary<string, string>();
             translationCandlestick.Add("Any", "");
@@ -2195,7 +2199,7 @@ namespace StockScannerCommonCode
             translationCandlestick.Add("Marubozu White", "ta_candlestick_mw");
             translationCandlestick.Add("Marubozu Black", "ta_candlestick_mb");
             translationCandlestick.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.Candlestick.ToString(), translationCandlestick);
+            translationsMaster.Add(FinvzEnumFilterType.Candlestick.ToString(), translationCandlestick);
 
             translationCurrentVolume = new Dictionary<string, string>();
             translationCurrentVolume.Add("Any", "");
@@ -2218,7 +2222,7 @@ namespace StockScannerCommonCode
             translationCurrentVolume.Add("Over 10M", "sh_curvol_o10000");
             translationCurrentVolume.Add("Over 20M", "sh_curvol_o20000");
             translationCurrentVolume.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.CurrentVolume.ToString(), translationCurrentVolume);
+            translationsMaster.Add(FinvzEnumFilterType.CurrentVolume.ToString(), translationCurrentVolume);
 
             translationFloat = new Dictionary<string, string>();
             translationFloat.Add("Any", "");
@@ -2239,7 +2243,7 @@ namespace StockScannerCommonCode
             translationFloat.Add("Over 500M", "sh_float_o500");
             translationFloat.Add("Over 1000M", "sh_float_o1000");
             translationFloat.Add("Custom (Elite only)", "custom doesn't work");
-            translationsMaster.Add(EnumFilterType.Float.ToString(), translationFloat);
+            translationsMaster.Add(FinvzEnumFilterType.Float.ToString(), translationFloat);
 
 
         }
