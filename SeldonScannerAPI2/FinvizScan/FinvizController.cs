@@ -106,6 +106,12 @@ namespace SeldonStockScannerAPI.FinvizScan
             return _finvizFilter.GetBreakout();
         }
 
+        [HttpGet("breakoutv2")]
+        public async Task<ActionResult<List<FinvizCompanyEntity>>> GetBreakoutV2()
+        {
+            return _finvizFilter.GetBreakoutV2();
+        }
+
         [HttpGet("shorts")]
         public async Task<ActionResult<List<FinvizCompanyEntity>>> GetShorts()
         {

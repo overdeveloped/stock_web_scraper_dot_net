@@ -5,6 +5,10 @@ namespace SeldonStockScannerAPI.Data
 {
     public class DataContext : DbContext
     {
+        public DataContext()
+        {
+        }
+
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
         }
@@ -20,5 +24,13 @@ namespace SeldonStockScannerAPI.Data
         public DbSet<Plus500Symbol> plus500Symbols { get; set; }
 
         public DbSet<FinvizCompanyEntity> finvizCompanyEntitys { get; set; }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=seldon;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False");
+            }
+        }
     }
 }

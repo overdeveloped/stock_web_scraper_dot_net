@@ -6,7 +6,7 @@ namespace SeldonStockScannerAPI.models
     public class Plus500Symbol
     {
         public int Id { get; set; }
-        public string Ticker { get; set; }
+        public string Symbol { get; set; }
 
         public Plus500Symbol()
         {

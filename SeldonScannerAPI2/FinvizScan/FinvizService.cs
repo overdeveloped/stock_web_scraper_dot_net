@@ -125,39 +125,62 @@ namespace SeldonStockScannerAPI.FinvizScan
             return this.FullUrl;
         }
 
-        public List<string> GetPlus500List()
+        private List<FinvizCompanyEntity> filterByPluss500(List<FinvizCompanyEntity> finvizResults)
         {
-            this.plus500tickers = _scraper.GetCompletePlus500();
-
-            return this.plus500tickers;
-        }
-
-
-        public List<FinvizCompanyEntity> GetMegaCompanies()
-        {
-            ResetFilterNames();
-
-            this.filterNames.Add(FinvzEnumFilterType.MarketCap.ToString(), "Mega ($200bln and more)");
-
-            List<FinvizCompanyEntity> finvizResults = _scraper.GetMegaCompanies();
-
             List<FinvizCompanyEntity> result = new List<FinvizCompanyEntity>();
 
-            if (this.plus500tickers.Count() > 0 && _scraper.GetMegaCompanies().Count() > 0)
+            using (var context = new DataContext())
             {
-                foreach (string symbol in this.plus500tickers)
+                List<Plus500Symbol> symbols = context.plus500Symbols.ToList();
+
+                if (symbols.Count > 0 && _scraper.GetMegaCompanies().Count() > 0)
                 {
-                    foreach (FinvizCompanyEntity finvizResult in finvizResults)
+                    foreach (Plus500Symbol symbol in symbols)
                     {
-                        if (symbol.Contains(finvizResult.Ticker))
+                        foreach (FinvizCompanyEntity finvizResult in finvizResults)
                         {
-                            result.Add(finvizResult);
+                            if (symbol.Symbol.Contains(finvizResult.Ticker))
+                            {
+                                result.Add(finvizResult);
+                            }
                         }
                     }
                 }
             }
 
             return result;
+        }
+
+        public List<string> GetPlus500List()
+        {
+            this.plus500tickers = _scraper.GetCompletePlus500();
+
+            using (var context = new DataContext())
+            {
+                foreach (var plus500ticker in plus500tickers)
+                {
+                    Plus500Symbol symbol = new Plus500Symbol();
+                    symbol.Symbol = plus500ticker;
+
+                    context.plus500Symbols.Add(symbol);
+
+                }
+
+                context.SaveChanges();
+            }
+
+
+            return this.plus500tickers;
+        }
+
+        public List<FinvizCompanyEntity> GetMegaCompanies()
+        {
+            ResetFilterNames();
+
+            this.filterNames.Add(FinvzEnumFilterType.MarketCap.ToString(), "Mega ($200bln and more)");
+            List<FinvizCompanyEntity> finvizResults = _scraper.GetMegaCompanies();
+
+            return filterByPluss500(finvizResults);
         }
 
         public List<FinvizCompanyEntity> GetLongHolds()
@@ -171,7 +194,9 @@ namespace SeldonStockScannerAPI.FinvizScan
             this.filterNames.Add(FinvzEnumFilterType.ReturnOnEquity.ToString(), "Over +15%");
             this.filterNames.Add(FinvzEnumFilterType.CurrentRatio.ToString(), "Over 1.5");
 
-            return _scraper.GetCustomWatchList(BuildUrl(), "longHolds");
+            List<FinvizCompanyEntity> finvizResults = _scraper.GetCustomWatchList(BuildUrl(), "longHolds");
+
+            return filterByPluss500(finvizResults);
         }
 
         public List<FinvizCompanyEntity> GetOversoldBounce()
@@ -183,7 +208,9 @@ namespace SeldonStockScannerAPI.FinvizScan
             this.filterNames.Add(FinvzEnumFilterType.Change.ToString(), "Up");
             this.filterNames.Add(FinvzEnumFilterType.RelativeVolume.ToString(), "Over 2");
 
-            return _scraper.GetCustomWatchList(BuildUrl(), "oversoldBounce");
+            List<FinvizCompanyEntity> finvizResults = _scraper.GetCustomWatchList(BuildUrl(), "oversoldBounce");
+
+            return filterByPluss500(finvizResults);
         }
 
         public List<FinvizCompanyEntity> GetBreakout()
@@ -198,7 +225,26 @@ namespace SeldonStockScannerAPI.FinvizScan
             this.filterNames.Add(FinvzEnumFilterType.DebtEquity.ToString(), "Under 1");
             this.filterNames.Add(FinvzEnumFilterType.AverageVolume.ToString(), "Over 100K");
 
-            return _scraper.GetCustomWatchList(BuildUrl(), "breakout");
+            List<FinvizCompanyEntity> finvizResults = _scraper.GetCustomWatchList(BuildUrl(), "breakout");
+
+            return filterByPluss500(finvizResults);
+        }
+
+        public List<FinvizCompanyEntity> GetBreakoutV2()
+        {
+            ResetFilterNames();
+
+            this.filterNames.Add(FinvzEnumFilterType.MarketCap.ToString(), "+Small (over $300mln)");
+            this.filterNames.Add(FinvzEnumFilterType.RelativeVolume.ToString(), "Over 1"); // Move this up if too many results
+            this.filterNames.Add(FinvzEnumFilterType.CurrentVolume.ToString(), "Over 500K"); // Move this up if too many results
+            this.filterNames.Add(FinvzEnumFilterType.SalesGrowthPast5Years.ToString(), "Positive (>0%)");
+            this.filterNames.Add(FinvzEnumFilterType.MA50.ToString(), "Price above SMA50");
+            this.filterNames.Add(FinvzEnumFilterType.HighLow52Week.ToString(), "0-10% below High");
+            this.filterNames.Add(FinvzEnumFilterType.Volatility.ToString(), "Month - Over 5%");
+
+            List<FinvizCompanyEntity> finvizResults = _scraper.GetCustomWatchList(BuildUrl(), "breakout_v2");
+
+            return filterByPluss500(finvizResults);
         }
 
         public List<FinvizCompanyEntity> GetShorts()
@@ -211,7 +257,9 @@ namespace SeldonStockScannerAPI.FinvizScan
             this.filterNames.Add(FinvzEnumFilterType.RelativeVolume.ToString(), "Over 1");
             this.filterNames.Add(FinvzEnumFilterType.CurrentVolume.ToString(), "Over 2M");
 
-            return _scraper.GetCustomWatchList(BuildUrl(), "shorts");
+            List<FinvizCompanyEntity> finvizResults = _scraper.GetCustomWatchList(BuildUrl(), "shorts");
+
+            return filterByPluss500(finvizResults);
         }
 
         public List<FinvizCompanyEntity> GetBounceOffMa()
@@ -224,20 +272,10 @@ namespace SeldonStockScannerAPI.FinvizScan
             this.filterNames.Add(FinvzEnumFilterType.RelativeVolume.ToString(), "Over 1");
             this.filterNames.Add(FinvzEnumFilterType.CurrentVolume.ToString(), "Over 2M");
 
-            return _scraper.GetCustomWatchList(BuildUrl(), "bouncema");
+            List<FinvizCompanyEntity> finvizResults = _scraper.GetCustomWatchList(BuildUrl(), "bouncema");
+
+            return filterByPluss500(finvizResults);
         }
-
-
-
-
-
-
-
-
-
-
-
-
 
 
         public List<FinvizCompanyEntity> GetShorts2()
@@ -279,8 +317,6 @@ namespace SeldonStockScannerAPI.FinvizScan
                 string filterName = filterNames[filterKey];
                 string filterURL = sma200translator[filterName];
                 argumentsSB.Append(translationsMaster[filterKey][filterNames[filterKey]]);
-                // Price above sma200
-                // Price above sma200
             }
 
             string fullUrl = "";

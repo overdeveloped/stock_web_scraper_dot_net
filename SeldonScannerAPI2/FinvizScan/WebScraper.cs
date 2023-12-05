@@ -787,6 +787,7 @@ namespace SeldonStockScannerAPI.FinvizScan
 
         private List<FinvizCompanyEntity> getResults(string url, string name)
         {
+            Helpers.outputToFile($"{name}_url", url);
             StringBuilder sb = new StringBuilder();
             List<FinvizCompanyEntity> results = new List<FinvizCompanyEntity>();
             HtmlWeb web = new HtmlWeb();
@@ -821,24 +822,39 @@ namespace SeldonStockScannerAPI.FinvizScan
 
                 HtmlNodeCollection tableTextRows = doc.DocumentNode.SelectNodes("//*[@id='screener-views-table']/tr[5]/td[1]/table/tr/td/table/tr");
 
-                for (int i = 0; i < tableTextRows.Count; i++)
+                if (tableTextRows != null)
                 {
-                    var children = tableTextRows[i].GetChildElements();
+                    sb.AppendLine($"********************{tableTextRows.Count}**********************");
 
-                    FinvizCompanyEntity fCompany = new FinvizCompanyEntity();
-                    fCompany.Ticker = children.ToList()[1].InnerText;
-                    fCompany.Company = children.ToList()[2].InnerText;
-                    fCompany.Sector = children.ToList()[3].InnerText;
-                    fCompany.Industry = children.ToList()[4].InnerText;
-                    fCompany.Country = children.ToList()[5].InnerText;
-                    fCompany.MarketCap = children.ToList()[6].InnerText;
-                    fCompany.PE = children.ToList()[7].InnerText;
-                    fCompany.Price = children.ToList()[8].InnerText;
-                    fCompany.Change = children.ToList()[9].InnerText;
-                    fCompany.Volume = children.ToList()[10].InnerText;
+                    foreach (var tableTextRow in tableTextRows)
+                    {
+                        var children = tableTextRow.GetChildElements();
 
-                    results.Add(fCompany);
+                        FinvizCompanyEntity fCompany = new FinvizCompanyEntity();
+                        fCompany.Ticker = children.ToList()[1].InnerText;
+                        fCompany.Company = children.ToList()[2].InnerText;
+                        fCompany.Sector = children.ToList()[3].InnerText;
+                        fCompany.Industry = children.ToList()[4].InnerText;
+                        fCompany.Country = children.ToList()[5].InnerText;
+                        fCompany.MarketCap = children.ToList()[6].InnerText;
+                        fCompany.PE = children.ToList()[7].InnerText;
+                        fCompany.Price = children.ToList()[8].InnerText;
+                        fCompany.Change = children.ToList()[9].InnerText;
+                        fCompany.Volume = children.ToList()[10].InnerText;
 
+                        results.Add(fCompany);
+                        sb.AppendLine($"******************************************");
+                        sb.AppendLine($"SYMBOL: {fCompany.Ticker}");
+                        sb.AppendLine($"NAME: {fCompany.Company}");
+                        sb.AppendLine($"SECTOR: {fCompany.Sector}");
+                        sb.AppendLine($"INDUSTRY: {fCompany.Industry}");
+                        sb.AppendLine($"COUNTRY: {fCompany.Country}");
+                        sb.AppendLine($"MARKETCAP: {fCompany.MarketCap}");
+                        sb.AppendLine($"PE: {fCompany.PE}");
+                        sb.AppendLine($"PRICE: {fCompany.Price}");
+                        sb.AppendLine($"CHANGE: {fCompany.Change}");
+                        sb.AppendLine($"VOLUME: {fCompany.Volume}");
+                    }
                 }
             }
 
