@@ -8,8 +8,9 @@ using SeldonStockScannerAPI.models;
 
 namespace SeldonStockScannerAPI.FinvizScan
 {
-    public class FinvizService : IFinvizFilter
+    public class FinvizService : IFinvizService
     {
+        //private readonly AppDbContext _dbContext;
         private readonly WebScraper _scraper = new WebScraper();
         private string RootUrl;
         private string FullUrl;
@@ -129,24 +130,33 @@ namespace SeldonStockScannerAPI.FinvizScan
         {
             List<FinvizCompanyEntity> result = new List<FinvizCompanyEntity>();
 
-            using (var context = new DataContext())
-            {
-                List<Plus500Symbol> symbols = context.plus500Symbols.ToList();
+            //using (var context = new DataContext())
+            //{
+            //    List<Plus500Symbol> symbols = context.plus500Symbols.ToList();
 
-                if (symbols.Count > 0 && _scraper.GetMegaCompanies().Count() > 0)
-                {
-                    foreach (Plus500Symbol symbol in symbols)
-                    {
-                        foreach (FinvizCompanyEntity finvizResult in finvizResults)
-                        {
-                            if (symbol.Symbol.Contains(finvizResult.Ticker))
-                            {
-                                result.Add(finvizResult);
-                            }
-                        }
-                    }
-                }
-            }
+            //    if (symbols.Count > 0 && _scraper.GetMegaCompanies().Count() > 0)
+            //    {
+            //        foreach (Plus500Symbol symbol in symbols)
+            //        {
+            //            foreach (FinvizCompanyEntity finvizResult in finvizResults)
+            //            {
+            //                if (symbol.Symbol.Contains('.'))
+            //                {
+            //                    string[] split = symbol.Symbol.Split('.');
+            //                    string firstPart = split[0];
+            //                    if (firstPart != null && firstPart.Equals(finvizResult.Ticker))
+            //                    {
+            //                        result.Add(finvizResult);
+            //                    }
+            //                }
+            //                else if (symbol.Symbol.Equals(finvizResult.Ticker))
+            //                {
+            //                    result.Add(finvizResult);
+            //                }
+            //            }
+            //        }
+            //    }
+            //}
 
             return result;
         }
@@ -155,19 +165,19 @@ namespace SeldonStockScannerAPI.FinvizScan
         {
             this.plus500tickers = _scraper.GetCompletePlus500();
 
-            using (var context = new DataContext())
-            {
-                foreach (var plus500ticker in plus500tickers)
-                {
-                    Plus500Symbol symbol = new Plus500Symbol();
-                    symbol.Symbol = plus500ticker;
+            //using (var context = new DataContext())
+            //{
+            //    foreach (var plus500ticker in plus500tickers)
+            //    {
+            //        Plus500Symbol symbol = new Plus500Symbol();
+            //        symbol.Symbol = plus500ticker;
 
-                    context.plus500Symbols.Add(symbol);
+            //        //context.plus500Symbols.Add(symbol);
 
-                }
+            //    }
 
-                context.SaveChanges();
-            }
+            //    context.SaveChanges();
+            //}
 
 
             return this.plus500tickers;
@@ -243,6 +253,48 @@ namespace SeldonStockScannerAPI.FinvizScan
             this.filterNames.Add(FinvzEnumFilterType.Volatility.ToString(), "Month - Over 5%");
 
             List<FinvizCompanyEntity> finvizResults = _scraper.GetCustomWatchList(BuildUrl(), "breakout_v2");
+
+            return filterByPluss500(finvizResults);
+        }
+
+        // Low float vs high volume
+        public List<FinvizCompanyEntity> GetBreakoutV3()
+        {
+            ResetFilterNames();
+
+            this.filterNames.Add(FinvzEnumFilterType.MarketCap.ToString(), "+Small (over $300mln)");
+            this.filterNames.Add(FinvzEnumFilterType.RelativeVolume.ToString(), "Over 1"); // Move this up if too many results
+            this.filterNames.Add(FinvzEnumFilterType.CurrentVolume.ToString(), "Over 500K"); // Move this up if too many results
+            this.filterNames.Add(FinvzEnumFilterType.SalesGrowthPast5Years.ToString(), "Positive (>0%)");
+            this.filterNames.Add(FinvzEnumFilterType.Float.ToString(), "Positive (>0%)");
+            this.filterNames.Add(FinvzEnumFilterType.MA50.ToString(), "Price above SMA50");
+            this.filterNames.Add(FinvzEnumFilterType.HighLow52Week.ToString(), "0-10% below High");
+            this.filterNames.Add(FinvzEnumFilterType.Volatility.ToString(), "Month - Over 5%");
+
+            List<FinvizCompanyEntity> finvizResults = _scraper.GetCustomWatchList(BuildUrl(), "breakout_v3");
+
+            return filterByPluss500(finvizResults);
+        }
+
+        public List<FinvizCompanyEntity> ForteCapitalDayTrading()
+        {
+            // From this tutorial:
+            // https://www.youtube.com/watch?v=yyW8WDGjdKI
+            ResetFilterNames();
+
+            //this.filterNames.Add(FinvzEnumFilterType.Country.ToString(), "USA");
+            this.filterNames.Add(FinvzEnumFilterType.SalesGrowthQuarterOverQuarter.ToString(), "Over 30%");
+            this.filterNames.Add(FinvzEnumFilterType.Industry.ToString(), "Stocks only (ex-Funds)");
+            this.filterNames.Add(FinvzEnumFilterType.AverageVolume.ToString(), "Over 500K");
+            this.filterNames.Add(FinvzEnumFilterType.IPODate.ToString(), "In the last 3 years"); // Make the most explosive moves but might keep the list too small
+            this.filterNames.Add(FinvzEnumFilterType.MA200.ToString(), "Price above SMA200");
+            this.filterNames.Add(FinvzEnumFilterType.MA50.ToString(), "Price above SMA50");
+            this.filterNames.Add(FinvzEnumFilterType.MA20.ToString(), "Price above SMA20");
+            this.filterNames.Add(FinvzEnumFilterType.FloatShort.ToString(), "Over 5%");
+            this.filterNames.Add(FinvzEnumFilterType.ChangeFromOpen.ToString(), "Up");
+
+
+            List<FinvizCompanyEntity> finvizResults = _scraper.GetCustomWatchList(BuildUrl(), "forte_day_trading_v2");
 
             return filterByPluss500(finvizResults);
         }

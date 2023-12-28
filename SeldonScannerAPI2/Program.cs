@@ -12,13 +12,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 // DATA
-builder.Services.AddDbContext<DataContext>(options =>
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-builder.Services.AddScoped<IFinvizFilter, FinvizService>();
-builder.Services.AddScoped<IWebScraper, WebScraper>();
+// Services, scoped injection
+builder.Services.AddTransient<IFinvizService, FinvizService>();
+//builder.Services.AddScoped<IWebScraper, WebScraper>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

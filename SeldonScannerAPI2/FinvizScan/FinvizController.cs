@@ -10,12 +10,13 @@ namespace SeldonStockScannerAPI.FinvizScan
     [ApiController]
     public class FinvizController : ControllerBase
     {
-        private readonly DataContext dataContext;
-        private readonly FinvizService _finvizFilter = new FinvizService();
+        //private readonly DataContext dataContext;
+        private readonly IFinvizService finvizService;
+        //private readonly FinvizService _finvizFilter = new FinvizService();
 
-        public FinvizController(DataContext dataContext)
+        public FinvizController(IFinvizService finvizService)
         {
-            this.dataContext = dataContext;
+            this.finvizService = finvizService;
         }
 
         [HttpGet("dummy")]
@@ -77,51 +78,57 @@ namespace SeldonStockScannerAPI.FinvizScan
         [HttpGet("plus500list")]
         public async Task<ActionResult<List<string>>> GetPlus500List()
         {
-            return _finvizFilter.GetPlus500List();
+            return finvizService.GetPlus500List();
         }
 
 
         [HttpGet("megacompanies")]
         public async Task<ActionResult<List<FinvizCompanyEntity>>> GetMegaCompanies()
         {
-            return _finvizFilter.GetMegaCompanies();
+            return finvizService.GetMegaCompanies();
         }
 
 
         [HttpGet("longholds")]
         public async Task<ActionResult<List<FinvizCompanyEntity>>> GetLongHolds()
         {
-            return _finvizFilter.GetLongHolds();
+            return finvizService.GetLongHolds();
         }
 
         [HttpGet("oversoldbounce")]
         public async Task<ActionResult<List<FinvizCompanyEntity>>> GetOversoldBounce()
         {
-            return _finvizFilter.GetOversoldBounce();
+            return finvizService.GetOversoldBounce();
         }
 
         [HttpGet("breakout")]
         public async Task<ActionResult<List<FinvizCompanyEntity>>> GetBreakout()
         {
-            return _finvizFilter.GetBreakout();
+            return finvizService.GetBreakout();
         }
 
         [HttpGet("breakoutv2")]
         public async Task<ActionResult<List<FinvizCompanyEntity>>> GetBreakoutV2()
         {
-            return _finvizFilter.GetBreakoutV2();
+            return finvizService.GetBreakoutV2();
+        }
+
+        [HttpGet("fortedaytrading")]
+        public async Task<ActionResult<List<FinvizCompanyEntity>>> GetForteDayTrading()
+        {
+            return finvizService.ForteCapitalDayTrading();
         }
 
         [HttpGet("shorts")]
         public async Task<ActionResult<List<FinvizCompanyEntity>>> GetShorts()
         {
-            return _finvizFilter.GetShorts();
+            return finvizService.GetShorts();
         }
 
         [HttpGet("bouncema")]
         public async Task<ActionResult<List<FinvizCompanyEntity>>> GetBounceOffMa()
         {
-            return _finvizFilter.GetBounceOffMa();
+            return finvizService.GetBounceOffMa();
         }
 
 
@@ -133,7 +140,7 @@ namespace SeldonStockScannerAPI.FinvizScan
         [HttpGet("tech")]
         public async Task<ActionResult<List<FinvizCompanyEntity>>> GetTech()
         {
-            return _finvizFilter.GetTech();
+            return finvizService.GetTech();
         }
 
         // Example input:
