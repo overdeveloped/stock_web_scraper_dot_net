@@ -143,6 +143,20 @@ namespace SeldonStockScannerAPI.FinvizScan
             return finvizService.GetTech();
         }
 
+        [HttpGet("fortedaytrading")]
+        public async Task<ActionResult<List<FinvizCompanyEntity>>> GetForteDayTrading()
+        {
+            return _finvizFilter.ForteCapitalDayTrading();
+        }
+
+        [HttpGet("overnightgapup")]
+        public async Task<ActionResult<List<FinvizCompanyEntity>>> GetOvernightGapUp()
+        {
+            return _finvizFilter.ForteCapitalDayTrading();
+        }
+
+
+
         // Example input:
 
         //{

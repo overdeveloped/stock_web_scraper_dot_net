@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Metrics;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using SeldonStockScannerAPI.models;
@@ -350,6 +352,38 @@ namespace SeldonStockScannerAPI.FinvizScan
             ResetFilterNames();
 
             return _scraper.GetTech();
+        }
+
+
+        public List<FinvizCompanyEntity> OvernightGapUp()
+        {
+            // From this tutorial:
+            // https://www.youtube.com/watch?v=VDN4jp4Uf1k
+            ResetFilterNames();
+
+        //this.filterNames.Add(FinvzEnumFilterType.Country.ToString(), "USA");
+
+        // TODO: Change all these filters to this:
+            //Price: 5 - 400
+            //Change from close / After hours change?: 2 %
+            //Float: 5M - 10M
+            //Market Cap: 1B
+            //Volume Today / Current Volume ?: 20000
+
+            this.filterNames.Add(FinvzEnumFilterType.Price.ToString(), "Over 30%");
+            this.filterNames.Add(FinvzEnumFilterType.Industry.ToString(), "Stocks only (ex-Funds)");
+            this.filterNames.Add(FinvzEnumFilterType.AverageVolume.ToString(), "Over 500K");
+            this.filterNames.Add(FinvzEnumFilterType.IPODate.ToString(), "In the last 3 years"); // Make the most explosive moves but might keep the list too small
+            this.filterNames.Add(FinvzEnumFilterType.MA200.ToString(), "Price above SMA200");
+            this.filterNames.Add(FinvzEnumFilterType.MA50.ToString(), "Price above SMA50");
+            this.filterNames.Add(FinvzEnumFilterType.MA20.ToString(), "Price above SMA20");
+            this.filterNames.Add(FinvzEnumFilterType.FloatShort.ToString(), "Over 5%");
+            this.filterNames.Add(FinvzEnumFilterType.ChangeFromOpen.ToString(), "Up");
+
+
+            List<FinvizCompanyEntity> finvizResults = _scraper.GetCustomWatchList(BuildUrl(), "forte_day_trading_v2");
+
+            return filterByPluss500(finvizResults);
         }
 
 
