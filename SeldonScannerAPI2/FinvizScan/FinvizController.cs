@@ -104,6 +104,13 @@ namespace SeldonStockScannerAPI.FinvizScan
             return finvizService.GetShorts();
         }
 
+        [HttpGet("shortsqueeze")]
+        public ActionResult<List<FinvizCompanyEntity>> GetShortSqueeze()
+        {
+            // TODO: NEEDS SHORT SQUEEZE IN SERVICE
+            return finvizService.GetShorts();
+        }
+
         [HttpGet("bouncema")]
         public ActionResult<List<FinvizCompanyEntity>> GetBounceOffMa()
         {

@@ -13,6 +13,7 @@ namespace SeldonStockScannerAPI.FinvizScan
         List<FinvizCompanyEntity> GetBreakoutV3() { return new List<FinvizCompanyEntity>(); }
         List<FinvizCompanyEntity> ForteCapitalDayTrading() { return new List<FinvizCompanyEntity>(); }
         List<FinvizCompanyEntity> GetShorts() { return new List<FinvizCompanyEntity>(); }
+        List<FinvizCompanyEntity> GetShortSqueezes() { return new List<FinvizCompanyEntity>(); }
         List<FinvizCompanyEntity> GetBounceOffMa() { return new List<FinvizCompanyEntity>(); }
         List<FinvizCompanyEntity> GetShorts2() { return new List<FinvizCompanyEntity>(); }
         List<FinvizCompanyEntity> GetTech() { return new List<FinvizCompanyEntity>(); }
