@@ -97,7 +97,7 @@ namespace SeldonStockScannerAPI.FinvizScan
                 { FinvzEnumFilterType.MarketCap.ToString(), "Mega (200bln and more)" }
             };
 
-            List<FinvizCompanyEntity> finvizResults = this.webScraper.GetCustomWatchList(this.finvizUrlTranslator.BuildUrl(urlArguments), "longHolds");
+            List<FinvizCompanyEntity> finvizResults = this.webScraper.GetCustomFinvizScan(this.finvizUrlTranslator.BuildUrl(urlArguments), "longHolds");
 
             return filterByPluss500(finvizResults);
         }
@@ -115,7 +115,7 @@ namespace SeldonStockScannerAPI.FinvizScan
             };
 
 
-            List<FinvizCompanyEntity> finvizResults = this.webScraper.GetCustomWatchList(this.finvizUrlTranslator.BuildUrl(urlArguments), "longHolds");
+            List<FinvizCompanyEntity> finvizResults = this.webScraper.GetCustomFinvizScan(this.finvizUrlTranslator.BuildUrl(urlArguments), "longHolds");
 
             return filterByPluss500(finvizResults);
         }
@@ -130,7 +130,7 @@ namespace SeldonStockScannerAPI.FinvizScan
                 { FinvzEnumFilterType.RelativeVolume.ToString(), "Over 2" }
             };
 
-            List<FinvizCompanyEntity> finvizResults = this.webScraper.GetCustomWatchList(this.finvizUrlTranslator.BuildUrl(urlArguments), "oversoldBounce");
+            List<FinvizCompanyEntity> finvizResults = this.webScraper.GetCustomFinvizScan(this.finvizUrlTranslator.BuildUrl(urlArguments), "oversoldBounce");
 
             return filterByPluss500(finvizResults);
         }
@@ -148,7 +148,7 @@ namespace SeldonStockScannerAPI.FinvizScan
                 { FinvzEnumFilterType.AverageVolume.ToString(), "Over 100K" }
             };
 
-            List<FinvizCompanyEntity> finvizResults = this.webScraper.GetCustomWatchList(this.finvizUrlTranslator.BuildUrl(urlArguments), "breakout");
+            List<FinvizCompanyEntity> finvizResults = this.webScraper.GetCustomFinvizScan(this.finvizUrlTranslator.BuildUrl(urlArguments), "breakout");
 
             return filterByPluss500(finvizResults);
         }
@@ -166,7 +166,7 @@ namespace SeldonStockScannerAPI.FinvizScan
                 { FinvzEnumFilterType.Volatility.ToString(), "Month - Over 5%" }
             };
 
-            List<FinvizCompanyEntity> finvizResults = this.webScraper.GetCustomWatchList(this.finvizUrlTranslator.BuildUrl(urlArguments), "breakout_v2");
+            List<FinvizCompanyEntity> finvizResults = this.webScraper.GetCustomFinvizScan(this.finvizUrlTranslator.BuildUrl(urlArguments), "breakout_v2");
 
             return filterByPluss500(finvizResults);
         }
@@ -186,7 +186,7 @@ namespace SeldonStockScannerAPI.FinvizScan
                 { FinvzEnumFilterType.Volatility.ToString(), "Month - Over 5%" }
             };
 
-            List<FinvizCompanyEntity> finvizResults = this.webScraper.GetCustomWatchList(this.finvizUrlTranslator.BuildUrl(urlArguments), "breakout_v3");
+            List<FinvizCompanyEntity> finvizResults = this.webScraper.GetCustomFinvizScan(this.finvizUrlTranslator.BuildUrl(urlArguments), "breakout_v3");
 
             return filterByPluss500(finvizResults);
         }
@@ -210,7 +210,7 @@ namespace SeldonStockScannerAPI.FinvizScan
             };
 
 
-            List<FinvizCompanyEntity> finvizResults = this.webScraper.GetCustomWatchList(this.finvizUrlTranslator.BuildUrl(urlArguments), "forte_day_trading_v2");
+            List<FinvizCompanyEntity> finvizResults = this.webScraper.GetCustomFinvizScan(this.finvizUrlTranslator.BuildUrl(urlArguments), "forte_day_trading_v2");
 
             return filterByPluss500(finvizResults);
         }
@@ -226,7 +226,7 @@ namespace SeldonStockScannerAPI.FinvizScan
                 { FinvzEnumFilterType.CurrentVolume.ToString(), "Over 2M" }
             };
 
-            List<FinvizCompanyEntity> finvizResults = this.webScraper.GetCustomWatchList(this.finvizUrlTranslator.BuildUrl(urlArguments), "shorts");
+            List<FinvizCompanyEntity> finvizResults = this.webScraper.GetCustomFinvizScan(this.finvizUrlTranslator.BuildUrl(urlArguments), "shorts");
 
             return filterByPluss500(finvizResults);
         }
@@ -243,7 +243,7 @@ namespace SeldonStockScannerAPI.FinvizScan
                 { FinvzEnumFilterType.CurrentRatio.ToString(), "Over 1.5" }
             };
 
-            return this.webScraper.GetCustomWatchList(this.finvizUrlTranslator.BuildUrl(urlArguments), "shorts2");
+            return this.webScraper.GetCustomFinvizScan(this.finvizUrlTranslator.BuildUrl(urlArguments), "shorts2");
         }
 
         public List<FinvizCompanyEntity> GetShortSqueezes()
@@ -262,7 +262,7 @@ namespace SeldonStockScannerAPI.FinvizScan
             //urlArguments.Add(FinvzEnumFilterType.ReturnOnEquity.ToString(), "Over +15%");
             //urlArguments.Add(FinvzEnumFilterType.CurrentRatio.ToString(), "Over 1.5");
 
-            return this.webScraper.GetCustomWatchList(this.finvizUrlTranslator.BuildUrl(urlArguments), "shorts2");
+            return this.webScraper.GetCustomFinvizScan(this.finvizUrlTranslator.BuildUrl(urlArguments), "short_squeeze");
         }
 
 
@@ -277,7 +277,7 @@ namespace SeldonStockScannerAPI.FinvizScan
                 { FinvzEnumFilterType.CurrentVolume.ToString(), "Over 2M" }
             };
 
-            List<FinvizCompanyEntity> finvizResults = this.webScraper.GetCustomWatchList(this.finvizUrlTranslator.BuildUrl(urlArguments), "bouncema");
+            List<FinvizCompanyEntity> finvizResults = this.webScraper.GetCustomFinvizScan(this.finvizUrlTranslator.BuildUrl(urlArguments), "bouncema");
 
             return filterByPluss500(finvizResults);
         }
@@ -315,7 +315,7 @@ namespace SeldonStockScannerAPI.FinvizScan
             };
 
 
-            List<FinvizCompanyEntity> finvizResults = this.webScraper.GetCustomWatchList(this.finvizUrlTranslator.BuildUrl(urlArguments), "forte_day_trading_v2");
+            List<FinvizCompanyEntity> finvizResults = this.webScraper.GetCustomFinvizScan(this.finvizUrlTranslator.BuildUrl(urlArguments), "forte_day_trading_v2");
 
             return filterByPluss500(finvizResults);
         }

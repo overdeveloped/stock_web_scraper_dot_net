@@ -12,7 +12,7 @@ namespace SeldonStockScannerAPI.WebScraper
         List<string> GetCompletePlus500();
 
         // Finviz website
-        List<FinvizCompanyEntity> GetCustomWatchList(string url, string name);
+        List<FinvizCompanyEntity> GetCustomFinvizScan(string url, string name);
 
         // Fidelity website
         Dictionary<string, string> getFTSE100();

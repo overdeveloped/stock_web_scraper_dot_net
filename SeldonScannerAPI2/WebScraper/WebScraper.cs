@@ -1,14 +1,6 @@
 ﻿using HtmlAgilityPack;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-//using Dapper;
-using System.Security.Policy;
 using SeldonStockScannerAPI.models;
 
 namespace SeldonStockScannerAPI.WebScraper
@@ -104,12 +96,7 @@ namespace SeldonStockScannerAPI.WebScraper
         /// Sends custom request to Finviz
         /// </summary>
         /// <returns></returns>
-        public List<FinvizCompanyEntity> GetCustomWatchList(string url, string name)
-        {
-            return getResults(url, name);
-        }
-
-        private List<FinvizCompanyEntity> getResults(string url, string name)
+        public List<FinvizCompanyEntity> GetCustomFinvizScan(string url, string name)
         {
             Helpers.outputToFile($"{name}_url", url);
             StringBuilder sb = new StringBuilder();
@@ -135,6 +122,7 @@ namespace SeldonStockScannerAPI.WebScraper
                 }
             }
 
+            // Check page by page
             for (int index = 1; index < 20 * iterationScaler; index += 20)
             {
                 doc = web.Load($"{url}&r={index}");
