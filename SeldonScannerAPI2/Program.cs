@@ -1,5 +1,7 @@
 global using SeldonStockScannerAPI.Data;
+using HtmlAgilityPack;
 using Microsoft.EntityFrameworkCore;
+using SeldonStockScannerAPI.Connections;
 using SeldonStockScannerAPI.FinvizScan;
 using SeldonStockScannerAPI.FinvizUrlTranslator;
 using SeldonStockScannerAPI.WebScraper;
@@ -21,8 +23,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // Services, singleton injection
 builder.Services.AddSingleton<IFinvizService, FinvizService>();
-builder.Services.AddSingleton<IWebScraper, WebScraper>();
+builder.Services.AddSingleton<IWebScraper, SeldonWebScraper>();
 builder.Services.AddSingleton<IFinvizUrlTranslator, FinvizUrlTranslator>();
+builder.Services.AddSingleton<HtmlWeb, HtmlWeb>();
+builder.Services.AddSingleton<IWebConnection, WebConnection>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

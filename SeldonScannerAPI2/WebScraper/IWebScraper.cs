@@ -1,4 +1,5 @@
-﻿using SeldonStockScannerAPI.models;
+﻿using HtmlAgilityPack;
+using SeldonStockScannerAPI.models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,13 +10,15 @@ namespace SeldonStockScannerAPI.WebScraper
 {
     public interface IWebScraper
     {
+        string GetTestHTML();
+
         List<string> GetCompletePlus500();
 
         // Finviz website
         List<FinvizCompanyEntity> GetCustomFinvizScan(string url, string name);
 
         // Fidelity website
-        Dictionary<string, string> getFTSE100();
+        Dictionary<string, string> GetFTSE100();
 
         // Yahoo website
         double GetCurrentValue(string symbol);

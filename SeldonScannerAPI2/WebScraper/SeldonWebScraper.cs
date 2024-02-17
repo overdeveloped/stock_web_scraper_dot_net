@@ -2,26 +2,45 @@
 using System.Reflection;
 using System.Text;
 using SeldonStockScannerAPI.models;
+using SeldonStockScannerAPI.Connections;
 
 namespace SeldonStockScannerAPI.WebScraper
 {
-    public class WebScraper : IWebScraper
+    public class SeldonWebScraper : IWebScraper
     {
+        private readonly IWebConnection webConnection;
+
+        public SeldonWebScraper(IWebConnection webConnection)
+        {
+            this.webConnection = webConnection;
+        }
+
+        public string GetTestHTML()
+        {
+            HtmlDocument doc = this.webConnection.GetWebsiteByUrl("test");
+            return doc.Text;
+        }
+
         public List<string> GetCompletePlus500()
         {
             List<string> results = new List<string>();
 
-            // TEST VERSION
-            //string testHtml = Helpers.getFromFile("plus500");
-            //HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
-            //doc.LoadHtml(testHtml);
+            HtmlDocument doc = this.webConnection.GetWebsiteByUrl("https://www.plus500.com/en/instruments#indicesf");
 
-            // REAL ONE
-            HtmlWeb web = new HtmlWeb();
-            HtmlDocument doc = web.Load("https://www.plus500.com/en/instruments#indicesf");
+            HtmlNodeCollection tableRowSpans = doc.DocumentNode.SelectNodes("//tr//span");
 
-            //string tag = doc.GetElementbyId("stocks").InnerHtml;
-            //Helpers.outputToFile("a_plus500_div_tag_by_id", tag);
+            int count = 2;
+            foreach (var tr in tableRowSpans)
+            {
+                if (count % 2 == 0)
+                {
+                    results.Add(tr.InnerText);
+                }
+
+                count++;
+            }
+
+            return results;
 
             HtmlNodeCollection tableData = doc.DocumentNode.SelectNodes("//div[@id='stocks']/div/div/div/div/table/tbody/tr/td[@class='sym']/span");
 
@@ -41,54 +60,6 @@ namespace SeldonStockScannerAPI.WebScraper
 
             return results;
 
-
-            // TODO: REPLACE WITH REAL HTML
-            //doc.LoadHtml(testHtml);
-            HtmlNodeCollection htmlNodes = doc.DocumentNode.SelectNodes("//table[@class='instruments-table']");
-
-            int tableCount = 0;
-            foreach (HtmlNode table in htmlNodes)
-            {
-                HtmlNodeCollection rowCollection = table.SelectNodes("tr");
-
-                if (tableCount > 7 && tableCount < 10)
-                {
-                    foreach (HtmlNode row in rowCollection)
-                    {
-                        HtmlNodeCollection dataCollection = row.SelectNodes("td");
-                        string symbolTranslated = "";
-
-                        foreach (HtmlNode cell in dataCollection)
-                        {
-                            string symbol = cell.InnerText.Split(' ')[0].Trim();
-                            if (symbol.Contains("-L"))
-                            {
-                                // TODO: SHOULD THIS HAVE A SUFFIX?
-                                symbolTranslated = symbol.Replace("-L", ".LON");
-                            }
-                            else
-                            {
-                                symbolTranslated = symbol;
-                            }
-
-                            results.Add(symbolTranslated);
-                            break;
-                        }
-                    }
-                }
-                tableCount++;
-            }
-
-            // The symbol names need converting. e.g. "-L" need to change to ".LON"
-
-            StringBuilder sb = new StringBuilder();
-            foreach (string item in results)
-            {
-                sb.AppendLine(item);
-            }
-            Helpers.outputToFile("plus500symbols", sb.ToString());
-
-            return results;
         }
 
         #region - FINVIZ -
@@ -180,7 +151,7 @@ namespace SeldonStockScannerAPI.WebScraper
 
 
         #region - FIDELITY -
-        public Dictionary<string, string> getFTSE100()
+        public Dictionary<string, string> GetFTSE100()
         {
             Dictionary<string, string> results = new Dictionary<string, string>();
 
