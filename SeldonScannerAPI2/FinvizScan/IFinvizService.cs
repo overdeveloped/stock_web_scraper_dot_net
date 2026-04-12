@@ -1,4 +1,4 @@
-﻿using SeldonStockScannerAPI.models;
+﻿using SeldonStockScannerAPI.Models;
 
 namespace SeldonStockScannerAPI.FinvizScan
 {

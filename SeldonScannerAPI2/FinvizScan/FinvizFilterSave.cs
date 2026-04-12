@@ -45,6 +45,7 @@ namespace SeldonStockScannerAPI.FinvizScan
         public Dictionary<string, string> translationBeta { get; set; }
         public Dictionary<string, string> translationPrice { get; set; }
         public Dictionary<string, string> translationAfterHoursClose { get; set; }
+
         // Column 2
         public Dictionary<string, string> translationIndex { get; set; }
         public Dictionary<string, string> translationPE { get; set; }
@@ -61,7 +62,6 @@ namespace SeldonStockScannerAPI.FinvizScan
         public Dictionary<string, string> translationTargetPrice { get; set; }
         public Dictionary<string, string> translationAfterHoursChange { get; set; }
 
-
         // Column 3
         public Dictionary<string, string> translationSector { get; set; }
         public Dictionary<string, string> translationForwardPE { get; set; }
@@ -76,14 +76,9 @@ namespace SeldonStockScannerAPI.FinvizScan
         public Dictionary<string, string> translation52WeekHighLow { get; set; }
         public Dictionary<string, string> translationAverageVolume { get; set; }
         public Dictionary<string, string> translationIPODate { get; set; }
-
-
-
-
-
-
         public Dictionary<string, string> translationRelativeVolume { get; set; }
         public Dictionary<string, string> translationSharesOutstanding { get; set; }
+
         // Column 4
         public Dictionary<string, string> translationIndustry { get; set; }
         public Dictionary<string, string> translationCurrentVolume { get; set; }

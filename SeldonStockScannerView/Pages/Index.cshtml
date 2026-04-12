@@ -1,0 +1,50 @@
+﻿@page
+@using SeldonStockScannerView.Models
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+    List<FinvizCompany> companies = (List<FinvizCompany>)ViewData["companies"];
+
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ticker</th>
+                <th>company</th>
+                <th>sector</th>
+                <th>industry</th>
+                <th>country</th>
+                <th>marketCap</th>
+                <th>pe</th>
+                <th>price</th>
+                <th>change</th>
+                <th>volume</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @{
+                foreach (FinvizCompany company in companies)
+                {
+                    <tr>
+                        <td>@company.Ticker</td>
+                        <td>@company.Company</td>
+                        <td>@company.Sector</td>
+                        <td>@company.Industry</td>
+                        <td>@company.Country</td>
+                        <td>@company.MarketCap</td>
+                        <td>@company.Pe</td>
+                        <td>@company.Price</td>
+                        <td>@company.Change</td>
+                        <td>@company.Volume</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

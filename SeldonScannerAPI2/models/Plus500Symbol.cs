@@ -1,15 +1,15 @@
 ﻿//using Newtonsoft.Json;
 
+using System.ComponentModel.DataAnnotations;
+
 namespace SeldonStockScannerAPI.models
 {
     // The property names reflect the column titles on the Finviz results page
     public class Plus500Symbol
     {
-        public int Id { get; set; }
-        public string Symbol { get; set; }
+        [Key, Required]
+        [MaxLength(12)]
+        public string Symbol { get; set; } = string.Empty;
 
-        public Plus500Symbol()
-        {
-        }
     }
 }

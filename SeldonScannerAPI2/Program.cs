@@ -13,12 +13,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-// DATA
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
-
 // Services, singleton injection
 builder.Services.AddSingleton<IFinvizService, FinvizService>();
 builder.Services.AddSingleton<IWebScraper, WebScraper>();

@@ -1,4 +1,4 @@
-﻿using SeldonStockScannerAPI.models;
+﻿using SeldonStockScannerAPI.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SeldonStockScannerAPI.Data;
-using SeldonStockScannerAPI.models;
+using SeldonStockScannerAPI.Models;
 
 namespace SeldonStockScannerAPI.FinvizScan
 {
@@ -20,30 +20,19 @@ namespace SeldonStockScannerAPI.FinvizScan
         }
 
         [HttpGet("dummy")]
-        public WatchList GetWatchListDummy()
+        public List<WatchListEntity> GetWatchListDummy()
         {
-            WatchList list = new WatchList();
-
-            FinvizCompanyEntity company = new FinvizCompanyEntity();
+            WatchListEntity company = new WatchListEntity();
 
             company.Ticker = "ticker";
             company.Company = "company";
-            company.Sector = "sector";
-            company.Industry = "industry";
-            company.Country = "country";
-            company.MarketCap = "marketCap";
-            company.PE = "pe";
-            company.Price = "price";
-            company.Change = "change";
-            company.Volume = "volume";
 
-            List<FinvizCompanyEntity> companies = new List<FinvizCompanyEntity>()
+            List<WatchListEntity> companies = new List<WatchListEntity>()
             {
                 company
             };
 
-            list.companies = companies;
-            return list;
+            return companies;
         }
 
 

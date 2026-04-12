@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 //using Dapper;
 using System.Security.Policy;
-using SeldonStockScannerAPI.models;
+using SeldonStockScannerAPI.Models;
 
 namespace SeldonStockScannerAPI.WebScraper
 {
