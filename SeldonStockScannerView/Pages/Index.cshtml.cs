@@ -50,47 +50,6 @@ namespace SeldonStockScannerView.Pages
         {
             Console.WriteLine("HANDLER SELECTION: " + this.scanType);
 
-            switch (endpoint)
-            {
-                case "0":
-                    endpoint = "GetMegaCompanies";
-                    break;
-                case "1":
-                    endpoint = "GetLongHolds";
-                    break;
-                case "2":
-                    endpoint = "GetOversoldBounce";
-                    break;
-                case "3":
-                    endpoint = "GetBreakout";
-                    break;
-                case "4":
-                    endpoint = "GetBreakoutV2";
-                    break;
-                case "5":
-                    endpoint = "GetBreakoutV3";
-                    break;
-                case "6":
-                    endpoint = "ForteCapitalDayTrading";
-                    break;
-                case "7":
-                    endpoint = "GetShorts";
-                    break;
-                case "8":
-                    endpoint = "GetShorts2";
-                    break;
-                case "9":
-                    endpoint = "GetShortSqueezes";
-                    break;
-                case "10":
-                    endpoint = "GetBounceOffMa";
-                    break;
-                case "11":
-                    endpoint = "GetTech";
-                    break;
-            }
-
-
             HttpResponseMessage result = await client.GetAsync($"https://localhost:7059/api/Finviz/{endpoint}");
             List<FinvizCompany> companies = new List<FinvizCompany>();
 
@@ -105,8 +64,6 @@ namespace SeldonStockScannerView.Pages
 
             return Partial("_ScanResultPartial", companies);
         }
-
-
 
     }
 }

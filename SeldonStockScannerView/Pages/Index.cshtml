@@ -84,6 +84,7 @@
 @section scripts
 {
     <script>
+        
         $("#buttScan").on("click", function () {
             const selected = $("#scanType").val();
             let endpoint = "";
@@ -147,57 +148,13 @@
         });
 
 
-        // function populateScanTable(data)
-        // {
-        //     new DataTable("#scanTable", 
-        //     {
-                
-        //     });
+        $(document).on("click", ".view-btn", function () {
+            const id = $(this).data("id");
+            console.log("Clicked Save on ticker: " + id);
 
 
-        //     $("#scanTable").DataTable().clear();
-
-        //     $.each(data, function (index, value)
-        //     {
-        //         $("#scanTable").DataTable().fnAddData(
-        //             [
-        //                 value.Ticker      ,
-        //                 value.Company     ,
-        //                 value.Sector      ,
-        //                 value.Industry    ,
-        //                 value.Country     ,
-        //                 value.MarketCap   ,
-        //                 value.Pe          ,
-        //                 value.Price       ,
-        //                 value.Change      ,
-        //                 value.Volume      
-
-        //             ]);
-                    
-        //     });
-        // }
+        });
 
 
-
-
-            // $.get(`?handler=PopulateResults&selected=${selected}`, function (data) {
-            //     console.log("SELECTION: " + selected);
-            // });
-
-
-
-
-        // document.getElementById("buttScan").addEventListener("click", () =>
-        // {
-        //     let xhreq = new XMLHttpRequest();
-
-        //     xhreq.onreadystatechange = function()
-        //     {
-        //         if (this.readyState == 4 && this.status == 200)
-        //         {
-        //             document.get
-        //         }
-        //     }
-        // })
     </script>
 }
