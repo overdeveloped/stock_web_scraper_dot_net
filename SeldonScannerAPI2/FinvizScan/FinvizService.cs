@@ -97,7 +97,19 @@ namespace SeldonStockScannerAPI.FinvizScan
                 { FinvzEnumFilterType.MarketCap.ToString(), "Mega (200bln and more)" }
             };
 
-            List<FinvizCompanyEntity> finvizResults = this.webScraper.GetCustomWatchList(this.finvizUrlTranslator.BuildUrl(urlArguments), "longHolds");
+            List<FinvizCompanyEntity> finvizResults = this.webScraper.GetCustomWatchList(this.finvizUrlTranslator.BuildUrl(urlArguments), "megaCompanies");
+
+            return filterByPluss500(finvizResults);
+        }
+
+        public List<FinvizCompanyEntity> GetTech()
+        {
+            Dictionary<string, string> urlArguments = new Dictionary<string, string>
+            {
+                { FinvzEnumFilterType.Sector.ToString(), "Technology" }
+            };
+
+            List<FinvizCompanyEntity> finvizResults = this.webScraper.GetCustomWatchList(this.finvizUrlTranslator.BuildUrl(urlArguments), "tech");
 
             return filterByPluss500(finvizResults);
         }

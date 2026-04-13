@@ -1,0 +1,21 @@
+﻿@using SeldonStockScannerView.Models
+@model IEnumerable<FinvizCompany>
+
+@foreach (var company in Model)
+{
+    <tr>
+        <td>@company.Ticker</td>
+        <td>@company.Company</td>
+        <td>@company.Sector</td>
+        <td>@company.Industry</td>
+        <td>@company.Country</td>
+        <td>@company.MarketCap</td>
+        <td>@company.Pe</td>
+        <td>@company.Price</td>
+        <td>@company.Change</td>
+        <td>@company.Volume</td>
+        <td>
+            <button class="btn btn-primary btn-sm view-btn" data-id="@company.Ticker">Save</button>
+        </td>
+    </tr>
+}

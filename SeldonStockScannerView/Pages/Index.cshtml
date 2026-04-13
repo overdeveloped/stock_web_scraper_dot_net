@@ -11,7 +11,31 @@
     <h1 class="display-4">Welcome</h1>
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 
-    <table>
+    <span>
+        <select asp-for="scanType" id="scanType" name="scanType">
+            <option value=""> select a scan </option>
+            <option value="0"> GetMegaCompanies </option>
+            <option value="1"> GetTech </option>
+            <option value="2"> GetLongHolds </option>
+            <option value="3"> GetOversoldBounce </option>
+            <option value="4"> GetBreakout </option>
+            <option value="5"> GetBreakoutV2 </option>
+            <option value="6"> ForteCapitalDayTrading </option>
+            <option value="7"> GetShorts </option>
+            <option value="8"> GetShortSqueezes </option>
+            <option value="9"> GetBounceOffMa </option>
+        </select>
+
+        @* <form asp-page-handler="Scan" method="get"> *@
+        @* <button id="buttScan">SCAN</button> *@
+        @* </form> *@
+        <button id="buttScan">SCAN</button>
+
+        @* <a asp-page-handler="Scan" class="btn btn-primary">Scan</a> *@
+
+    </span>
+
+    <table id="scanTable">
         <thead>
             <tr>
                 <th>ticker</th>
@@ -24,27 +48,156 @@
                 <th>price</th>
                 <th>change</th>
                 <th>volume</th>
+                <th>Watch List</th>
             </tr>
         </thead>
 
-        <tbody>
-            @{
-                foreach (FinvizCompany company in companies)
+        <tbody id="scanBody">
+
+
+
+@*             @{
+                if (companies != null)
                 {
-                    <tr>
-                        <td>@company.Ticker</td>
-                        <td>@company.Company</td>
-                        <td>@company.Sector</td>
-                        <td>@company.Industry</td>
-                        <td>@company.Country</td>
-                        <td>@company.MarketCap</td>
-                        <td>@company.Pe</td>
-                        <td>@company.Price</td>
-                        <td>@company.Change</td>
-                        <td>@company.Volume</td>
-                    </tr>
+                    foreach (FinvizCompany company in companies)
+                    {
+                        <tr>
+                            <td>@company.Ticker</td>
+                            <td>@company.Company</td>
+                            <td>@company.Sector</td>
+                            <td>@company.Industry</td>
+                            <td>@company.Country</td>
+                            <td>@company.MarketCap</td>
+                            <td>@company.Pe</td>
+                            <td>@company.Price</td>
+                            <td>@company.Change</td>
+                            <td>@company.Volume</td>
+                        </tr>
+                    }
                 }
             }
-        </tbody>
+ *@        </tbody>
     </table>
+
 </div>
+
+@section scripts
+{
+    <script>
+        $("#buttScan").on("click", function () {
+            const selected = $("#scanType").val();
+            let endpoint = "";
+            console.log(selected);
+
+            switch (selected)
+            {
+                case "0":
+                    endpoint = "megacompanies";
+                    break;
+                case "1":
+                   endpoint = "tech";
+                   break;
+                case "2":
+                   endpoint = "longholds";
+                   break;
+                case "3":
+                   endpoint = "oversoldbounce";
+                   break;
+                case "4":
+                   endpoint = "breakout";
+                   break;
+                case "5":
+                   endpoint = "breakoutv2";
+                   break;
+                case "6":
+                   endpoint = "fortedaytrading";
+                   break;
+                case "7":
+                   endpoint = "shorts";
+                   break;
+                case "8":
+                   endpoint = "shortsqueeze";
+                   break;
+                case "9":
+                   endpoint = "bouncema";
+                   break;
+            }
+
+            if (selected != "")
+            {
+                $.ajax({
+                    // url: `https://localhost:7059/api/Finviz/` + endpoint,
+                    url: "?handler=Scan&endpoint=" + endpoint,
+                    method: "GET",
+                    // contentType: 'application/json',
+                    success: function(resp) {
+                        $("#scanBody").html(resp);
+                        // alert(JSON.parse(resp));
+                        // companies = JSON.parse(resp);
+                        // populateScanTable(resp);
+                        // new DataTable("#scanTable", {
+                        //     resp;
+                        // });
+                    },
+                    error: function(err) {
+                        console.log("Error getting scan results: " + err.responseText);
+                    }
+                });
+            }
+        });
+
+
+        // function populateScanTable(data)
+        // {
+        //     new DataTable("#scanTable", 
+        //     {
+                
+        //     });
+
+
+        //     $("#scanTable").DataTable().clear();
+
+        //     $.each(data, function (index, value)
+        //     {
+        //         $("#scanTable").DataTable().fnAddData(
+        //             [
+        //                 value.Ticker      ,
+        //                 value.Company     ,
+        //                 value.Sector      ,
+        //                 value.Industry    ,
+        //                 value.Country     ,
+        //                 value.MarketCap   ,
+        //                 value.Pe          ,
+        //                 value.Price       ,
+        //                 value.Change      ,
+        //                 value.Volume      
+
+        //             ]);
+                    
+        //     });
+        // }
+
+
+
+
+            // $.get(`?handler=PopulateResults&selected=${selected}`, function (data) {
+            //     console.log("SELECTION: " + selected);
+            // });
+
+
+
+
+        // document.getElementById("buttScan").addEventListener("click", () =>
+        // {
+        //     let xhreq = new XMLHttpRequest();
+
+        //     xhreq.onreadystatechange = function()
+        //     {
+        //         if (this.readyState == 4 && this.status == 200)
+        //         {
+        //             document.get
+        //         }
+        //     }
+        // })
+    </script>
+}

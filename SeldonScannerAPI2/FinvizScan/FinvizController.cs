@@ -35,6 +35,13 @@ namespace SeldonStockScannerAPI.FinvizScan
             return companies;
         }
 
+        [HttpGet("scan")]
+        public ActionResult<List<string>> GetScan()
+        {
+            return finvizService.GetPlus500List();
+        }
+
+
 
         // For filtering by what's available on the Plus500 platform
         [HttpGet("plus500list")]
