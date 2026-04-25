@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SeldonStockScannerAPI.Data;
 using SeldonStockScannerAPI.Models;
+using System.Data;
 
 namespace SeldonStockScannerAPI.FinvizScan
 {
@@ -40,8 +41,6 @@ namespace SeldonStockScannerAPI.FinvizScan
         {
             return finvizService.GetPlus500List();
         }
-
-
 
         // For filtering by what's available on the Plus500 platform
         [HttpGet("plus500list")]
@@ -119,5 +118,16 @@ namespace SeldonStockScannerAPI.FinvizScan
             return finvizService.GetBounceOffMa();
         }
 
+        [HttpPost]
+        public async Task<ActionResult> AddToWatchList(int id)
+        {
+            // Check this: https://copilot.microsoft.com/chats/Vx5o4gCMPLrEvXi1iKh6C
+
+            DataRow row = GetRowFromDatabase(id); // however you fetch it
+
+            await SendRowToApi(row);
+
+            return RedirectToAction("Index");
+        }
     }
 }

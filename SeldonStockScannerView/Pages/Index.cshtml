@@ -141,7 +141,7 @@
                         // });
                     },
                     error: function(err) {
-                        console.log("Error getting scan results: " + err.responseText);
+                        console.error("Error getting scan results: " + err.responseText);
                     }
                 });
             }
@@ -150,9 +150,19 @@
 
         $(document).on("click", ".view-btn", function () {
             const id = $(this).data("id");
-            console.log("Clicked Save on ticker: " + id);
+            const company = $(this).data("company");
+            console.log("Clicked Save on ticker: " + id + ", " + company);
 
-
+            // $.ajax({
+            //     url: "?handler=Scan&endpoint=watchlist",
+            //     method: "POST",
+            //     success: function(resp){
+            //         console.log(resp);
+            //     },
+            //     error: function(err){
+            //         console.error("Error saving company to watch list: " + err.responseText);
+            //     }
+            // });
         });
 
 

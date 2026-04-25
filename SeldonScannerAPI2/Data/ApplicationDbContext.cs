@@ -7,7 +7,7 @@ namespace SeldonStockScannerAPI.Data
 {
     public class ApplicationDbContext : DbContext
     {
-        public DbSet<FinvizCompanyEntity> FinvizCompanye { get; set; }
+        public DbSet<FinvizCompanyEntity> FinvizCompany { get; set; }
         public DbSet<WatchListEntity> WatchList { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

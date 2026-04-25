@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using SeldonStockScannerView.Models;
+using System.Data;
 
 namespace SeldonStockScannerView.Pages
 {
@@ -64,6 +65,25 @@ namespace SeldonStockScannerView.Pages
 
             return Partial("_ScanResultPartial", companies);
         }
+
+        public async Task<IActionResult> OnPostWatchListAsync(string id, string value)
+        {
+            HttpResponseMessage result = await client.post($"https://localhost:7059/api/Finviz/{endpoint}");
+
+        }
+
+
+
+
+        // HELPERS
+        public static Dictionary<string, object> RowToDictionary(DataRow row)
+        {
+            return row.Table.Columns
+                .Cast<DataColumn>()
+                .ToDictionary(col => col.ColumnName, col => row[col]);
+        }
+
+
 
     }
 }
