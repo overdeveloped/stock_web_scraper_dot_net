@@ -15,10 +15,11 @@
         <td>@company.Change</td>
         <td>@company.Volume</td>
         <td>
-            <form method="POST" action="/api/watchlist"></form>
-            <input type="hidden" name="ticker" value="@company.Ticker"/>
+            @* <form method="POST" action="/api/watchlist"></form> *@
+            @* <input type="hidden" name="ticker" value="@company.Ticker"/> *@
             @* <button class="btn btn-primary btn-sm view-btn" data-id="@company.Ticker">Save</button> *@
-            <button type="submit" class="btn btn-primary btn-sm view-btn">Save</button>
+            @* <button type="submit" class="btn btn-primary btn-sm view-btn">Save</button> *@
+            <button id="openWatchModal" class="btn btn-primary btn-sm view-btn">Save</button>
         </td>
     </tr>
 }

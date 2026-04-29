@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using SeldonStockScannerAPI.Models;
+using SeldonStockScannerAPI.WatchList;
 
 namespace SeldonStockScannerAPI.Data
 {

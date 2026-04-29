@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SeldonStockScannerAPI.Data;
 using SeldonStockScannerAPI.Models;
+using SeldonStockScannerAPI.WatchList;
 using System.Data;
 
 namespace SeldonStockScannerAPI.FinvizScan
@@ -21,19 +22,19 @@ namespace SeldonStockScannerAPI.FinvizScan
         }
 
         [HttpGet("dummy")]
-        public List<WatchListEntity> GetWatchListDummy()
+        public WatchListEntity GetWatchListDummy()
         {
-            WatchListEntity company = new WatchListEntity();
+            WatchListEntity watchList = new WatchListEntity();
 
-            company.Ticker = "ticker";
-            company.Company = "company";
+            //company.Ticker = "ticker";
+            //company.Company = "company";
 
-            List<WatchListEntity> companies = new List<WatchListEntity>()
-            {
-                company
-            };
+            //List<WatchListEntity> companies = new List<WatchListEntity>()
+            //{
+            //    company
+            //};
 
-            return companies;
+            return watchList;
         }
 
         [HttpGet("scan")]
@@ -123,9 +124,9 @@ namespace SeldonStockScannerAPI.FinvizScan
         {
             // Check this: https://copilot.microsoft.com/chats/Vx5o4gCMPLrEvXi1iKh6C
 
-            DataRow row = GetRowFromDatabase(id); // however you fetch it
+            //DataRow row = GetRowFromDatabase(id); // however you fetch it
 
-            await SendRowToApi(row);
+            //await SendRowToApi(row);
 
             return RedirectToAction("Index");
         }

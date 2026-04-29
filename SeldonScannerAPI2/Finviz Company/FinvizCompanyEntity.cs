@@ -1,11 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using SeldonStockScannerAPI.WatchList;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SeldonStockScannerAPI.Models
 {
     // The property names reflect the column titles on the Finviz results page
     public class FinvizCompanyEntity
     {
-        [Key, Required]
+        [Key]
         [MaxLength(12)]
         public string Ticker { get; set; } = string.Empty;
 
@@ -36,6 +38,8 @@ namespace SeldonStockScannerAPI.Models
 
         [MaxLength(50)]
         public string? Volume { get; set; }
+
+        public ICollection<WatchListEntity> Watchlists { get; set; }
 
     }
 }

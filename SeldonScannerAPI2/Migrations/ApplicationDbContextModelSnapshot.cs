@@ -21,6 +21,21 @@ namespace SeldonStockScannerAPI.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("FinvizCompanyEntityWatchListEntity", b =>
+                {
+                    b.Property<string>("CompaniesTicker")
+                        .HasColumnType("nvarchar(12)");
+
+                    b.Property<int>("WatchlistsWatchListId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CompaniesTicker", "WatchlistsWatchListId");
+
+                    b.HasIndex("WatchlistsWatchListId");
+
+                    b.ToTable("FinvizCompanyEntityWatchListEntity");
+                });
+
             modelBuilder.Entity("SeldonStockScannerAPI.Models.FinvizCompanyEntity", b =>
                 {
                     b.Property<string>("Ticker")
@@ -66,23 +81,40 @@ namespace SeldonStockScannerAPI.Migrations
 
                     b.HasKey("Ticker");
 
-                    b.ToTable("FinvizCompanyEntities");
+                    b.ToTable("FinvizCompany");
                 });
 
-            modelBuilder.Entity("SeldonStockScannerAPI.Models.WatchListEntity", b =>
+            modelBuilder.Entity("SeldonStockScannerAPI.WatchList.WatchListEntity", b =>
                 {
-                    b.Property<string>("Ticker")
-                        .HasMaxLength(12)
-                        .HasColumnType("nvarchar(12)");
+                    b.Property<int>("WatchListId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<string>("Company")
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WatchListId"));
+
+                    b.Property<string>("WatchListName")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.HasKey("Ticker");
+                    b.HasKey("WatchListId");
 
-                    b.ToTable("WatchListEntity");
+                    b.ToTable("WatchList");
+                });
+
+            modelBuilder.Entity("FinvizCompanyEntityWatchListEntity", b =>
+                {
+                    b.HasOne("SeldonStockScannerAPI.Models.FinvizCompanyEntity", null)
+                        .WithMany()
+                        .HasForeignKey("CompaniesTicker")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("SeldonStockScannerAPI.WatchList.WatchListEntity", null)
+                        .WithMany()
+                        .HasForeignKey("WatchlistsWatchListId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }

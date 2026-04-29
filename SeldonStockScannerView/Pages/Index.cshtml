@@ -8,7 +8,7 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
+    <h1 class="display-4">Scanner</h1>
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 
     <span>
@@ -56,7 +56,7 @@
 
 
 
-@*             @{
+            @*             @{
                 if (companies != null)
                 {
                     foreach (FinvizCompany company in companies)
@@ -81,10 +81,46 @@
 
 </div>
 
+<div id="modalWatch" class="modal fade" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add to Watch List</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <div class="modal-body" id="modalContent">
+                <!-- Select box will load here -->
+                <p>Loading...</p>
+            </div>
+
+
+
+
+
+            <form asp-action="Create" method="post">
+
+@*                     <select id="watchLists" class="form-control">
+                        <option value="">Select watch list</option>
+                    </select>
+ *@
+
+
+
+            </form>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+        </div>
+    </div>
+</div>
+
+
 @section scripts
 {
     <script>
-        
+
         $("#buttScan").on("click", function () {
             const selected = $("#scanType").val();
             let endpoint = "";
@@ -147,7 +183,7 @@
             }
         });
 
-
+        // SAVE TO WATCH    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         $(document).on("click", ".view-btn", function () {
             const id = $(this).data("id");
             const company = $(this).data("company");
@@ -164,6 +200,35 @@
             //     }
             // });
         });
+
+        $(document).on("click", "#openWatchModal", function() {
+            $("#modalWatch").modal("show");
+        });
+
+        $("#modalWatch").on("shown.bs.modal", function() {
+
+            console.log("Loading modal data");
+
+
+            $("#modalContent").load('/WatchList/GetAllWatchLists');
+
+
+            // $.ajax({
+            //     url: '@Url.Action("GetAllWatchLists", "WatchList")',
+            //     type: "GET",
+            //     success: function (data) {
+            //         console.log(data);
+
+            //     },
+            //     error: function (err) {
+            //         console.error("ERROR: " + err);
+            //     }
+
+            // });
+        });
+
+
+        // END SAVE TO WATCH    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
     </script>

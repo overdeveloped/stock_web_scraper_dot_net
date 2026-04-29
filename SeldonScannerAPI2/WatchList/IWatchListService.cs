@@ -1,10 +1,8 @@
-﻿using SeldonStockScannerAPI.Models;
-
-namespace SeldonStockScannerAPI.WatchList
+﻿namespace SeldonStockScannerAPI.WatchList
 {
     public interface IWatchListService
     {
-        Task<IEnumerable<WatchListEntity>> GetAllAsync();
+        IEnumerable<WatchListEntity> GetAll();
         Task<WatchListEntity?> GetByIdAsync(int id);
         Task<WatchListEntity> CreateAsync(WatchListEntity product);
         Task<WatchListEntity?> UpdateAsync(int id, WatchListEntity product);

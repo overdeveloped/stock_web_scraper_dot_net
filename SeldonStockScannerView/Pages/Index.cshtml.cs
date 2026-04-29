@@ -66,12 +66,19 @@ namespace SeldonStockScannerView.Pages
             return Partial("_ScanResultPartial", companies);
         }
 
-        public async Task<IActionResult> OnPostWatchListAsync(string id, string value)
-        {
-            HttpResponseMessage result = await client.post($"https://localhost:7059/api/Finviz/{endpoint}");
+        //public async Task<IActionResult> OnPostWatchListAsync(string id, string value)
+        //{
+        //    HttpResponseMessage result = await client.post($"https://localhost:7059/api/Finviz/{endpoint}");
 
-        }
+        //}
 
+        //public async Task<IActionResult> OnGetWatchListsAsync()
+        //{
+        //    Console.WriteLine("GET WATCH LISTS");
+
+        //    HttpResponseMessage result = await client.GetAsync($"https://localhost:7059/api/WatchList");
+
+        //}
 
 
 

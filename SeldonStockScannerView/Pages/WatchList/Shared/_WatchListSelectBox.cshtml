@@ -1,0 +1,9 @@
+﻿@model IEnumerable<SeldonStockScannerView.Models.WatchList>
+
+<select id="ProductId" name="ProductId" class="form-control">
+    <option value="">-- Select Product --</option>
+    @foreach (var w in Model)
+    {
+        <option value="@w.WatchListId">@w.WatchListName</option>
+    }
+</select>

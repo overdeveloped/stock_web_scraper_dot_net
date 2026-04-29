@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SeldonStockScannerAPI.Models;
 using System;
 
 namespace SeldonStockScannerAPI.WatchList
@@ -13,9 +12,9 @@ namespace SeldonStockScannerAPI.WatchList
             _context = context;
         }
 
-        public async Task<IEnumerable<WatchListEntity>> GetAllAsync()
+        public IEnumerable<WatchListEntity> GetAll()
         {
-            return await _context.WatchList.ToListAsync();
+            return _context.WatchList.ToList();
         }
 
         public async Task<WatchListEntity?> GetByIdAsync(int id)
@@ -23,20 +22,20 @@ namespace SeldonStockScannerAPI.WatchList
             return await _context.WatchList.FindAsync(id);
         }
 
-        public async Task<WatchListEntity> CreateAsync(WatchListEntity product)
+        public async Task<WatchListEntity> CreateAsync(WatchListEntity watchList)
         {
-            _context.WatchList.Add(product);
+            _context.WatchList.Add(watchList);
             await _context.SaveChangesAsync();
-            return product;
+            return watchList;
         }
 
-        public async Task<WatchListEntity?> UpdateAsync(int id, WatchListEntity product)
+        public async Task<WatchListEntity?> UpdateAsync(int id, WatchListEntity watchList)
         {
             var existing = await _context.WatchList.FindAsync(id);
             if (existing == null)
                 return null;
 
-            existing.Company = product.Company;
+            existing.WatchListName = watchList.WatchListName;
 
             await _context.SaveChangesAsync();
             return existing;
