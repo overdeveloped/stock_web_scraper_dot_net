@@ -12,45 +12,45 @@ namespace SeldonStockScannerAPI.WatchList
             _context = context;
         }
 
-        public IEnumerable<WatchListEntity> GetAll()
+        public async Task<IEnumerable<WatchListEntity>> GetAll()
         {
             return _context.WatchList.ToList();
         }
 
-        public async Task<WatchListEntity?> GetByIdAsync(int id)
-        {
-            return await _context.WatchList.FindAsync(id);
-        }
+        //public async Task<WatchListEntity?> GetByIdAsync(int id)
+        //{
+        //    return await _context.WatchList.FindAsync(id);
+        //}
 
-        public async Task<WatchListEntity> CreateAsync(WatchListEntity watchList)
-        {
-            _context.WatchList.Add(watchList);
-            await _context.SaveChangesAsync();
-            return watchList;
-        }
+        //public async Task<WatchListEntity> CreateAsync(WatchListEntity watchList)
+        //{
+        //    _context.WatchList.Add(watchList);
+        //    await _context.SaveChangesAsync();
+        //    return watchList;
+        //}
 
-        public async Task<WatchListEntity?> UpdateAsync(int id, WatchListEntity watchList)
-        {
-            var existing = await _context.WatchList.FindAsync(id);
-            if (existing == null)
-                return null;
+        //public async Task<WatchListEntity?> UpdateAsync(int id, WatchListEntity watchList)
+        //{
+        //    var existing = await _context.WatchList.FindAsync(id);
+        //    if (existing == null)
+        //        return null;
 
-            existing.WatchListName = watchList.WatchListName;
+        //    existing.WatchListName = watchList.WatchListName;
 
-            await _context.SaveChangesAsync();
-            return existing;
-        }
+        //    await _context.SaveChangesAsync();
+        //    return existing;
+        //}
 
-        public async Task<bool> DeleteAsync(int id)
-        {
-            var existing = await _context.WatchList.FindAsync(id);
-            if (existing == null)
-                return false;
+        //public async Task<bool> DeleteAsync(int id)
+        //{
+        //    var existing = await _context.WatchList.FindAsync(id);
+        //    if (existing == null)
+        //        return false;
 
-            _context.WatchList.Remove(existing);
-            await _context.SaveChangesAsync();
-            return true;
-        }
+        //    _context.WatchList.Remove(existing);
+        //    await _context.SaveChangesAsync();
+        //    return true;
+        //}
 
 
         //public void AddWatchItem(WatchListEntity watchItem)

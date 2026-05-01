@@ -4,24 +4,22 @@ using SeldonStockScannerView.Services;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-
-namespace WatchList
+namespace SeldonStockScannerView.Pages.WatchList
 {
     public class IndexModel : PageModel
     {
         private readonly WatchListService _api;
+        public List<WatchListModel> WatchLists { get; set; }
 
         public IndexModel(WatchListService api)
         {
             _api = api;
         }
 
-        public List<WatchList> WatchLists { get; set; }
 
-        public async Task OnGet()
+        public async Task OnGetAsync()
         {
-            WatchLists = await _api.GetAll();
+            WatchLists = await _api.GetAllAsync();
         }
     }
-
 }

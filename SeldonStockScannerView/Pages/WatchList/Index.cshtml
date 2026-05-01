@@ -1,6 +1,5 @@
-﻿@page
-@* @model IEnumerable<SeldonStockScannerView.Models.WatchList> *@
-@model WatchList.IndexModel
+﻿@page "/WatchLists"
+@model IndexModel
 
 <h2>Products</h2>
 
@@ -9,19 +8,17 @@
 <table class="table mt-3">
     <tr>
         <th>Name</th>
-        <th>Price</th>
         <th></th>
     </tr>
 
-    @foreach (var w in Model)
+    @foreach (var w in Model.WatchLists)
     {
         <tr>
-            <td>@w.</td>
-            <td>@p.Price</td>
+            <td>@w.WatchListName</td>
             <td>
-                <a asp-page="Edit" asp-route-id="@p.Id">Edit</a> |
-                <a asp-page="Details" asp-route-id="@p.Id">Details</a> |
-                <a asp-page="Delete" asp-route-id="@p.Id">Delete</a>
+                <a asp-page="Edit" asp-route-id="@w.WatchListId">Edit</a> |
+                <a asp-page="Details" asp-route-id="@w.WatchListId">Details</a> |
+                <a asp-page="Delete" asp-route-id="@w.WatchListId">Delete</a>
             </td>
         </tr>
     }

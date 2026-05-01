@@ -7,8 +7,8 @@ using SeldonStockScannerAPI.WatchList;
 
 namespace SeldonStockScannerAPI.FinvizScan
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("api/[controller]")]
     public class WatchListController : Controller
     {
         //private readonly DataContext dataContext;
@@ -29,28 +29,23 @@ namespace SeldonStockScannerAPI.FinvizScan
 
         //}
 
-        [HttpPost]
-        public void CreateWatchlist(WatchListEntity watchItem)
-        {
-            //this._watchListService.AddWatchItem(watchItem);
+        //[HttpPost]
+        //public void CreateWatchlist(WatchListEntity watchItem)
+        //{
+        //    //this._watchListService.AddWatchItem(watchItem);
 
-            throw new NotImplementedException();
-        }
+        //    throw new NotImplementedException();
+        //}
 
 
         [HttpGet]
-        public ActionResult GetAllWatchLists()
+        public async Task<IActionResult> GetAll()
         {
-            var products = _watchListService.GetAll()
-                .Select(p => new WatchListEntity
-                {
-                    WatchListId = p.WatchListId,
-                    WatchListName = p.WatchListName
-                })
-                .ToList();
-
-            return View(products);
+            var items = await _watchListService.GetAll();
+            return Ok(items);
         }
+
+
 
         //[HttpGet]
         //public WatchListEntity GetWatchList(int id)
@@ -78,13 +73,13 @@ namespace SeldonStockScannerAPI.FinvizScan
         //}
 
 
-        [HttpPut]
-        public void AddWatch(WatchListEntity watchItem)
-        {
-            //this._watchListService.AddWatchItem(watchItem);
+        //[HttpPut]
+        //public void AddWatch(WatchListEntity watchItem)
+        //{
+        //    //this._watchListService.AddWatchItem(watchItem);
 
-            throw new NotImplementedException();
-        }
+        //    throw new NotImplementedException();
+        //}
 
 
 

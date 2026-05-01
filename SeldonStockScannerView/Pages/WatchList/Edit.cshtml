@@ -1,0 +1,15 @@
+﻿@page "/WatchList/{id}"
+@model EditModel
+
+<h2>Edit Watch List</h2>
+
+<form method="post">
+    <input type="hidden" asp-for="WatchList.WatchListId" />
+
+    <div class="form-group">
+        <label>Name</label>
+        <input asp-for="WatchList.WatchListName" class="form-control" />
+    </div>
+
+    <button class="btn btn-primary mt-2">Update</button>
+</form>

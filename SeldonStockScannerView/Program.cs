@@ -1,10 +1,14 @@
 using SeldonStockScannerView.Services;
+using System.Net.Http;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
-builder.Services.AddHttpClient<WatchListService>();
+builder.Services.AddHttpClient<WatchListService>(client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7059/api/");
+});
 
 var app = builder.Build();
 

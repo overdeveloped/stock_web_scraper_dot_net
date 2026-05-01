@@ -2,7 +2,7 @@
 
 namespace SeldonStockScannerView.Models
 {
-    public class WatchList
+    public class WatchListModel
     {
         public int WatchListId { get; set; }
         public string WatchListName { get; set; } = string.Empty;

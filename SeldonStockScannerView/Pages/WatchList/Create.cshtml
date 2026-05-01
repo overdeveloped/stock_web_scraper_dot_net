@@ -1,0 +1,13 @@
+﻿@page "/WatchList"
+@model CreateModel
+
+<h2>Create Product</h2>
+
+<form method="post">
+    <div class="form-group">
+        <label>Name</label>
+        <input asp-for="WatchList.WatchListName" class="form-control" />
+    </div>
+
+    <button class="btn btn-primary mt-2">Save</button>
+</form>
