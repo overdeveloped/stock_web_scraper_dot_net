@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using SeldonStockScannerAPI.Models;
+using SeldonStockScannerAPI.Finviz_Company;
 using SeldonStockScannerAPI.WatchList;
 
 namespace SeldonStockScannerAPI.Data
@@ -37,7 +36,7 @@ namespace SeldonStockScannerAPI.Data
                 .HasKey(w => w.Id);
 
             modelBuilder.Entity<FinvizCompanyEntity>()
-                .HasKey(f => f.Id);
+                .HasKey(c => c.Id);
 
             modelBuilder.Entity<WatchListEntity>()
                 .HasMany(w => w.Companies)

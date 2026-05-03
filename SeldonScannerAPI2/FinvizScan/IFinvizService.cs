@@ -1,4 +1,5 @@
-﻿using SeldonStockScannerAPI.Models;
+﻿
+using SeldonStockScannerAPI.Finviz_Company;
 
 namespace SeldonStockScannerAPI.FinvizScan
 {
@@ -17,6 +18,5 @@ namespace SeldonStockScannerAPI.FinvizScan
         List<FinvizCompanyEntity> GetShortSqueezes() { return new List<FinvizCompanyEntity>(); }
         List<FinvizCompanyEntity> GetBounceOffMa() { return new List<FinvizCompanyEntity>(); }
         List<FinvizCompanyEntity> GetTech() { return new List<FinvizCompanyEntity>(); }
-
     }
 }

@@ -2,9 +2,10 @@
 {
     public interface IWatchListService
     {
-        Task<IEnumerable<WatchListEntity>> GetAllAsync();
-        Task<WatchListEntity?> GetByIdAsync(int id);
+        Task<IEnumerable<WatchListDTO>> GetAllAsync();
+        Task<WatchListDTO?> GetByIdAsync(int id);
         Task<WatchListEntity> CreateAsync(WatchListEntity product);
+        Task<WatchListEntity> CreateWithCompaniesAsync(AttachCompaniesDTO request);
         Task<WatchListEntity?> UpdateAsync(int id, WatchListEntity product);
         Task<bool> DeleteAsync(int id);
     }

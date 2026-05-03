@@ -2,20 +2,20 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SeldonStockScannerAPI.Data;
-using SeldonStockScannerAPI.Models;
+using SeldonStockScannerAPI.Finviz_Company;
 using SeldonStockScannerAPI.WatchList;
 
 namespace SeldonStockScannerAPI.WatchList
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class FinvizCompanyController : Controller
+    public class FinvizWatchList : Controller
     {
         //private readonly DataContext dataContext;
         private readonly IWatchListService _watchListService;
         //private readonly FinvizService _finvizFilter = new FinvizService();
 
-        public FinvizCompanyController(IWatchListService WatchListService)
+        public FinvizWatchList(IWatchListService WatchListService)
         {
             this._watchListService = WatchListService;
         }
@@ -42,10 +42,27 @@ namespace SeldonStockScannerAPI.WatchList
         }
 
         [HttpPost]
-        public void AddWatch(WatchListEntity watchItem)
+        public async Task<ActionResult<WatchListEntity>> Create(WatchListEntity watchList)
         {
-            this._watchListService.CreateAsync(watchItem);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var created = await this._watchListService.CreateAsync(watchList);
+
+            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
+
+        [HttpPost("create-with-companies")]
+        public async Task<ActionResult<WatchListEntity>> CreateWithCompanies(AttachCompaniesDTO request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var created = await this._watchListService.CreateWithCompaniesAsync(request);
+
+            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        }
+
 
         [HttpPut("{id:int}")]
         public async Task<ActionResult<WatchListEntity>> Update(int id, WatchListEntity updated)

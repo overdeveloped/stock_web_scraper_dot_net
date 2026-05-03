@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SeldonStockScannerAPI.Data;
-using SeldonStockScannerAPI.Models;
 using SeldonStockScannerAPI.WatchList;
 
 namespace SeldonStockScannerAPI.Finviz_Company
@@ -11,26 +10,24 @@ namespace SeldonStockScannerAPI.Finviz_Company
     [Route("api/[controller]")]
     public class FinvizCompanyController : Controller
     {
-        //private readonly DataContext dataContext;
-        private readonly IWatchListService _watchListService;
-        //private readonly FinvizService _finvizFilter = new FinvizService();
+        private readonly IFinvizCompanyService _finvizCompanyService;
 
-        public FinvizCompanyController(IWatchListService WatchListService)
+        public FinvizCompanyController(IFinvizCompanyService finvizCompanyService)
         {
-            this._watchListService = WatchListService;
+            this._finvizCompanyService = finvizCompanyService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var items = await _watchListService.GetAllAsync();
+            var items = await _finvizCompanyService.GetAllAsync();
             return Ok(items);
         }
 
         [HttpGet("{id:int}")]
-        public async Task<ActionResult<WatchListEntity>> GetById(int id)
+        public async Task<ActionResult<FinvizCompanyEntity>> GetById(int id)
         {
-            var result = await this._watchListService.GetByIdAsync(id);
+            var result = await this._finvizCompanyService.GetByIdAsync(id);
 
             if (result == null)
             {
@@ -38,22 +35,26 @@ namespace SeldonStockScannerAPI.Finviz_Company
             }
 
             return Ok(result);
-
         }
 
         [HttpPost]
-        public void AddWatch(WatchListEntity watchItem)
-        {
-            this._watchListService.CreateAsync(watchItem);
-        }
-
-        [HttpPut("{id:int}")]
-        public async Task<ActionResult<WatchListEntity>> Update(int id, WatchListEntity updated)
+        public async Task<ActionResult<FinvizCompanyEntity>> Create(FinvizCompanyEntity company)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var result = await _watchListService.UpdateAsync(id, updated);
+            var created = await this._finvizCompanyService.CreateAsync(company);
+
+            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        }
+
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<FinvizCompanyEntity>> Update(int id, FinvizCompanyEntity updated)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            var result = await _finvizCompanyService.UpdateAsync(id, updated);
 
             if (result == null)
                 return NotFound();
@@ -64,7 +65,7 @@ namespace SeldonStockScannerAPI.Finviz_Company
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var deleted = await _watchListService.DeleteAsync(id);
+            var deleted = await _finvizCompanyService.DeleteAsync(id);
 
             if (!deleted)
                 return NotFound();

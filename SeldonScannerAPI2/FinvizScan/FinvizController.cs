@@ -1,8 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using SeldonStockScannerAPI.Data;
-using SeldonStockScannerAPI.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using SeldonStockScannerAPI.Finviz_Company;
 using SeldonStockScannerAPI.WatchList;
 using System.Data;
 

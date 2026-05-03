@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using SeldonStockScannerAPI.Models;
+using SeldonStockScannerAPI.WatchList;
 
 namespace SeldonStockScannerAPI.Finviz_Company
 {
@@ -12,25 +12,90 @@ namespace SeldonStockScannerAPI.Finviz_Company
             _context = context;
         }
 
-        public async Task<IEnumerable<FinvizCompanyEntity>> GetAllAsync()
+        public async Task<IEnumerable<FinvizCompanyDTO>> GetAllAsync()
         {
-            return  await _context.FinvizCompany
+            var entities = await _context.FinvizCompany
                 .Include(c => c.Watchlists)
                 .ToListAsync();
+
+            var entityDTOs = new List<FinvizCompanyDTO>();
+
+            if (entities.Any())
+            {
+                foreach (var entity in entities)
+                {
+                    entityDTOs.Add(new FinvizCompanyDTO()
+                    {
+                        Id = entity.Id,
+                        Company = entity.Company,
+                        Sector = entity.Sector,
+                        Industry = entity.Industry,
+                        Country = entity.Country,
+                        MarketCap = entity.MarketCap,
+                        PE = entity.PE,
+                        Price = entity.Price,
+                        Change = entity.Change,
+                        Volume = entity.Volume,
+                        Watchlists = entity.Watchlists
+                    .Select(w => new WatchListDTO { Id = w.Id, WatchListName = w.WatchListName })
+                    .ToList()
+                    });
+                }
+            }
+            else
+            {
+                return null;
+            }
+
+            return entityDTOs;
         }
 
-        public async Task<FinvizCompanyEntity?> GetByIdAsync(int id)
+        public async Task<FinvizCompanyDTO?> GetByIdAsync(int id)
         {
-            return await _context.FinvizCompany
+            var entity = await _context.FinvizCompany
                 .AsNoTracking()
                 .Include(c => c.Watchlists)
                 .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (entity == null)
+                return null;
+
+            return new FinvizCompanyDTO()
+            {
+                Id = entity.Id,
+                Company = entity.Company,
+                Sector = entity.Sector,
+                Industry = entity.Industry,
+                Country = entity.Country,
+                MarketCap = entity.MarketCap,
+                PE = entity.PE,
+                Price = entity.Price,
+                Change = entity.Change,
+                Volume = entity.Volume,
+                Watchlists = entity.Watchlists
+                    .Select(w => new WatchListDTO { Id = w.Id, WatchListName = w.WatchListName })
+                    .ToList()
+            };
         }
 
         public async Task<FinvizCompanyEntity> CreateAsync(FinvizCompanyEntity company)
         {
             _context.FinvizCompany.Add(company);
             await _context.SaveChangesAsync();
+            return company;
+        }
+
+        public async Task<FinvizCompanyEntity> CreateCompanyAsync(FinvizCompanyEntity company, List<int> watchListIds)
+        {
+            var watchlists = await _context.WatchList
+                .Where(w => watchListIds.Contains(w.Id))
+                .ToListAsync();
+
+            company.Watchlists = watchlists;
+
+            _context.FinvizCompany.Add(company);
+            await _context.SaveChangesAsync();
+
             return company;
         }
 
@@ -82,6 +147,22 @@ namespace SeldonStockScannerAPI.Finviz_Company
             _context.FinvizCompany.Remove(existing);
             await _context.SaveChangesAsync();
             return true;
+        }
+
+        public async Task AddWatchListToCompany(int companyId, int watchListId)
+        {
+            var company = await _context.FinvizCompany
+                .Include(c => c.Watchlists)
+                .FirstOrDefaultAsync(c => c.Id == companyId);
+
+            var watchList = await _context.WatchList.FindAsync(watchListId);
+
+            if (company == null || watchList == null)
+                return;
+
+            company.Watchlists.Add(watchList);
+
+            await _context.SaveChangesAsync();
         }
     }
 }

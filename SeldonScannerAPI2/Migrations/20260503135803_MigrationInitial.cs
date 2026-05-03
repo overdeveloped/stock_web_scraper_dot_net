@@ -14,7 +14,8 @@ namespace SeldonStockScannerAPI.Migrations
                 name: "FinvizCompany",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(12)", maxLength: 12, nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Company = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Sector = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     Industry = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
@@ -47,7 +48,7 @@ namespace SeldonStockScannerAPI.Migrations
                 name: "WatchListCompanies",
                 columns: table => new
                 {
-                    CompaniesId = table.Column<string>(type: "nvarchar(12)", nullable: false),
+                    CompaniesId = table.Column<int>(type: "int", nullable: false),
                     WatchlistsId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>

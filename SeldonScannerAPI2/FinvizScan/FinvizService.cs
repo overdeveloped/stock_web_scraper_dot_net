@@ -1,5 +1,5 @@
-﻿using SeldonStockScannerAPI.FinvizUrlTranslator;
-using SeldonStockScannerAPI.Models;
+﻿using SeldonStockScannerAPI.Finviz_Company;
+using SeldonStockScannerAPI.FinvizUrlTranslator;
 using SeldonStockScannerAPI.WebScraper;
 
 namespace SeldonStockScannerAPI.FinvizScan

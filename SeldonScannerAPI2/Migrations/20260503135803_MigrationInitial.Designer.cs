@@ -11,7 +11,7 @@ using SeldonStockScannerAPI.Data;
 namespace SeldonStockScannerAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260502132315_MigrationInitial")]
+    [Migration("20260503135803_MigrationInitial")]
     partial class MigrationInitial
     {
         /// <inheritdoc />
@@ -26,8 +26,8 @@ namespace SeldonStockScannerAPI.Migrations
 
             modelBuilder.Entity("FinvizCompanyEntityWatchListEntity", b =>
                 {
-                    b.Property<string>("CompaniesId")
-                        .HasColumnType("nvarchar(12)");
+                    b.Property<int>("CompaniesId")
+                        .HasColumnType("int");
 
                     b.Property<int>("WatchlistsId")
                         .HasColumnType("int");
@@ -39,11 +39,13 @@ namespace SeldonStockScannerAPI.Migrations
                     b.ToTable("WatchListCompanies", (string)null);
                 });
 
-            modelBuilder.Entity("SeldonStockScannerAPI.Models.FinvizCompanyEntity", b =>
+            modelBuilder.Entity("SeldonStockScannerAPI.Finviz_Company.FinvizCompanyEntity", b =>
                 {
-                    b.Property<string>("Id")
-                        .HasMaxLength(12)
-                        .HasColumnType("nvarchar(12)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Change")
                         .HasMaxLength(50)
@@ -107,7 +109,7 @@ namespace SeldonStockScannerAPI.Migrations
 
             modelBuilder.Entity("FinvizCompanyEntityWatchListEntity", b =>
                 {
-                    b.HasOne("SeldonStockScannerAPI.Models.FinvizCompanyEntity", null)
+                    b.HasOne("SeldonStockScannerAPI.Finviz_Company.FinvizCompanyEntity", null)
                         .WithMany()
                         .HasForeignKey("CompaniesId")
                         .OnDelete(DeleteBehavior.Cascade)
