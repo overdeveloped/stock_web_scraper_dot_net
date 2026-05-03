@@ -9,7 +9,7 @@ namespace SeldonStockScannerAPI.Models
     {
         [Key]
         [MaxLength(12)]
-        public string Ticker { get; set; } = string.Empty;
+        public int Id { get; set; }
 
         [Required]
         [MaxLength(50)]
@@ -39,7 +39,7 @@ namespace SeldonStockScannerAPI.Models
         [MaxLength(50)]
         public string? Volume { get; set; }
 
-        public ICollection<WatchListEntity> Watchlists { get; set; }
+        public ICollection<WatchListEntity> Watchlists { get; set; } = new List<WatchListEntity>();
 
     }
 }

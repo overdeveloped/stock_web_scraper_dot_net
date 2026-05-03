@@ -10,6 +10,5 @@ namespace SeldonStockScannerAPI.Finviz_Company
         Task<FinvizCompanyEntity> CreateAsync(FinvizCompanyEntity product);
         Task<FinvizCompanyEntity?> UpdateAsync(int id, FinvizCompanyEntity product);
         Task<bool> DeleteAsync(int id);
-
     }
 }

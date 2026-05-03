@@ -5,7 +5,7 @@ using SeldonStockScannerAPI.Data;
 using SeldonStockScannerAPI.Models;
 using SeldonStockScannerAPI.WatchList;
 
-namespace SeldonStockScannerAPI.WatchList
+namespace SeldonStockScannerAPI.Finviz_Company
 {
     [ApiController]
     [Route("api/[controller]")]

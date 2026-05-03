@@ -11,7 +11,7 @@ using SeldonStockScannerAPI.Data;
 namespace SeldonStockScannerAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260427170834_MigrationInitial")]
+    [Migration("20260502132315_MigrationInitial")]
     partial class MigrationInitial
     {
         /// <inheritdoc />
@@ -26,22 +26,22 @@ namespace SeldonStockScannerAPI.Migrations
 
             modelBuilder.Entity("FinvizCompanyEntityWatchListEntity", b =>
                 {
-                    b.Property<string>("CompaniesTicker")
+                    b.Property<string>("CompaniesId")
                         .HasColumnType("nvarchar(12)");
 
-                    b.Property<int>("WatchlistsWatchListId")
+                    b.Property<int>("WatchlistsId")
                         .HasColumnType("int");
 
-                    b.HasKey("CompaniesTicker", "WatchlistsWatchListId");
+                    b.HasKey("CompaniesId", "WatchlistsId");
 
-                    b.HasIndex("WatchlistsWatchListId");
+                    b.HasIndex("WatchlistsId");
 
-                    b.ToTable("FinvizCompanyEntityWatchListEntity");
+                    b.ToTable("WatchListCompanies", (string)null);
                 });
 
             modelBuilder.Entity("SeldonStockScannerAPI.Models.FinvizCompanyEntity", b =>
                 {
-                    b.Property<string>("Ticker")
+                    b.Property<string>("Id")
                         .HasMaxLength(12)
                         .HasColumnType("nvarchar(12)");
 
@@ -82,25 +82,25 @@ namespace SeldonStockScannerAPI.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.HasKey("Ticker");
+                    b.HasKey("Id");
 
                     b.ToTable("FinvizCompany");
                 });
 
             modelBuilder.Entity("SeldonStockScannerAPI.WatchList.WatchListEntity", b =>
                 {
-                    b.Property<int>("WatchListId")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("WatchListId"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("WatchListName")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.HasKey("WatchListId");
+                    b.HasKey("Id");
 
                     b.ToTable("WatchList");
                 });
@@ -109,13 +109,13 @@ namespace SeldonStockScannerAPI.Migrations
                 {
                     b.HasOne("SeldonStockScannerAPI.Models.FinvizCompanyEntity", null)
                         .WithMany()
-                        .HasForeignKey("CompaniesTicker")
+                        .HasForeignKey("CompaniesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("SeldonStockScannerAPI.WatchList.WatchListEntity", null)
                         .WithMany()
-                        .HasForeignKey("WatchlistsWatchListId")
+                        .HasForeignKey("WatchlistsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

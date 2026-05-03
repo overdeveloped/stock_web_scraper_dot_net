@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using System;
 
 namespace SeldonStockScannerAPI.WatchList
@@ -12,50 +13,66 @@ namespace SeldonStockScannerAPI.WatchList
             _context = context;
         }
 
-        public async Task<IEnumerable<WatchListEntity>> GetAll()
+        public async Task<IEnumerable<WatchListEntity>> GetAllAsync()
         {
-            return _context.WatchList.ToList();
+            return await _context.WatchList
+                .Include(w => w.Companies)
+                .ToListAsync();
         }
 
-        //public async Task<WatchListEntity?> GetByIdAsync(int id)
-        //{
-        //    return await _context.WatchList.FindAsync(id);
-        //}
+        public async Task<WatchListEntity> GetByIdAsync(int id)
+        {
+            return await _context.WatchList
+                .AsNoTracking()
+                .Include(w => w.Companies)
+                .FirstOrDefaultAsync(w => w.Id == id);
+        }
 
-        //public async Task<WatchListEntity> CreateAsync(WatchListEntity watchList)
-        //{
-        //    _context.WatchList.Add(watchList);
-        //    await _context.SaveChangesAsync();
-        //    return watchList;
-        //}
+        public async Task<WatchListEntity> CreateAsync(WatchListEntity watchList)
+        {
+            _context.WatchList.Add(watchList);
+            await _context.SaveChangesAsync();
+            return watchList;
+        }
 
-        //public async Task<WatchListEntity?> UpdateAsync(int id, WatchListEntity watchList)
-        //{
-        //    var existing = await _context.WatchList.FindAsync(id);
-        //    if (existing == null)
-        //        return null;
+        public async Task<WatchListEntity?> UpdateAsync(int id, WatchListEntity watchList)
+        {
+            var existing = await _context.WatchList
+                .Include(w => w.Companies)
+                .FirstOrDefaultAsync(w => w.Id == id);
 
-        //    existing.WatchListName = watchList.WatchListName;
+            if (existing == null)
+                return null;
 
-        //    await _context.SaveChangesAsync();
-        //    return existing;
-        //}
+            existing.WatchListName = watchList.WatchListName;
 
-        //public async Task<bool> DeleteAsync(int id)
-        //{
-        //    var existing = await _context.WatchList.FindAsync(id);
-        //    if (existing == null)
-        //        return false;
+            // Update companies
+            if (watchList.Companies != null && watchList.Companies.Any())
+            {
+                watchList.Companies.Clear();
 
-        //    _context.WatchList.Remove(existing);
-        //    await _context.SaveChangesAsync();
-        //    return true;
-        //}
+                foreach (var comp in watchList.Companies)
+                {
+                    var company = await _context.FinvizCompany.FindAsync(comp.Id);
 
+                    if (company != null)
+                        watchList.Companies.Add(company);
+                }
+            }
 
-        //public void AddWatchItem(WatchListEntity watchItem)
-        //{
-        //    throw new NotImplementedException();
-        //}
+            await _context.SaveChangesAsync();
+            return existing;
+        }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var existing = await _context.WatchList.FindAsync(id);
+            if (existing == null)
+                return false;
+
+            _context.WatchList.Remove(existing);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

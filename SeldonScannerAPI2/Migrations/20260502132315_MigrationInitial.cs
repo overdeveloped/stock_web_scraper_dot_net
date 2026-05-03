@@ -14,7 +14,7 @@ namespace SeldonStockScannerAPI.Migrations
                 name: "FinvizCompany",
                 columns: table => new
                 {
-                    Ticker = table.Column<string>(type: "nvarchar(12)", maxLength: 12, nullable: false),
+                    Id = table.Column<string>(type: "nvarchar(12)", maxLength: 12, nullable: false),
                     Company = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Sector = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     Industry = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
@@ -27,57 +27,57 @@ namespace SeldonStockScannerAPI.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FinvizCompany", x => x.Ticker);
+                    table.PrimaryKey("PK_FinvizCompany", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "WatchList",
                 columns: table => new
                 {
-                    WatchListId = table.Column<int>(type: "int", nullable: false)
+                    Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     WatchListName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WatchList", x => x.WatchListId);
+                    table.PrimaryKey("PK_WatchList", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
-                name: "FinvizCompanyEntityWatchListEntity",
+                name: "WatchListCompanies",
                 columns: table => new
                 {
-                    CompaniesTicker = table.Column<string>(type: "nvarchar(12)", nullable: false),
-                    WatchlistsWatchListId = table.Column<int>(type: "int", nullable: false)
+                    CompaniesId = table.Column<string>(type: "nvarchar(12)", nullable: false),
+                    WatchlistsId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_FinvizCompanyEntityWatchListEntity", x => new { x.CompaniesTicker, x.WatchlistsWatchListId });
+                    table.PrimaryKey("PK_WatchListCompanies", x => new { x.CompaniesId, x.WatchlistsId });
                     table.ForeignKey(
-                        name: "FK_FinvizCompanyEntityWatchListEntity_FinvizCompany_CompaniesTicker",
-                        column: x => x.CompaniesTicker,
+                        name: "FK_WatchListCompanies_FinvizCompany_CompaniesId",
+                        column: x => x.CompaniesId,
                         principalTable: "FinvizCompany",
-                        principalColumn: "Ticker",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_FinvizCompanyEntityWatchListEntity_WatchList_WatchlistsWatchListId",
-                        column: x => x.WatchlistsWatchListId,
+                        name: "FK_WatchListCompanies_WatchList_WatchlistsId",
+                        column: x => x.WatchlistsId,
                         principalTable: "WatchList",
-                        principalColumn: "WatchListId",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_FinvizCompanyEntityWatchListEntity_WatchlistsWatchListId",
-                table: "FinvizCompanyEntityWatchListEntity",
-                column: "WatchlistsWatchListId");
+                name: "IX_WatchListCompanies_WatchlistsId",
+                table: "WatchListCompanies",
+                column: "WatchlistsId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "FinvizCompanyEntityWatchListEntity");
+                name: "WatchListCompanies");
 
             migrationBuilder.DropTable(
                 name: "FinvizCompany");

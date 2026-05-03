@@ -9,20 +9,22 @@ using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddControllers();
+
 // Add services to the container.
 
 //builder.Services.AddCaching(builder.Configuration);
 
-builder.Services.AddDbContext<ApplicationDbContext>();
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Services, singleton injection
-builder.Services.AddSingleton<IFinvizService, FinvizService>();
-builder.Services.AddSingleton<IWebScraper, WebScraper>();
-builder.Services.AddSingleton<IFinvizUrlTranslator, FinvizUrlTranslator>();
+builder.Services.AddScoped<IFinvizService, FinvizService>();
+builder.Services.AddScoped<IWebScraper, WebScraper>();
+builder.Services.AddScoped<IFinvizUrlTranslator, FinvizUrlTranslator>();
 
 builder.Services.AddScoped<IWatchListService, WatchListService>();
 
-builder.Services.AddControllers();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

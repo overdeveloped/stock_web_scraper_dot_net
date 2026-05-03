@@ -155,7 +155,7 @@ namespace SeldonStockScannerAPI.WebScraper
                         var children = tableTextRow.GetChildElements();
 
                         FinvizCompanyEntity fCompany = new FinvizCompanyEntity();
-                        fCompany.Ticker = children.ToList()[1].InnerText;
+                        fCompany.Id = Convert.ToInt32(children.ToList()[1].InnerText);
                         fCompany.Company = children.ToList()[2].InnerText;
                         fCompany.Sector = children.ToList()[3].InnerText;
                         fCompany.Industry = children.ToList()[4].InnerText;
@@ -168,7 +168,7 @@ namespace SeldonStockScannerAPI.WebScraper
 
                         results.Add(fCompany);
                         sb.AppendLine($"******************************************");
-                        sb.AppendLine($"SYMBOL: {fCompany.Ticker}");
+                        sb.AppendLine($"SYMBOL: {fCompany.Id}");
                         sb.AppendLine($"NAME: {fCompany.Company}");
                         sb.AppendLine($"SECTOR: {fCompany.Sector}");
                         sb.AppendLine($"INDUSTRY: {fCompany.Industry}");

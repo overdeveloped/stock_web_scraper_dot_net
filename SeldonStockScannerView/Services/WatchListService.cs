@@ -19,22 +19,22 @@ namespace SeldonStockScannerView.Services
 
         public async Task<WatchListModel> Get(int id)
         {
-            return await _httpClient.GetFromJsonAsync<WatchListModel>($"api/WatchList/{id}");
+            return await _httpClient.GetFromJsonAsync<WatchListModel>($"WatchList/{id}");
         }
 
         public async Task Create(WatchListModel watchList)
         {
-            await _httpClient.PostAsJsonAsync("api/WatchList", watchList);
+            await _httpClient.PostAsJsonAsync("WatchList", watchList);
         }
 
         public async Task Update(WatchListModel watchList)
         {
-            await _httpClient.PutAsJsonAsync($"api/WatchList/{watchList.WatchListId}", watchList);
+            await _httpClient.PutAsJsonAsync($"WatchList/{watchList.WatchListId}", watchList);
         }
 
         public async Task Delete(int id)
         {
-            await _httpClient.DeleteAsync($"api/WatchList/{id}");
+            await _httpClient.DeleteAsync($"WatchList/{id}");
         }
     }
 }

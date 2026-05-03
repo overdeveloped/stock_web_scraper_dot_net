@@ -8,12 +8,12 @@ namespace SeldonStockScannerAPI.WatchList
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int WatchListId { get; set; }
+        public int Id { get; set; }
 
         [Required]
         [MaxLength(50)]
         public string WatchListName { get; set; } = string.Empty;
 
-        public ICollection<FinvizCompanyEntity> Companies { get; set; }
+        public ICollection<FinvizCompanyEntity> Companies { get; set; } = new List<FinvizCompanyEntity>();
     }
 }

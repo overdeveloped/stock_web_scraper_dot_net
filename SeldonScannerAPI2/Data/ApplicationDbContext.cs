@@ -11,21 +11,38 @@ namespace SeldonStockScannerAPI.Data
         public DbSet<FinvizCompanyEntity> FinvizCompany { get; set; }
         public DbSet<WatchListEntity> WatchList { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            IConfigurationRoot configuration = new ConfigurationBuilder()
-                .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
-                .AddJsonFile("appsettings.json")
-                .Build();
+        // DON'T USE THIS. IT IS NOT DEPENDNACY INJECTION
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    IConfigurationRoot configuration = new ConfigurationBuilder()
+        //        .SetBasePath(AppDomain.CurrentDomain.BaseDirectory)
+        //        .AddJsonFile("appsettings.json")
+        //        .Build();
 
-            optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+        //    optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+        //}
+
+
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        {
+            //options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
 
-        //public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-        //{
-        //    //options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            modelBuilder.Entity<WatchListEntity>()
+                .HasKey(w => w.Id);
 
-        //}
+            modelBuilder.Entity<FinvizCompanyEntity>()
+                .HasKey(f => f.Id);
+
+            modelBuilder.Entity<WatchListEntity>()
+                .HasMany(w => w.Companies)
+                .WithMany(c => c.Watchlists)
+                .UsingEntity(j => j.ToTable("WatchListCompanies"));
+        }
     }
 }

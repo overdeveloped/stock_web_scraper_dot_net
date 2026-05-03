@@ -14,12 +14,17 @@ namespace SeldonStockScannerAPI.Finviz_Company
 
         public async Task<IEnumerable<FinvizCompanyEntity>> GetAllAsync()
         {
-            return await _context.FinvizCompany.ToListAsync();
+            return  await _context.FinvizCompany
+                .Include(c => c.Watchlists)
+                .ToListAsync();
         }
 
         public async Task<FinvizCompanyEntity?> GetByIdAsync(int id)
         {
-            return await _context.FinvizCompany.FindAsync(id);
+            return await _context.FinvizCompany
+                .AsNoTracking()
+                .Include(c => c.Watchlists)
+                .FirstOrDefaultAsync(c => c.Id == id);
         }
 
         public async Task<FinvizCompanyEntity> CreateAsync(FinvizCompanyEntity company)
@@ -31,12 +36,12 @@ namespace SeldonStockScannerAPI.Finviz_Company
 
         public async Task<FinvizCompanyEntity?> UpdateAsync(int id, FinvizCompanyEntity company)
         {
-            var existing = await _context.FinvizCompany.FindAsync(id);
+            var existing = await _context.FinvizCompany
+                .Include(c => c.Watchlists)
+                .FirstOrDefaultAsync(c => c.Id == id);
 
             if (existing == null)
-            {
                 return null;
-            }
 
             existing.Company = company.Company;
             existing.Sector = company.Sector;
@@ -48,20 +53,33 @@ namespace SeldonStockScannerAPI.Finviz_Company
             existing.Change = company.Change;
             existing.Volume = company.Volume;
 
+
+            // Update watchlists
+            if (company.Watchlists != null && company.Watchlists.Any())
+            {
+                company.Watchlists.Clear();
+
+                foreach (var comp in company.Watchlists)
+                {
+                    var watchlist = await _context.WatchList.FindAsync(comp.Id);
+
+                    if (watchlist != null)
+                        company.Watchlists.Add(watchlist);
+                }
+            }
+
             await _context.SaveChangesAsync();
             return existing;
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
-            var existing = await _context.WatchList.FindAsync(id);
+            var existing = await _context.FinvizCompany.FindAsync(id);
 
             if (existing == null)
-            {
                 return false;
-            }
 
-            _context.WatchList.Remove(existing);
+            _context.FinvizCompany.Remove(existing);
             await _context.SaveChangesAsync();
             return true;
         }
