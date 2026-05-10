@@ -12,6 +12,10 @@ namespace SeldonStockScannerAPI.Finviz_Company
         public int Id { get; set; }
 
         [Required]
+        [MaxLength(10)]
+        public string Ticker { get; set; } = string.Empty;
+
+        [Required]
         [MaxLength(50)]
         public string Company { get; set; } = string.Empty;
 

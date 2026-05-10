@@ -27,6 +27,7 @@ namespace SeldonStockScannerAPI.Finviz_Company
                     entityDTOs.Add(new FinvizCompanyDTO()
                     {
                         Id = entity.Id,
+                        Ticker = entity.Ticker,
                         Company = entity.Company,
                         Sector = entity.Sector,
                         Industry = entity.Industry,
@@ -63,6 +64,7 @@ namespace SeldonStockScannerAPI.Finviz_Company
             return new FinvizCompanyDTO()
             {
                 Id = entity.Id,
+                Ticker = entity.Ticker,
                 Company = entity.Company,
                 Sector = entity.Sector,
                 Industry = entity.Industry,
@@ -108,6 +110,7 @@ namespace SeldonStockScannerAPI.Finviz_Company
             if (existing == null)
                 return null;
 
+            existing.Ticker = company.Ticker;
             existing.Company = company.Company;
             existing.Sector = company.Sector;
             existing.Industry = company.Industry;
@@ -117,7 +120,6 @@ namespace SeldonStockScannerAPI.Finviz_Company
             existing.Price = company.Price;
             existing.Change = company.Change;
             existing.Volume = company.Volume;
-
 
             // Update watchlists
             if (company.Watchlists != null && company.Watchlists.Any())

@@ -15,8 +15,11 @@ namespace SeldonStockScannerView.Models
     using Newtonsoft.Json;
     using Newtonsoft.Json.Converters;
 
-    public partial class FinvizCompany
+    public partial class FinvizCompanyModel
     {
+        [JsonProperty("id")]
+        public int Id { get; set; }
+
         [JsonProperty("ticker")]
         public string Ticker { get; set; }
 
@@ -48,14 +51,14 @@ namespace SeldonStockScannerView.Models
         public string Volume { get; set; }
     }
 
-    public partial class FinvizCompany
+    public partial class FinvizCompanyModel
     {
-        public static List<FinvizCompany> FromJson(string json) => JsonConvert.DeserializeObject<List<FinvizCompany>>(json, SeldonStockScannerView.Models.Converter.Settings);
+        public static List<FinvizCompanyModel> FromJson(string json) => JsonConvert.DeserializeObject<List<FinvizCompanyModel>>(json, SeldonStockScannerView.Models.Converter.Settings);
     }
 
     public static class Serialize
     {
-        public static string ToJson(this List<FinvizCompany> self) => JsonConvert.SerializeObject(self, SeldonStockScannerView.Models.Converter.Settings);
+        public static string ToJson(this List<FinvizCompanyModel> self) => JsonConvert.SerializeObject(self, SeldonStockScannerView.Models.Converter.Settings);
     }
 
     internal static class Converter

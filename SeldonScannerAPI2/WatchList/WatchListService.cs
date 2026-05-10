@@ -34,6 +34,7 @@ namespace SeldonStockScannerAPI.WatchList
                             .Select(w => new FinvizCompanyDTO
                             { 
                                 Id = w.Id,
+                                Ticker = w.Ticker,
                                 Company = w.Company,
                                 Sector = w.Sector,
                                 Industry = w.Industry,
@@ -50,7 +51,7 @@ namespace SeldonStockScannerAPI.WatchList
             }
             else
             {
-                return null;
+                return entityDTOs;
             }
 
             return entityDTOs;
@@ -74,6 +75,7 @@ namespace SeldonStockScannerAPI.WatchList
                     .Select(w => new FinvizCompanyDTO
                     {
                         Id = w.Id,
+                        Ticker = w.Ticker,
                         Company = w.Company,
                         Sector = w.Sector,
                         Industry = w.Industry,

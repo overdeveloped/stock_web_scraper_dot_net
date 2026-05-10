@@ -8,9 +8,9 @@ namespace SeldonStockScannerView.Pages.WatchList
 {
     public class CreateModel : PageModel
     {
-        private readonly WatchListService _api;
+        private readonly IWatchListClient _api;
 
-        public CreateModel(WatchListService api)
+        public CreateModel(IWatchListClient api)
         {
             _api = api;
         }
@@ -25,7 +25,7 @@ namespace SeldonStockScannerView.Pages.WatchList
             if (!ModelState.IsValid)
                 return Page();
 
-            await _api.Create(WatchList);
+            await _api.CreateAsync(WatchList);
             return RedirectToPage("Index");
         }
     }

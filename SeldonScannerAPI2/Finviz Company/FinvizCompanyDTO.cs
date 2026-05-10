@@ -7,6 +7,8 @@ namespace SeldonStockScannerAPI.Finviz_Company
     {
         public int Id { get; set; }
 
+        public string Ticker { get; set; } = string.Empty;
+
         public string Company { get; set; } = string.Empty;
 
         public string? Sector { get; set; }

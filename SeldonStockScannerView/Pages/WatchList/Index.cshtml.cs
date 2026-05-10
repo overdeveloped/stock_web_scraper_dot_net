@@ -8,14 +8,13 @@ namespace SeldonStockScannerView.Pages.WatchList
 {
     public class IndexModel : PageModel
     {
-        private readonly WatchListService _api;
-        public List<WatchListModel> WatchLists { get; set; }
+        private readonly IWatchListClient _api;
+        public List<WatchListModel> WatchLists { get; set; } = new();
 
-        public IndexModel(WatchListService api)
+        public IndexModel(IWatchListClient api)
         {
             _api = api;
         }
-
 
         public async Task OnGetAsync()
         {

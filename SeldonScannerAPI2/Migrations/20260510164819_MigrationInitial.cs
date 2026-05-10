@@ -16,6 +16,7 @@ namespace SeldonStockScannerAPI.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Ticker = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     Company = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Sector = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
                     Industry = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),

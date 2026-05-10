@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using SeldonStockScannerView.Models;
 using System.Data;
 
@@ -9,14 +10,24 @@ namespace SeldonStockScannerView.Pages
     {
         private readonly ILogger<IndexModel> _logger;
 
-        static readonly HttpClient client = new HttpClient();
+        private readonly IFinvizScanClient _api_scan;
+        private readonly IWatchListClient _api_watchList;
 
         [BindProperty]
         public string scanType { get; set; }
 
-        public IndexModel(ILogger<IndexModel> logger)
+        public List<FinvizCompanyModel> Companies { get; set; } = new();
+
+        [BindProperty]
+        public int SelectedWatchListId { get; set; }
+        public List<SelectListItem> WatchLists { get; set; } = new();
+
+
+        public IndexModel(ILogger<IndexModel> logger, IFinvizScanClient api_scan, IWatchListClient api_watchList)
         {
             _logger = logger;
+            _api_scan = api_scan;
+            _api_watchList = api_watchList;
         }
 
         public void OnPostScan()
@@ -25,46 +36,70 @@ namespace SeldonStockScannerView.Pages
             Console.WriteLine(scanType.ToString());
         }
 
-        public void OnGet()
+        public async Task OnGetAsync()
         {
-            string thing = "";
-        }
+            var results = await _api_watchList.GetAllAsync();
 
-        public void GetShorts()
-        {
-            Task<HttpResponseMessage> task = client.GetAsync("https://localhost:7059/api/Finviz/shorts");
-            HttpResponseMessage result = task.Result;
-            List<FinvizCompany> companies = new List<FinvizCompany>();
-
-            if (result.IsSuccessStatusCode)
+            WatchLists = results.Select(r => new SelectListItem
             {
-                Task<string> readString = result.Content.ReadAsStringAsync();
-                string jsonString = readString.Result;
-                companies = FinvizCompany.FromJson(jsonString);
-            }
+                Value = r.Id.ToString(),
+                Text = r.WatchListName
+            }).ToList();
 
-            ViewData["companies"] = companies;
+            string thing = "";
 
         }
+
+        //public void GetShorts()
+        //{
+        //    Task<HttpResponseMessage> task = _api.GetAllAsync("https://localhost:7059/api/Finviz/shorts");
+        //    HttpResponseMessage result = task.Result;
+        //    List<FinvizCompany> companies = new List<FinvizCompany>();
+
+        //    if (result.IsSuccessStatusCode)
+        //    {
+        //        Task<string> readString = result.Content.ReadAsStringAsync();
+        //        string jsonString = readString.Result;
+        //        companies = FinvizCompany.FromJson(jsonString);
+        //    }
+
+        //    ViewData["companies"] = companies;
+
+        //}
 
         public async Task<IActionResult> OnGetScanAsync(string endpoint)
         {
+
             Console.WriteLine("HANDLER SELECTION: " + this.scanType);
 
-            HttpResponseMessage result = await client.GetAsync($"https://localhost:7059/api/Finviz/{endpoint}");
-            List<FinvizCompany> companies = new List<FinvizCompany>();
+            Companies = await _api_scan.GetAllAsync(endpoint);
 
-            if (result.IsSuccessStatusCode)
-            {
-                Task<string> readString = result.Content.ReadAsStringAsync();
-                string jsonString = readString.Result;
-                companies = FinvizCompany.FromJson(jsonString);
-            }
+            ViewData["companies"] = Companies;
 
-            ViewData["companies"] = companies;
-
-            return Partial("_ScanResultPartial", companies);
+            return Partial("_ScanResultPartial", Companies);
         }
+
+
+
+
+        //public async Task<IActionResult> OnPostAsync()
+        //{
+        //    var watchList = await _api_watchList.GetByIdAsync(SelectedWatchListId);
+
+        //    var company = 
+
+        //    watchList.Companies.Add()
+        //    _api_watchList.UpdateAsync()
+        //}
+
+
+
+
+
+
+
+
+
 
         //public async Task<IActionResult> OnPostWatchListAsync(string id, string value)
         //{

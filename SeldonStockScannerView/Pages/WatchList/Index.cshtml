@@ -1,7 +1,7 @@
 ﻿@page "/WatchLists"
 @model IndexModel
 
-<h2>Products</h2>
+<h2>Watch Lists</h2>
 
 <a asp-page="Create" class="btn btn-primary">Create New</a>
 
@@ -16,9 +16,9 @@
         <tr>
             <td>@w.WatchListName</td>
             <td>
-                <a asp-page="Edit" asp-route-id="@w.WatchListId">Edit</a> |
-                <a asp-page="Details" asp-route-id="@w.WatchListId">Details</a> |
-                <a asp-page="Delete" asp-route-id="@w.WatchListId">Delete</a>
+                <a asp-page="Edit" asp-route-id="@w.Id">Edit</a> |
+                <a asp-page="Details" asp-route-id="@w.Id">Details</a> |
+                <a asp-page="Delete" asp-route-id="@w.Id">Delete</a>
             </td>
         </tr>
     }

@@ -11,7 +11,7 @@ using SeldonStockScannerAPI.Data;
 namespace SeldonStockScannerAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260503135803_MigrationInitial")]
+    [Migration("20260510164819_MigrationInitial")]
     partial class MigrationInitial
     {
         /// <inheritdoc />
@@ -79,6 +79,11 @@ namespace SeldonStockScannerAPI.Migrations
                     b.Property<string>("Sector")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Ticker")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
 
                     b.Property<string>("Volume")
                         .HasMaxLength(50)

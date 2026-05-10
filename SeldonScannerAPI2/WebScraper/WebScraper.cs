@@ -147,7 +147,7 @@ namespace SeldonStockScannerAPI.WebScraper
                         var children = tableTextRow.GetChildElements();
 
                         FinvizCompanyEntity fCompany = new FinvizCompanyEntity();
-                        fCompany.Id = Convert.ToInt32(children.ToList()[1].InnerText);
+                        fCompany.Ticker = children.ToList()[1].InnerText;
                         fCompany.Company = children.ToList()[2].InnerText;
                         fCompany.Sector = children.ToList()[3].InnerText;
                         fCompany.Industry = children.ToList()[4].InnerText;

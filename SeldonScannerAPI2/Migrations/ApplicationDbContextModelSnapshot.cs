@@ -77,6 +77,11 @@ namespace SeldonStockScannerAPI.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("Ticker")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
                     b.Property<string>("Volume")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");

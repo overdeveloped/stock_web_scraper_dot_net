@@ -11,7 +11,7 @@ namespace SeldonStockScannerView.Controllers
         //{
         //    var watchLists = await _api.GetAll();
         //    return View(watchLists);
-        //}
+        //}x
 
         //public async Task<ActionResult> Details(int id)
         //{

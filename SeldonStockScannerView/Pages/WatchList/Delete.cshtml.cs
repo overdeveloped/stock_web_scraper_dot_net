@@ -4,11 +4,11 @@ using SeldonStockScannerView.Models;
 using SeldonStockScannerView.Services;
 using System.Threading.Tasks;
 
-public class EditModel : PageModel
+public class DeleteModel : PageModel
 {
     private readonly IWatchListClient _api;
 
-    public EditModel(IWatchListClient api)
+    public DeleteModel(IWatchListClient api)
     {
         _api = api;
     }
@@ -26,7 +26,7 @@ public class EditModel : PageModel
         if (!ModelState.IsValid)
             return Page();
 
-        await _api.UpdateAsync(WatchList.Id, WatchList);
+        await _api.DeleteAsync(WatchList.Id);
         return RedirectToPage("Index");
     }
 }
