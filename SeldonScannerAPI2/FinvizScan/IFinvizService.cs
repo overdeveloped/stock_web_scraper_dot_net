@@ -6,7 +6,7 @@ namespace SeldonStockScannerAPI.FinvizScan
     public interface IFinvizService
     {
         List<string> GetPlus500List() { return new List<string>(); }
-        List<FinvizCompanyEntity> GetMegaCompanies() { return new List<FinvizCompanyEntity>(); }
+        Task<List<FinvizCompanyEntity>> GetMegaCompaniesAsync();
         List<FinvizCompanyEntity> GetLongHolds() { return new List<FinvizCompanyEntity>(); }
         List<FinvizCompanyEntity> GetOversoldBounce() { return new List<FinvizCompanyEntity>(); }
         List<FinvizCompanyEntity> GetBreakout() { return new List<FinvizCompanyEntity>(); }

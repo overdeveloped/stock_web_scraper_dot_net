@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Azure.Core;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SeldonStockScannerAPI.Data;
@@ -37,6 +38,19 @@ namespace SeldonStockScannerAPI.Finviz_Company
             return Ok(result);
         }
 
+        [HttpGet("by-ticker")]
+        public async Task<ActionResult<FinvizCompanyDTO>> GetByTicker(string ticker)
+        {
+            var result = await this._finvizCompanyService.GetByTickerAsync(ticker.ToUpper());
+
+            if (result == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(result);
+        }
+
         [HttpPost]
         public async Task<ActionResult<FinvizCompanyEntity>> Create(FinvizCompanyEntity company)
         {
@@ -49,12 +63,12 @@ namespace SeldonStockScannerAPI.Finviz_Company
         }
 
         [HttpPut("{id:int}")]
-        public async Task<ActionResult<FinvizCompanyEntity>> Update(int id, FinvizCompanyEntity updated)
+        public async Task<ActionResult<FinvizCompanyEntity>> Update(string ticker, FinvizCompanyEntity updated)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-
-            var result = await _finvizCompanyService.UpdateAsync(id, updated);
+ 
+            var result = await _finvizCompanyService.UpdateAsync(ticker, updated);
 
             if (result == null)
                 return NotFound();

@@ -5,8 +5,9 @@ namespace SeldonStockScannerAPI.Finviz_Company
     {
         Task<IEnumerable<FinvizCompanyDTO>> GetAllAsync();
         Task<FinvizCompanyDTO?> GetByIdAsync(int id);
+        Task<FinvizCompanyDTO?> GetByTickerAsync(string ticker);
         Task<FinvizCompanyEntity> CreateAsync(FinvizCompanyEntity company);
-        Task<FinvizCompanyEntity?> UpdateAsync(int id, FinvizCompanyEntity company);
+        Task<FinvizCompanyEntity?> UpdateAsync(string id, FinvizCompanyEntity company);
         Task<bool> DeleteAsync(int id);
     }
 }

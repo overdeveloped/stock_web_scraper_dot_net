@@ -38,7 +38,6 @@ namespace SeldonStockScannerAPI.WatchList
             }
 
             return Ok(result);
-
         }
 
         [HttpPost]

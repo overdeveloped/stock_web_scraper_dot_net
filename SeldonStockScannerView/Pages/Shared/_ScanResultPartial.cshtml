@@ -19,7 +19,13 @@
             @* <input type="hidden" name="ticker" value="@company.Ticker"/> *@
             @* <button class="btn btn-primary btn-sm view-btn" data-id="@company.Ticker">Save</button> *@
             @* <button type="submit" class="btn btn-primary btn-sm view-btn">Save</button> *@
-            <button id="openWatchModal" class="btn btn-primary btn-sm view-btn" data-row-id="@company.Id">Save</button>
+            <button class="btn btn-primary btn-sm view-btn"
+                data-row-id="@company.Id"
+                data-row-ticker="@company.Ticker"
+                data-bs-toggle="modal"
+                data-bs-target="#modalWatch">
+                Save
+            </button>
         </td>
     </tr>
 }

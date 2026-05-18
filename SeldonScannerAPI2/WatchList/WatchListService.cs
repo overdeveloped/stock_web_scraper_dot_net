@@ -1,7 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Azure.Core;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using SeldonStockScannerAPI.Finviz_Company;
 using System;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace SeldonStockScannerAPI.WatchList
 {
@@ -116,6 +118,22 @@ namespace SeldonStockScannerAPI.WatchList
             return watchList;
         }
 
+        //public async Task<WatchListEntity> AddCompanyToWatchListAsync(string ticker, int id)
+        //{
+        //    var existing = await _context.WatchList
+        //        .Include(w => w.Companies)
+        //        .FirstOrDefaultAsync(w => w.Id == id);
+
+        //    if (existing == null)
+        //        return null;
+
+        //    if (!existing.Companies.Any(c => c.Ticker == ticker))
+        //    {
+        //        watchList.Companies.Add(company);
+        //        await _db.SaveChangesAsync();
+        //    }
+        //}
+
         public async Task<WatchListEntity?> UpdateAsync(int id, WatchListEntity watchList)
         {
             var existing = await _context.WatchList
@@ -170,6 +188,11 @@ namespace SeldonStockScannerAPI.WatchList
             watchList.Companies.Add(company);
 
             await _context.SaveChangesAsync();
+        }
+
+        public Task<WatchListEntity> AddCompanyToWatchListAsync(AttachCompaniesDTO request)
+        {
+            throw new NotImplementedException();
         }
     }
 }

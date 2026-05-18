@@ -80,6 +80,46 @@ namespace SeldonStockScannerAPI.Finviz_Company
             };
         }
 
+        public async Task<FinvizCompanyDTO?> GetByTickerAsync(string ticker)
+        {
+            var entity = await _context.FinvizCompany
+                .AsNoTracking()
+                .FirstOrDefaultAsync(c => c.Ticker == ticker);
+
+            if (entity == null)
+                return null;
+
+            return new FinvizCompanyDTO()
+            {
+                Id = entity.Id,
+                Ticker = entity.Ticker,
+                Company = entity.Company,
+                Sector = entity.Sector,
+                Industry = entity.Industry,
+                Country = entity.Country,
+                MarketCap = entity.MarketCap,
+                PE = entity.PE,
+                Price = entity.Price,
+                Change = entity.Change,
+                Volume = entity.Volume,
+            };
+
+        }
+
+        //public async Task<FinvizCompanyEntity> CheckOrAdd(string ticker)
+        //{
+        //    // CHECK IF ALREADY EXISTS
+        //    var comp = await _context.FinvizCompany.FirstOrDefaultAsync(c => c.Ticker == ticker);
+
+        //    if (comp == null)
+        //    {
+        //        comp = new FinvizCompanyEntity()
+        //    }
+
+
+
+        //}
+
         public async Task<FinvizCompanyEntity> CreateAsync(FinvizCompanyEntity company)
         {
             _context.FinvizCompany.Add(company);
@@ -101,14 +141,17 @@ namespace SeldonStockScannerAPI.Finviz_Company
             return company;
         }
 
-        public async Task<FinvizCompanyEntity?> UpdateAsync(int id, FinvizCompanyEntity company)
+        public async Task<FinvizCompanyEntity?> UpdateAsync(string ticker, FinvizCompanyEntity company)
         {
             var existing = await _context.FinvizCompany
                 .Include(c => c.Watchlists)
-                .FirstOrDefaultAsync(c => c.Id == id);
+                .FirstOrDefaultAsync(c => c.Ticker == ticker);
 
             if (existing == null)
-                return null;
+            {
+                await CreateAsync(company);
+                return company;
+            }
 
             existing.Ticker = company.Ticker;
             existing.Company = company.Company;
@@ -124,15 +167,17 @@ namespace SeldonStockScannerAPI.Finviz_Company
             // Update watchlists
             if (company.Watchlists != null && company.Watchlists.Any())
             {
-                company.Watchlists.Clear();
+                var newWatchlists = new List<WatchListEntity>();
 
                 foreach (var comp in company.Watchlists)
                 {
                     var watchlist = await _context.WatchList.FindAsync(comp.Id);
 
                     if (watchlist != null)
-                        company.Watchlists.Add(watchlist);
+                        newWatchlists.Add(watchlist);
                 }
+
+                existing.Watchlists = newWatchlists;
             }
 
             await _context.SaveChangesAsync();
@@ -166,5 +211,6 @@ namespace SeldonStockScannerAPI.Finviz_Company
 
             await _context.SaveChangesAsync();
         }
+
     }
 }

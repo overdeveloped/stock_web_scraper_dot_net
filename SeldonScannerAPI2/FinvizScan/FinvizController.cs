@@ -49,9 +49,9 @@ namespace SeldonStockScannerAPI.FinvizScan
 
         // Basic Scans
         [HttpGet("megacompanies")]
-        public ActionResult<List<FinvizCompanyEntity>> GetMegaCompanies()
+        public async Task<List<FinvizCompanyEntity>> GetMegaCompanies()
         {
-            return finvizService.GetMegaCompanies();
+            return await finvizService.GetMegaCompaniesAsync();
         }
 
         [HttpGet("tech")]

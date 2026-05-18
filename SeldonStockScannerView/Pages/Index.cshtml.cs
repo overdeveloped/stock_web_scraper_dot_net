@@ -22,6 +22,13 @@ namespace SeldonStockScannerView.Pages
         public int SelectedWatchListId { get; set; }
         public List<SelectListItem> WatchLists { get; set; } = new();
 
+        [BindProperty]
+        public int RowId { get; set; }
+
+        [BindProperty]
+        public int Ticker { get; set; }
+
+
 
         public IndexModel(ILogger<IndexModel> logger, IFinvizScanClient api_scan, IWatchListClient api_watchList)
         {
@@ -84,12 +91,13 @@ namespace SeldonStockScannerView.Pages
 
         //public async Task<IActionResult> OnPostAsync()
         //{
-        //    var watchList = await _api_watchList.GetByIdAsync(SelectedWatchListId);
+        //    var payload = new
+        //    {
+        //        ticker = Ticker,
+        //        watchListId = SelectedWatchListId
+        //    };
 
-        //    var company = 
-
-        //    watchList.Companies.Add()
-        //    _api_watchList.UpdateAsync()
+        //    var response = await _api_watchList.
         //}
 
 

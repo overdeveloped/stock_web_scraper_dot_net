@@ -16,6 +16,11 @@ builder.Services.AddHttpClient<IFinvizScanClient, FinvizScanClient> (client =>
     client.BaseAddress = new Uri("https://localhost:7059/api/Finviz/");
 });
 
+builder.Services.AddHttpClient<IFinvizCompanyClient, FinvizCompanyClient> (client =>
+{
+    client.BaseAddress = new Uri("https://localhost:7059/api/FinvizCompany/");
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

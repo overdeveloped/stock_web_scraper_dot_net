@@ -11,13 +11,15 @@ namespace SeldonStockScannerAPI.FinvizScan
         //private readonly AppDbContext _dbContext;
         private readonly IWebScraper webScraper;
         private readonly IFinvizUrlTranslator finvizUrlTranslator;
+        private readonly IFinvizCompanyService finvizCompanyService;
 
         private List<string> plus500tickers = new List<string>();
 
-        public FinvizService(IWebScraper webScraper, IFinvizUrlTranslator finvizUrlTranslator)
+        public FinvizService(IWebScraper webScraper, IFinvizUrlTranslator finvizUrlTranslator, IFinvizCompanyService finvizCompanyService)
         {
             this.webScraper = webScraper;
             this.finvizUrlTranslator = finvizUrlTranslator;
+            this.finvizCompanyService = finvizCompanyService;
         }
 
         private List<FinvizCompanyEntity> filterByPluss500(List<FinvizCompanyEntity> finvizResults)
@@ -90,7 +92,7 @@ namespace SeldonStockScannerAPI.FinvizScan
             return this.plus500tickers;
         }
 
-        public List<FinvizCompanyEntity> GetMegaCompanies()
+        public async Task<List<FinvizCompanyEntity>> GetMegaCompaniesAsync()
         {
             Dictionary<string, string> urlArguments = new Dictionary<string, string>
             {
@@ -98,6 +100,11 @@ namespace SeldonStockScannerAPI.FinvizScan
             };
 
             List<FinvizCompanyEntity> finvizResults = this.webScraper.GetCustomWatchList(this.finvizUrlTranslator.BuildUrl(urlArguments), "megaCompanies");
+
+            foreach (var result in finvizResults)
+            {
+                await finvizCompanyService.UpdateAsync(result.Ticker, result);
+            }
 
             return filterByPluss500(finvizResults);
         }

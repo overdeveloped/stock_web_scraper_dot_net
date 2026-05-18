@@ -88,36 +88,37 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
 
-            <div class="modal-body" id="modalContent">
-                <!-- Select box will load here -->
-                <select asp-for="SelectedWatchListId" asp-items="Model.WatchLists" class="form-select">
-                    <option value="">Select One</option>
-                </select>
-
-
-
-                <p>Loading...</p>
-            </div>
 
 
 
 
-
-            <form asp-action="Create" method="post">
-                <input id="RowId" name="RowId"/>
+            <form method="post">
+                <input type="hidden" id="ModalTicker" name="Ticker"/>
 
 @*                     <select id="watchLists" class="form-control">
                         <option value="">Select watch list</option>
                     </select>
- *@
+ *@             <div class="modal-body">
+                    <!-- Select box will load here -->
+                    <select asp-for="SelectedWatchListId" asp-items="Model.WatchLists" class="form-select">
+                        <option value="">Select One</option>
+                    </select>
+                    <p>Loading...</p>
+                </div>
 
 
+
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
 
             </form>
 
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
+
+
+
+
         </div>
     </div>
 </div>
@@ -126,6 +127,24 @@
 @section scripts
 {
     <script>
+
+        document.getElementById('modalWatch')
+            .addEventListener('show.bs.modal', async function (event) {
+
+                const button = event.relatedTarget; // ← the clicked button
+                const ticker = button.getAttribute('data-row-ticker');
+
+                const response = await fetch(`/api/FinvizCompany/by-ticker/${ticker}`)
+                const company = await response.json();
+
+                // Store row Ticker in hidden field
+                document.getElementById('ModalTicker').value = ticker;
+                window.selectedCompany = company;
+
+                console.log("Modal opened for row:", ticker);
+                console.log("Modal opened for company:", company);
+            });
+
 
         $("#buttScan").on("click", function () {
             const selected = $("#scanType").val();
@@ -190,61 +209,71 @@
         });
 
         // SAVE TO WATCH    ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-        $(document).on("click", ".view-btn", function () {
-            const id = $(this).data("id");
-            const company = $(this).data("company");
-            console.log("Clicked Save on ticker: " + id + ", " + company);
+        // $(document).on("click", ".view-btn", function () {
+        //     const id = $(this).data("id");
+        //     const company = $(this).data("company");
+        //     console.log("Clicked Save on ticker: " + id + ", " + company);
 
-            // $.ajax({
-            //     url: "?handler=Scan&endpoint=watchlist",
-            //     method: "POST",
-            //     success: function(resp){
-            //         console.log(resp);
-            //     },
-            //     error: function(err){
-            //         console.error("Error saving company to watch list: " + err.responseText);
-            //     }
-            // });
-        });
+        //     // $.ajax({
+        //     //     url: "?handler=Scan&endpoint=watchlist",
+        //     //     method: "POST",
+        //     //     success: function(resp){
+        //     //         console.log(resp);
+        //     //     },
+        //     //     error: function(err){
+        //     //         console.error("Error saving company to watch list: " + err.responseText);
+        //     //     }
+        //     // });
+        // });
 
-        $(document).on("click", "#openWatchModal", function() {
-            $("#modalWatch").modal("show");
-        });
+        // $(document).on("click", "#openWatchModal", function(event) {
+        //     let butt = $(event.target);
+        //     let rowTicker = butt.data("row-ticker");
 
-        $("#modalWatch").on("shown.bs.modal", function(event) {
+        //     debugger;
 
-            // let butt = $(event.relatedTarget);
-            let butt = $("#openWatchModal");
-            // data-row-id
+        //     $("#modalWatch").modal("show");
+        // });
 
-            // PASS IN TICKER FROM BUTTON AND DO DB LOOKUP TO CHECK IF IT EXISTS
+        // $("#modalWatch").on("shown.bs.modal", function(event) {
 
-            rowId = butt.data("row-id");
-            $("#RowId").val(rowId);
-
-            console.log("Loading modal data");
-
-            $("#modalContent").load('/WatchList/GetAllWatchLists');
+        //     let butt = $(event.relatedTarget);
+        //     // data-row-id
+        //     console.log(butt);
 
 
+        //     // PASS IN TICKER FROM BUTTON AND DO DB LOOKUP TO CHECK IF IT EXISTS
+        //     let rowTicker = butt.data("row-ticker");
+
+        //     debugger;
+
+
+        //     rowId = butt.data("row-id");
+        //     $("#RowId").val(rowId);
+
+        //     console.log("Loading modal data");
+
+        //     $("#modalContent").load('/WatchList/GetAllWatchLists');
 
 
 
 
 
-            // $.ajax({
-            //     url: '@Url.Action("GetAllWatchLists", "WatchList")',
-            //     type: "GET",
-            //     success: function (data) {
-            //         console.log(data);
 
-            //     },
-            //     error: function (err) {
-            //         console.error("ERROR: " + err);
-            //     }
 
-            // });
-        });
+        //     // $.ajax({
+        //     //     url: '@Url.Action("GetAllWatchLists", "WatchList")',
+        //     //     type: "GET",
+        //     //     success: function (data) {
+        //     //         console.log(data);
+
+        //     //     },
+        //     //     error: function (err) {
+        //     //         console.error("ERROR: " + err);
+        //     //     }
+
+        //     // });
+        // });
 
 
         // END SAVE TO WATCH    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
